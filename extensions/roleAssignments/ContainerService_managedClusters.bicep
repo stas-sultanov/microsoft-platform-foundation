@@ -45,7 +45,7 @@ var roleIdDictionary = union(
 
 /* existing resources */
 
-resource ContainerService_managedClusters_ 'Microsoft.ContainerService/managedClusters@2025-03-01' existing = {
+resource ContainerService_managedClusters_ 'Microsoft.ContainerService/managedClusters@2025-05-01' existing = {
 	name: name
 }
 

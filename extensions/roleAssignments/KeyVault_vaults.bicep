@@ -19,7 +19,7 @@ import {
 @description('Collection of roles assignments.')
 param assignments RoleAssignment[]
 
-@description('Name of the Microsoft.Storage/storageAccounts resource.')
+@description('Name of the Microsoft.KeyVault/vaults resource.')
 param name string
 
 /* variables */
@@ -27,20 +27,22 @@ param name string
 var roleIdDictionary = union(
 	StandardRoleDictionary,
 	{
-		'Storage Blob Data Contributor': 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-		'Storage Blob Data Reader': '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
-		'Storage Queue Data Contributor': '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
-		'Storage Queue Data Message Processor': '8a0f0c08-91a1-4084-bc3d-661d67233fed'
-		'Storage Queue Data Message Sender': 'c6a89b2d-59bc-44d0-9896-0f6e12d7b80a'
-		'Storage Queue Data Reader': '19e7f393-937e-4f77-808e-94535e297925'
-		'Storage Table Data Contributor': '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
-		'Storage Table Data Reader': '76199698-9eea-4c19-bc75-cec21354c6b6'
+		'Key Vault Administrator': '00482a5a-887f-4fb3-b363-3b7fe8e74483'
+		'Key Vault Certificate User': 'db79e9a7-68ee-4b58-9aeb-b90e7c24fcba'
+		'Key Vault Certificates Officer': 'a4417e6f-fecd-4de8-b567-7b0420556985'
+		'Key Vault Contributor': 'f25e0fa2-a7c8-4377-a976-54943a77a395'
+		'Key Vault Crypto Officer': '14b46e9e-c2b7-41b4-b07b-48a6ebf60603'
+		'Key Vault Crypto Service Encryption User': 'e147488a-f6f5-4113-8e2d-b22465e65bf6'
+		'Key Vault Crypto User': '12338af0-0e69-4776-bea7-57ae8d297424'
+		'Key Vault Reader': '21090545-7ca7-4776-b22c-e363652d74d2'
+		'Key Vault Secrets Officer': 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7'
+		'Key Vault Secrets User': '4633458b-17de-408a-b874-0445c86b69e6'
 	}
 )
 
 /* existing resources */
 
-resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2025-01-01' existing = {
+resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2024-11-01' existing = {
 	name: name
 }
 
@@ -53,11 +55,11 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		roleIdDictionary
 	): {
 		name: guid(
-			Storage_storageAccounts_.id,
+			KeyVault_vaults_.id,
 			authorization.principalId,
 			authorization.roleDefinitionId
 		)
 		properties: authorization
-		scope: Storage_storageAccounts_
+		scope: KeyVault_vaults_
 	}
 ]

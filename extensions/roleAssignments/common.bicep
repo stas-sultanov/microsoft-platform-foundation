@@ -19,26 +19,28 @@ var StandardRoleDictionary = {
 
 @export()
 type RoleAssignment = {
+	@description('Description of role assignment.')
 	description: string?
+
+	@description('The ID of the principal.')
 	principalId: string
+
+	@description('The name of the principal.')
 	principalName: string?
-	principalType: AuthorizationPrincipalType
+
+	@description('The type of the principal.')
+	principalType: resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties.principalType
+
+	@description('Name of the role.')
 	roleName: string
 }
 
 @export()
-type AuthorizationPrincipalType =
-	| 'Device'
-	| 'ForeignGroup'
-	| 'Group'
-	| 'ServicePrincipal'
-	| 'User'
-
-@export()
+@description('Converts an instance of RoleAssignment type to an instance of Microsoft.Authorization/roleAssignments.properties')
 func ConvertToRoleAssignmentProperties(
 	authorizations RoleAssignment[],
 	roleIdDictionary object
-) RoleAssignmentProperties[] =>
+) resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties[] =>
 	map(
 		authorizations,
 		authorization => {
@@ -51,10 +53,3 @@ func ConvertToRoleAssignmentProperties(
 			)
 		}
 	)
-
-type RoleAssignmentProperties = {
-	description: string
-	principalId: string
-	principalType: AuthorizationPrincipalType?
-	roleDefinitionId: string
-}
