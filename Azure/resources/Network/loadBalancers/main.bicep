@@ -1,0 +1,67 @@
+metadata author = {
+	fullName: 'Stas Sultanov'
+	profile: 'https://github.com/stas-sultanov'
+}
+metadata description = 'Provisions a Load Balancer and assigns Insights Diagnostic extensions.'
+
+/* IMPORTS */
+
+import {
+	Resource as InsightsDiagnosticSetting
+} from '../../../library/Insights/diagnosticSettings.bicep'
+
+/* PARAMETERS */
+
+@description('The extensions settings.')
+param extensions {
+	Insights: {
+		diagnosticSettings: InsightsDiagnosticSetting[]
+	}
+}
+
+@description('The geo-location.')
+param location string
+
+@description('The name.')
+param name string
+
+@description('The configurable properties.')
+param properties resourceInput<'Microsoft.Network/loadBalancers@2025-05-01'>.properties
+
+@description('The SKU.')
+param sku resourceInput<'Microsoft.Network/loadBalancers@2025-05-01'>.sku
+
+@description('The tags.')
+param tags resourceInput<'Microsoft.Network/loadBalancers@2025-05-01'>.tags
+
+/* RESOURCES */
+
+resource Network_loadBalancers_ 'Microsoft.Network/loadBalancers@2025-05-01' = {
+	location: location
+	name: name
+	properties: properties
+	sku: sku
+	tags: tags
+}
+
+#disable-next-line use-recent-api-versions
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for extension in extensions.Insights.diagnosticSettings: {
+		name: extension.name
+		properties: extension.properties
+		scope: Network_loadBalancers_
+	}
+]
+
+/* OUTPUTS */
+
+@description('The id.')
+output id string = Network_loadBalancers_.id
+
+@description('Properties of load balancer.')
+output properties {
+	@description('Collection of backend address pools used by a load balancer.')
+	backendAddressPools: resourceOutput<'Microsoft.Network/loadBalancers@2024-07-01'>.properties.backendAddressPools
+} = {
+	backendAddressPools: Network_loadBalancers_.properties.backendAddressPools
+}

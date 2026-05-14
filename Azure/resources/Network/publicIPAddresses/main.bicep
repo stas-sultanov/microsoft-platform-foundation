@@ -1,0 +1,78 @@
+metadata author = {
+	fullName: 'Stas Sultanov'
+	profile: 'https://github.com/stas-sultanov'
+}
+metadata description = 'Provisions a Public IP Address and assigns Insights Diagnostic extensions.'
+
+/* IMPORTS */
+
+import {
+	Resource as InsightsDiagnosticSetting
+} from '../../../library/Insights/diagnosticSettings.bicep'
+
+/* PARAMETERS */
+
+@description('The extensions settings.')
+param extensions {
+	Insights: {
+		diagnosticSettings: InsightsDiagnosticSetting[]
+	}
+}
+
+@description('The geo-location.')
+param location string
+
+@description('The name.')
+param name string
+
+@description('The configurable properties.')
+param properties resourceInput<'Microsoft.Network/publicIPAddresses@2025-05-01'>.properties = {
+	publicIPAllocationMethod: 'Static'
+}
+
+@description('The SKU.')
+param sku resourceInput<'Microsoft.Network/publicIPAddresses@2025-05-01'>.sku
+
+@description('The tags.')
+param tags resourceInput<'Microsoft.Network/publicIPAddresses@2025-05-01'>.tags
+
+@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
+param zones string[]
+
+/* RESOURCES */
+
+resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2025-05-01' = {
+	location: location
+	name: name
+	properties: properties
+	sku: sku
+	tags: tags
+	zones: zones
+}
+
+/* EXTENSIONS */
+
+#disable-next-line use-recent-api-versions
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for extension in extensions.Insights.diagnosticSettings: {
+		name: extension.name
+		properties: extension.properties
+		scope: Network_publicIPAddresses_
+	}
+]
+
+/* OUTPUTS */
+
+@description('The id.')
+output id string = Network_publicIPAddresses_.id
+
+@description('The name.')
+output name string = Network_publicIPAddresses_.name
+
+@description('The properties.')
+output properties {
+	@description('The IP address associated with the public IP address resource.')
+	ipAddress: string
+} = {
+	ipAddress: Network_publicIPAddresses_.properties.ipAddress
+}

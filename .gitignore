@@ -1,0 +1,10 @@
+# Local Bicep cache directory (if configured inside this folder)
+.bicep/
+
+# Bicep parameter files
+*.bicepparam
+*.local.bicepparam
+*.user.bicepparam
+
+# Compiled ARM template output from Bicep
+**/*.json
