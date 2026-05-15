@@ -12,9 +12,9 @@ metadata description = 'Provides reusable types and functions for Microsoft.Auth
 type PropertiesInput = {
 	@description('Description of role assignment.')
 	description: string
-	@description('The principal ID.')
+	@description('The principal id.')
 	principalId: string
-	@description('The principal type of the assigned principal ID.')
+	@description('The principal type of the assigned principal id.')
 	principalType: resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties.principalType?
 	@description('The role definition name.')
 	roleName: string

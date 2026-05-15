@@ -20,7 +20,7 @@ type ResourceReference = {
 type ResourceScope = {
 	@description('The resource group name.')
 	resourceGroupName: string
-	@description('The subscription ID.')
+	@description('The subscription id.')
 	subscriptionId: string?
 }
 

@@ -4,6 +4,12 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Sql/servers resource.'
 
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
+import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
+
 /* TYPES */
 
 type EntraPrincipalType =
@@ -18,7 +24,7 @@ type EntraPrincipal = {
 	@description('ObjectId of the principal within the Entra tenant.')
 	objectId: string
 
-	@description('Id of the Entra tenant.')
+	@description('The id of the Entra tenant.')
 	tenantId: string?
 
 	@description('Type of the principal within the Entra tenant.')
@@ -27,8 +33,16 @@ type EntraPrincipal = {
 
 /* PARAMETERS */
 
-@description('Administrator principal.')
-param adminPrincipal EntraPrincipal
+@description('The extension settings.')
+@sealed()
+param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+	}
+	Insights: {
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
+	}
+}
 
 @description('Managed Service Identity.')
 param identity resourceInput<'Microsoft.Sql/servers@2025-01-01'>.identity
@@ -39,53 +53,29 @@ param location string
 @description('Name of the resource.')
 param name string
 
-@description('Define if access from Public Network is allowed.')
-@allowed([
-	'Enabled'
-	'Disabled'
-])
-param publicNetworkAccess string = 'Disabled'
-
-@description('Common tags to put on the resource.')
-param tags object
-
-@description('Id of the OperationalInsights/Workspace resource.')
-param workspaceId string
-
-/* VARIABLES */
-
-var operationalInsights_workspaces__id_split = split(
-	workspaceId,
-	'/'
-)
-
-/* EXISTING RESOURCES */
-
-resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspaces@2025-07-01' existing = {
-	name: operationalInsights_workspaces__id_split[8]
-	scope: resourceGroup(
-		operationalInsights_workspaces__id_split[2],
-		operationalInsights_workspaces__id_split[4]
-	)
+@description('The configurable properties.')
+param properties {
+	@description('The server Entra ID administrator.')
+	administrators: {
+		@description('Name of the principal within the Entra tenant.')
+		name: string
+		@description('ObjectId of the principal within the Entra tenant.')
+		objectId: string
+		@description('Type of the principal within the Entra tenant.')
+		principalType: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.administrators.principalType
+		@description('The id of the Entra tenant.')
+		tenantId: string?
+	}
+	@description('Specifies whether or not public endpoint access is allowed for this server.')
+	publicNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.publicNetworkAccess
+	@description('The number of days this server will stay soft-deleted.')
+	retentionDays: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.retentionDays
 }
+
+@description('The tags.')
+param tags resourceInput<'Microsoft.Sql/servers@2025-01-01'>.tags
 
 /* RESOURCES */
-
-#disable-next-line use-recent-api-versions
-resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-	name: OperationalInsights_workspaces_.name
-	properties: {
-		logAnalyticsDestinationType: 'Dedicated'
-		logs: [
-			{
-				category: 'SQLSecurityAuditEvents'
-				enabled: true
-			}
-		]
-		workspaceId: OperationalInsights_workspaces_.id
-	}
-	scope: Sql_servers_databases__master
-}
 
 resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' = {
 	identity: identity
@@ -95,13 +85,14 @@ resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' = {
 		administrators: {
 			administratorType: 'ActiveDirectory'
 			azureADOnlyAuthentication: true
-			login: adminPrincipal.name
-			principalType: adminPrincipal.type
-			sid: adminPrincipal.objectId
-			tenantId: adminPrincipal.?tenantId ?? subscription().tenantId
+			login: properties.administrators.name
+			principalType: properties.administrators.principalType
+			sid: properties.administrators.objectId
+			tenantId: properties.administrators.?tenantId ?? az.tenant().tenantId
 		}
-		minimalTlsVersion: '1.2'
-		publicNetworkAccess: publicNetworkAccess
+		minimalTlsVersion: '1.3'
+		publicNetworkAccess: properties.publicNetworkAccess
+		retentionDays: properties.retentionDays
 	}
 	tags: tags
 }
@@ -147,6 +138,28 @@ resource Sql_servers_firewallRules__AllowPublicNetworkAccess 'Microsoft.Sql/serv
 		startIpAddress: '0.0.0.0'
 	}
 }
+
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		Sql_servers_.id,
+		extensions.Authorization.roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
+		scope: Sql_servers_
+	}
+]
+
+#disable-next-line use-recent-api-versions
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for extension in extensions.Insights.diagnosticSettings: {
+		name: extension.name
+		properties: extension.properties
+		scope: Sql_servers_
+	}
+]
 
 /* OUTPUTS */
 

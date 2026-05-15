@@ -15,7 +15,7 @@ param DataFactory_factories__name string
 @description('Name of the resource.')
 param name string
 
-@description('Id of the Storage/storageAccounts resource.')
+@description('The id of the Storage/storageAccounts resource.')
 param Storage_storageAccounts__id string
 
 /* VARIABLES */

@@ -12,11 +12,9 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
-import {
-	PropertiesInput
-} from '../../../library/KeyVault/vaults.bicep'
-
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
+
+import * as KeyValutVaults from '../../../library/KeyVault/vaults.bicep'
 
 /* PARAMETERS */
 
@@ -38,7 +36,7 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties PropertiesInput
+param properties KeyValutVaults.PropertiesInput
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.KeyVault/vaults@2024-11-01'>.tags
@@ -70,15 +68,6 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2025-05-01' = {
 
 /* EXTENSIONS */
 
-#disable-next-line use-recent-api-versions
-resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
-		scope: KeyVault_vaults_
-	}
-]
-
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for extension in AuthorizationRoleAssignments.CreateArray(
 		KeyVault_vaults_.id,
@@ -90,9 +79,18 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
+#disable-next-line use-recent-api-versions
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for extension in extensions.Insights.diagnosticSettings: {
+		name: extension.name
+		properties: extension.properties
+		scope: KeyVault_vaults_
+	}
+]
+
 /* OUTPUTS */
 
-@description('The ID.')
+@description('The id.')
 output id string = KeyVault_vaults_.id
 
 @description('The name.')

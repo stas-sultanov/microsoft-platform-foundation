@@ -6,16 +6,20 @@ metadata description = 'Provisions a Microsoft.ContainerRegistry/registries reso
 
 /* IMPORTS */
 
-import {
-	Resource as InsightsDiagnosticSetting
-} from '../../../library/Insights/diagnosticSettings.bicep'
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
+import * as InsightsDiagnosticSetting from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
 
 @description('The extensions settings.')
+@sealed()
 param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+	}
 	Insights: {
-		diagnosticSettings: InsightsDiagnosticSetting[]
+		diagnosticSettings: InsightsDiagnosticSetting.Resource[]
 	}
 }
 
@@ -45,6 +49,17 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 }
 
 /* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		ContainerRegistry_registries_.id,
+		extensions.Authorization.roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
+		scope: ContainerRegistry_registries_
+	}
+]
 
 #disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [

@@ -69,15 +69,6 @@ resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspac
 
 /* EXTENSIONS */
 
-#disable-next-line use-recent-api-versions
-resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
-		scope: OperationalInsights_workspaces_
-	}
-]
-
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for extension in AuthorizationRoleAssignments.CreateArray(
 		OperationalInsights_workspaces_.id,
@@ -89,9 +80,18 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
+#disable-next-line use-recent-api-versions
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for extension in extensions.Insights.diagnosticSettings: {
+		name: extension.name
+		properties: extension.properties
+		scope: OperationalInsights_workspaces_
+	}
+]
+
 /* OUTPUTS */
 
-@description('The ID.')
+@description('The id.')
 output id string = OperationalInsights_workspaces_.id
 
 @description('The identity.')

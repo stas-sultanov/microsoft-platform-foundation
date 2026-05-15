@@ -10,11 +10,19 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import {
-	PropertiesInput
-} from '../../../library/Insights/actionGroups.bicep'
+import * as ActionGroups from '../../../library/Insights/actionGroups.bicep'
+
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
 /* PARAMETERS */
+
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+	}
+}
 
 @description('The geo-location.')
 param location string
@@ -23,7 +31,7 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties PropertiesInput
+param properties ActionGroups.PropertiesInput
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.Insights/actionGroups@2023-01-01'>.tags
@@ -41,9 +49,22 @@ resource Insights_actionGroups_ 'Microsoft.Insights/actionGroups@2023-01-01' = {
 	tags: tags
 }
 
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		Insights_actionGroups_.id,
+		extensions.Authorization.roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
+		scope: Insights_actionGroups_
+	}
+]
+
 /* OUTPUTS */
 
-@description('The ID.')
+@description('The id.')
 output id string = Insights_actionGroups_.id
 
 @description('The name.')

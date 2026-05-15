@@ -6,16 +6,15 @@ metadata description = 'Provisions a Microsoft.Insights/autoscaleSettings resour
 
 /* IMPORTS */
 
-import {
-	Resource as InsightsDiagnosticSetting
-} from '../../../library/Insights/diagnosticSettings.bicep'
+import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
 
 @description('The extensions settings.')
+@sealed()
 param extensions {
 	Insights: {
-		diagnosticSettings: InsightsDiagnosticSetting[]
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
@@ -31,12 +30,16 @@ param properties resourceInput<'Microsoft.Insights/autoscaleSettings@2022-10-01'
 @description('The tags.')
 param tags resourceInput<'Microsoft.Insights/autoscaleSettings@2022-10-01'>.tags
 
+/* RESOURCES */
+
 resource Insights_autoscaleSettings_ 'Microsoft.Insights/autoscaleSettings@2022-10-01' = {
 	location: location
 	name: name
 	properties: properties
 	tags: tags
 }
+
+/* EXTENSIONS */
 
 #disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [

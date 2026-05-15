@@ -112,13 +112,13 @@ param name string
 @description('Configuration parameters.')
 param parameters Parameters
 
-@description('Id of the Web/serverfarms resource.')
+@description('The id of the Web/serverfarms resource.')
 param serverFarmId string
 
 @description('Tags to put on the resource.')
 param tags object = {}
 
-@description('Id of the OperationalInsights/workspaces resource.')
+@description('The id of the OperationalInsights/workspaces resource.')
 param workspaceId string
 
 /* VARIABLES */

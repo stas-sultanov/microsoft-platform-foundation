@@ -10,24 +10,25 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import {
-	Resource as InsightsDiagnosticSetting
-} from '../../../library/Insights/diagnosticSettings.bicep'
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
-import {
-	Resource as MaintenanceConfigurationAssignment
-} from '../../../library/Maintenance/configurationAssignments.bicep'
+import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
+
+import * as MaintenanceConfigurationAssignments from '../../../library/Maintenance/configurationAssignments.bicep'
 
 /* PARAMETERS */
 
 @description('The extension settings.')
 @sealed()
 param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+	}
 	Insights: {
-		diagnosticSettings: InsightsDiagnosticSetting[]
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 	Maintenance: {
-		configurationAssignments: MaintenanceConfigurationAssignment[]
+		configurationAssignments: MaintenanceConfigurationAssignments.Resource[]
 	}
 }
 
@@ -60,6 +61,17 @@ resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGatewa
 
 /* EXTENSIONS */
 
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		Network_virtualNetworkGateways_.id,
+		extensions.Authorization.roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
+		scope: Network_virtualNetworkGateways_
+	}
+]
+
 #disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
@@ -80,7 +92,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 
 /* OUTPUTS */
 
-@description('The ID.')
+@description('The id.')
 output id string = Network_virtualNetworkGateways_.id
 
 @description('The identity.')

@@ -6,16 +6,15 @@ metadata description = 'Provisions a Load Balancer and assigns Insights Diagnost
 
 /* IMPORTS */
 
-import {
-	Resource as InsightsDiagnosticSetting
-} from '../../../library/Insights/diagnosticSettings.bicep'
+import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
 
 @description('The extensions settings.')
+@sealed()
 param extensions {
 	Insights: {
-		diagnosticSettings: InsightsDiagnosticSetting[]
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
@@ -43,6 +42,8 @@ resource Network_loadBalancers_ 'Microsoft.Network/loadBalancers@2025-05-01' = {
 	sku: sku
 	tags: tags
 }
+
+/* EXTENSIONS */
 
 #disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [

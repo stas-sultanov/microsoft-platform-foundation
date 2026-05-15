@@ -6,15 +6,13 @@ metadata description = 'Provisions a private DNS zone.'
 
 /* IMPORTS */
 
-import {
-	ARecord
-} from '../../../library/Network/dnsZones.bicep'
+import * as NetworkDnsZones from '../../../library/Network/dnsZones.bicep'
 
 /* TYPES */
 
 type Resources = {
 	@description('The array of virtual network links.')
-	A: ARecord[]
+	A: NetworkDnsZones.ARecord[]
 	@description('The array of virtual network links.')
 	virtualNetworkLinks: VirtualNetworkLinkResource[]
 }

@@ -1,6 +1,6 @@
 # Microsoft Platform Foundation
 
-Foundation for building secure and reliable IT solutions on Microsoft Azure with Microsoft Entra ID.
+Foundation for building secure and reliable IT solutions on top of Microsoft Azure and Microsoft Entra ID.
 
 Created by [Stas Sultanov](https://www.linkedin.com/in/stas-sultanov)
 
@@ -16,33 +16,33 @@ This section describes where content lives in the repository.
 
 ```bash
 ./
-|- Azure/
-|  |- library/                  # Shared types, functions, and constants
-|  |- patterns/                 # Multi-resource composition modules
-|  |- resources/                # Reusable single-primary-resource modules with extensions
-|  `- specs/                    # Single-primary-resource modules with settings for specific purposes
-|- Entra/
-|  `- applications/             # Microsoft Graph modules for Entra applications
-|- bicepconfig.json             # Bicep analyzer and linting configuration
-|- readme.md                    # Repository guidance
-`- license.md                   # License information
+├─ Azure/
+│  ├─ library/       # Shared types, functions, and constants
+│  ├─ patterns/      # Multi-resource composition modules
+│  ├─ resources/     # Reusable single-primary-resource modules with extensions
+│  └─ specs/         # Single-primary-resource modules with settings for specific purposes
+├─ Entra/
+│  └─ applications/  # Microsoft Graph modules for Entra applications
+├─ bicepconfig.json  # Bicep analyzer and linting configuration
+├─ readme.md         # Repository guidance
+└─ license.md        # License information
 ```
 
 ## Taxonomy
 
 The module location MUST match the module intent.
 
-| Area | Purpose | Rules |
-|------|---------|-------|
-| `Azure/library` | Shared types, functions, and constants | Files MUST NOT deploy resources directly. |
-| `Azure/patterns` | Reusable compositions that deploy and wire multiple resource types | Modules MUST own the relationship between the resources they compose. |
-| `Azure/resources` | Reusable modules for one primary Azure resource type | Modules MAY deploy extension resources scoped to the primary resource, such as role assignments, diagnostic settings, data collection rule associations, or maintenance assignments. |
-| `Azure/specs` | Modules for one primary Azure resource type with settings for a specific purpose | Modules MUST remain resource-specific and MUST be more opinionated than `Azure/resources` modules. |
-| `Entra/applications` | Entra application artifacts managed through Microsoft Graph | Modules MAY manage application registrations, credentials, and federated identity credentials. |
+| Area                 | Purpose | Rules 
+|----------------------|---------|-------
+| `Azure/library`      | Shared types, functions, and constants | MUST NOT contain resources.
+| `Azure/patterns`     | Reusable compositions that deploy and wire multiple resource types | MUST own the relationship between the resources they compose.
+| `Azure/resources`    | Reusable modules for one primary Azure resource type | MAY deploy extension resources scoped to the primary resource.
+| `Azure/specs`        | Reusable modules for one primary Azure resource type with settings for a specific purpose | MUST remain resource-specific and MUST be more opinionated than `Azure/resources` modules.
+| `Entra/applications` | Entra application artifacts managed through Microsoft Graph |
 
 ## Conventions
 
-This section defines conventions that MUST be strictly followed for creating or updating modules in this repository.
+This section defines conventions that MUST be strictly followed by all modules within this repository.
 
 ### General Guidance
 
@@ -64,9 +64,10 @@ This section defines conventions that MUST be strictly followed for creating or 
 - `Azure/resources/<Provider>/<resourceType>/main.bicep`
 - `Azure/resources/<Provider>/<resourceType>/<nestedResourceType>/main.bicep`
 - `Azure/specs/<Provider>/<resourceType>/<Name>.bicep`
+- `Azure/specs/<Provider>/<resourceType>/<nestedResourceType>/<Name>.bicep`
 - `Entra/applications/<Name>.bicep`
 
-Provider and resource type names SHOULD match Azure resource type casing where practical. Case-only path differences MUST be avoided because they are fragile across operating systems.
+Provider and resource type names MUST match Azure resource type casing where practical. Case-only path differences MUST be avoided because they are fragile across operating systems.
 
 ### File Structure
 
@@ -106,10 +107,10 @@ Alphabetical ordering applies to:
 
 Names MUST be predictable so modules are easy to scan and compare.
 
-- Standard parameter names SHOULD be used where applicable: `name`, `location`, `identity`, `properties`, `sku`, `tags`, and `extensions`.
-- `properties` SHOULD represent strongly typed configurable resource properties.
-- `extensions` SHOULD represent extension resources grouped by provider or concern, such as `Authorization`, `Insights`, or `Maintenance`.
-- Resource symbols MUST be deterministic and SHOULD follow `<Provider>_<resourceType>_` or `<Provider>_<resourceType>_<nestedResourceType>_`.
+- Standard parameter names MUST be used where applicable: `name`, `location`, `identity`, `properties`, `sku`, `tags`, and `extensions`.
+- `properties` MUST represent strongly typed configurable resource properties.
+- `extensions` MUST represent extension resources grouped by provider or concern, such as `Authorization`, `Insights`, or `Maintenance`.
+- Resource symbols MUST be deterministic and MUST follow `<Provider>_<resourceType>_` or `<Provider>_<resourceType>_<nestedResourceType>_`.
 - Type names MUST describe intent, such as `PropertiesInput`, `ResourceInput`, `Resource`, `ExtensionsInput`, or a scenario-specific name.
 - Output names SHOULD be short and stable, usually `id`, `name`, `identity`, or narrowly scoped property names.
 
@@ -141,6 +142,7 @@ Diagnostic settings MAY be provisioned through `Insights` extensions when a reso
 - RBAC authorization MUST be used where Azure supports it.
 - Keys, shared secrets, and connection strings MUST NOT be used for resource access.
 - Public access, firewall rules, and trusted-service exceptions MUST be explicit in the module interface.
+- Latest version of TLS must be used.
 - Outputs MAY include stable identifiers needed by consumers, but MUST NOT include secrets.
 
 ### Bicep Configuration

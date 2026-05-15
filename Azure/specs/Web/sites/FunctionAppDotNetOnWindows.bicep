@@ -100,7 +100,7 @@ param name string
 @description('Service properties.')
 param properties Properties
 
-@description('Id of the Web/serverfarms resource.')
+@description('The id of the Web/serverfarms resource.')
 param serverFarmId string
 
 @description('Tags to put on the resource.')

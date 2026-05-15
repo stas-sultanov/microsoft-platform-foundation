@@ -100,7 +100,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 /* OUTPUTS */
 
-@description('The ID.')
+@description('The id.')
 output id string = Insights_dataCollectionRules_.id
 
 @description('The name.')
@@ -110,7 +110,7 @@ output name string = Insights_dataCollectionRules_.name
 output properties {
 	@description('The ingestion endpoints to send data to the rule.')
 	endpoints: resourceOutput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.endpoints
-	@description('The immutable ID of this data collection rule.')
+	@description('The immutable id of this data collection rule.')
 	immutableId: resourceOutput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.immutableId
 } = {
 	endpoints: Insights_dataCollectionRules_.properties.endpoints

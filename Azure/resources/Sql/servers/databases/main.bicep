@@ -39,7 +39,7 @@ param name string
 ])
 param sku string = 'Basic'
 
-@description('Id of the Sql/servers/databases resource which is used by different creation modes.')
+@description('The id of the Sql/servers/databases resource which is used by different creation modes.')
 param sourceDatabaseId string = ''
 
 @description('Name of the Sql/servers resource.')
@@ -48,7 +48,7 @@ param sqlServerName string
 @description('Tags to put on the resource.')
 param tags object
 
-@description('Id of the OperationalInsights/Workspace resource.')
+@description('The id of the OperationalInsights/Workspace resource.')
 param workspaceId string
 
 /* VARIABLES */

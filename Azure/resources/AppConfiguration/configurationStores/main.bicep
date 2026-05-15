@@ -51,7 +51,7 @@ param properties {
 	@maxValue(7)
 	@minValue(1)
 	softDeleteRetentionInDays: int?
-	@description('The ID of the Microsoft.Insights/components resource.')
+	@description('The id of the Microsoft.Insights/components resource.')
 	telemetryResourceId: string
 }
 
@@ -89,15 +89,6 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 
 /* EXTENSIONS */
 
-#disable-next-line use-recent-api-versions
-resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
-		scope: AppConfiguration_configurationStores_
-	}
-]
-
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for extension in AuthorizationRoleAssignments.CreateArray(
 		AppConfiguration_configurationStores_.id,
@@ -109,9 +100,18 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
+#disable-next-line use-recent-api-versions
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for extension in extensions.Insights.diagnosticSettings: {
+		name: extension.name
+		properties: extension.properties
+		scope: AppConfiguration_configurationStores_
+	}
+]
+
 /* OUTPUTS */
 
-@description('The ID.')
+@description('The id.')
 output id string = AppConfiguration_configurationStores_.id
 
 @description('The name.')

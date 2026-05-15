@@ -8,13 +8,9 @@ metadata description = 'Provisions a Microsoft.Compute/virtualMachineScaleSets r
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
-import {
-	Resource as InsightsDataCollectionRuleAssociation
-} from '../../../library/Insights/dataCollectionRuleAssociations.bicep'
+import * as InsightsDataCollectionRuleAssociations from '../../../library/Insights/dataCollectionRuleAssociations.bicep'
 
-import {
-	Resource as MaintenanceConfigurationAssignment
-} from '../../../library/Maintenance/configurationAssignments.bicep'
+import * as MaintenanceConfigurationAssignments from '../../../library/Maintenance/configurationAssignments.bicep'
 
 /* TYPES */
 
@@ -24,10 +20,10 @@ type Extensions = {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}
 	Insights: {
-		dataCollectionRuleAssociations: InsightsDataCollectionRuleAssociation[]
+		dataCollectionRuleAssociations: InsightsDataCollectionRuleAssociations.Resource[]
 	}
 	Maintenance: {
-		configurationAssignments: MaintenanceConfigurationAssignment[]
+		configurationAssignments: MaintenanceConfigurationAssignments.Resource[]
 	}
 }
 

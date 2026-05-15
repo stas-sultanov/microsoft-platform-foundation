@@ -2,43 +2,47 @@ metadata author = {
 	fullName: 'Stas Sultanov'
 	profile: 'https://github.com/stas-sultanov'
 }
-metadata description = 'Provisions a microsoft.alertsManagement/smartDetectorAlertRules resource.'
+metadata description = 'Provisions standard set of Microsoft.AlertsManagement/smartDetectorAlertRules for Application Insights components.'
+
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
+/* TYPES */
+
+@description('The configuration of a smart detector alert rule.')
+@sealed()
+type ResourceInput = {
+	@description('The name.')
+	name: string
+	@description('The tags.')
+	tags: resourceInput<'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01'>.tags
+}
 
 /* PARAMETERS */
 
-@description('Id of the Insights/actionGroups resource.')
-param actionGroupId string
-
-@description('Name of the Insights/components resource.')
-param componentName string
-
-@description('Common tags to put on the resource.')
-param customWebhookPayload string = ''
-
-@description('Location to deploy the resources.')
-param location string
-
-@description('A prefix to use to generate names of the resources.')
-param namePrefix string
-
-@description('Tags to put on the resource.')
-param tags object = {}
-
-/* VARIABLES */
-
-var actionGroupInformation = {
-	customWebhookPayload: empty(customWebhookPayload)
-		? null
-		: customWebhookPayload
-	groupIds: [
-		Insights_actionGroup_.id
-	]
+@description('The detector settings.')
+@sealed()
+param alertRules {
+	@description('The Dependency Performance Degradation detector settings.')
+	dependencyPerformanceDegradation: ResourceInput
+	@description('The Exception Volume Changed detector settings.')
+	exceptionVolumeChanged: ResourceInput
+	@description('The Failure Anomalies detector settings.')
+	failureAnomalies: ResourceInput
+	@description('The Memory Leak detector settings.')
+	memoryLeak: ResourceInput
+	@description('The Request Performance Degradation detector settings.')
+	requestPerformanceDegradation: ResourceInput
+	@description('The Trace Severity detector settings.')
+	traceSeverity: ResourceInput
 }
 
-var insights_actionGroups__id_split = split(
-	actionGroupId,
-	'/'
-)
+@description('The Microsoft.Insights/actionGroups resource id.')
+param commonActionGroups resourceInput<'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01'>.properties.actionGroups
+
+@description('The Microsoft.Insights/components resource name.')
+param componentName string
 
 /* EXISTING RESOURCES */
 
@@ -46,22 +50,14 @@ resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' existin
 	name: componentName
 }
 
-resource Insights_actionGroup_ 'Microsoft.Insights/actionGroups@2023-01-01' existing = {
-	name: insights_actionGroups__id_split[8]
-	scope: resourceGroup(
-		insights_actionGroups__id_split[2],
-		insights_actionGroups__id_split[4]
-	)
-}
-
 /* RESOURCES */
 
 @description('Failure Anomalies')
-resource alertsManagement_smartDetectorAlertRules_Anomalies 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource alertsManagement_smartDetectorAlertRules__Anomalies 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
-	name: '${namePrefix}fa'
+	name: alertRules.failureAnomalies.name
 	properties: {
-		actionGroups: actionGroupInformation
+		actionGroups: commonActionGroups
 		description: 'Detects an unusual rise in the rate in failed HTTP requests or dependency calls.'
 		detector: {
 			id: 'FailureAnomaliesDetector'
@@ -73,20 +69,15 @@ resource alertsManagement_smartDetectorAlertRules_Anomalies 'microsoft.alertsMan
 		severity: 'Sev3'
 		state: 'Enabled'
 	}
-	tags: union(
-		tags,
-		{
-			'hidden-title': 'failure anomalies'
-		}
-	)
+	tags: alertRules.failureAnomalies.tags
 }
 
 @description('Dependency Performance Degradation')
-resource alertsManagement_smartDetectorAlertRules_DependencyPerformanceDegradation 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource alertsManagement_smartDetectorAlertRules__DependencyPerformanceDegradation 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
-	name: '${namePrefix}dpd'
+	name: alertRules.dependencyPerformanceDegradation.name
 	properties: {
-		actionGroups: actionGroupInformation
+		actionGroups: commonActionGroups
 		description: 'Detects an unusual increase in dependencies requests processing time.'
 		detector: {
 			id: 'DependencyPerformanceDegradationDetector'
@@ -98,20 +89,15 @@ resource alertsManagement_smartDetectorAlertRules_DependencyPerformanceDegradati
 		severity: 'Sev3'
 		state: 'Enabled'
 	}
-	tags: union(
-		tags,
-		{
-			'hidden-title': 'dependency performance degradation'
-		}
-	)
+	tags: alertRules.dependencyPerformanceDegradation.tags
 }
 
 @description('Exception Volume Changed')
-resource alertsManagement_smartDetectorAlertRules_ExceptionVolumeChangedDetector 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource alertsManagement_smartDetectorAlertRules__ExceptionVolumeChangedDetector 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
-	name: '${namePrefix}evc'
+	name: alertRules.exceptionVolumeChanged.name
 	properties: {
-		actionGroups: actionGroupInformation
+		actionGroups: commonActionGroups
 		description: 'Detects an unusual increase in the rate of exceptions.'
 		detector: {
 			id: 'ExceptionVolumeChangedDetector'
@@ -123,20 +109,15 @@ resource alertsManagement_smartDetectorAlertRules_ExceptionVolumeChangedDetector
 		severity: 'Sev3'
 		state: 'Enabled'
 	}
-	tags: union(
-		tags,
-		{
-			'hidden-title': 'exception volume changed'
-		}
-	)
+	tags: alertRules.exceptionVolumeChanged.tags
 }
 
 @description('Memory Leak')
-resource alertsManagement_smartDetectorAlertRules_MemoryLeakDetector 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource alertsManagement_smartDetectorAlertRules__MemoryLeakDetector 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
-	name: '${namePrefix}ml'
+	name: alertRules.memoryLeak.name
 	properties: {
-		actionGroups: actionGroupInformation
+		actionGroups: commonActionGroups
 		description: 'Detects an unusual increase in memory consumption pattern.'
 		detector: {
 			id: 'MemoryLeakDetector'
@@ -148,20 +129,15 @@ resource alertsManagement_smartDetectorAlertRules_MemoryLeakDetector 'microsoft.
 		severity: 'Sev3'
 		state: 'Enabled'
 	}
-	tags: union(
-		tags,
-		{
-			'hidden-title': 'memory leak'
-		}
-	)
+	tags: alertRules.memoryLeak.tags
 }
 
 @description('Request Performance Degradation')
-resource alertsManagement_smartDetectorAlertRules_RequestPerformanceDegradation 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource alertsManagement_smartDetectorAlertRules__RequestPerformanceDegradation 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
-	name: '${namePrefix}rpd'
+	name: alertRules.requestPerformanceDegradation.name
 	properties: {
-		actionGroups: actionGroupInformation
+		actionGroups: commonActionGroups
 		description: 'Detects an unusual increase in requests processing time.'
 		detector: {
 			id: 'RequestPerformanceDegradationDetector'
@@ -173,20 +149,15 @@ resource alertsManagement_smartDetectorAlertRules_RequestPerformanceDegradation 
 		severity: 'Sev3'
 		state: 'Enabled'
 	}
-	tags: union(
-		tags,
-		{
-			'hidden-title': 'request performance degradation'
-		}
-	)
+	tags: alertRules.requestPerformanceDegradation.tags
 }
 
 @description('Trace Severity')
-resource alertsManagement_smartDetectorAlertRules_TraceSeverityDetector 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource alertsManagement_smartDetectorAlertRules__TraceSeverityDetector 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
-	name: '${namePrefix}ts'
+	name: alertRules.traceSeverity.name
 	properties: {
-		actionGroups: actionGroupInformation
+		actionGroups: commonActionGroups
 		description: 'Detects an unusual increase in the severity of the traces.'
 		detector: {
 			id: 'TraceSeverityDetector'
@@ -198,25 +169,19 @@ resource alertsManagement_smartDetectorAlertRules_TraceSeverityDetector 'microso
 		severity: 'Sev3'
 		state: 'Enabled'
 	}
-	tags: union(
-		tags,
-		{
-			'hidden-title': 'trace severity'
-		}
-	)
+	tags: alertRules.traceSeverity.tags
 }
 
 #disable-next-line use-recent-api-versions
-resource Insights_components_ProactiveDetectionConfig_MigrationToAlertRulesCompleted 'Microsoft.Insights/components/ProactiveDetectionConfigs@2018-05-01-preview' = {
+resource Insights_components_ProactiveDetectionConfig__MigrationToAlertRulesCompleted 'Microsoft.Insights/components/ProactiveDetectionConfigs@2018-05-01-preview' = {
 	dependsOn: [
-		alertsManagement_smartDetectorAlertRules_Anomalies
-		alertsManagement_smartDetectorAlertRules_DependencyPerformanceDegradation
-		alertsManagement_smartDetectorAlertRules_ExceptionVolumeChangedDetector
-		alertsManagement_smartDetectorAlertRules_MemoryLeakDetector
-		alertsManagement_smartDetectorAlertRules_RequestPerformanceDegradation
-		alertsManagement_smartDetectorAlertRules_TraceSeverityDetector
+		alertsManagement_smartDetectorAlertRules__Anomalies
+		alertsManagement_smartDetectorAlertRules__DependencyPerformanceDegradation
+		alertsManagement_smartDetectorAlertRules__ExceptionVolumeChangedDetector
+		alertsManagement_smartDetectorAlertRules__MemoryLeakDetector
+		alertsManagement_smartDetectorAlertRules__RequestPerformanceDegradation
+		alertsManagement_smartDetectorAlertRules__TraceSeverityDetector
 	]
-	location: location
 	name: 'migrationToAlertRulesCompleted'
 	parent: Insights_components_
 	properties: {

@@ -11,16 +11,16 @@ metadata description = 'Provisions a Microsoft.DataFactory/factories/linkedservi
 @maxValue(60)
 param connectionTimeout int = 30
 
-@description('Id of the Data Factory resource.')
+@description('The id of the Data Factory resource.')
 param dataFactoryId string
 
 @description('The name of the linked service. It must be unique among the linked services in the factory.')
 param name string
 
-@description('Id of the SQL Database resource.')
+@description('The id of the SQL Database resource.')
 param sqlServerDatabaseId string
 
-@description('Id of the SQL Server resource.')
+@description('The id of the SQL Server resource.')
 param sqlServerId string
 
 /* EXISTING RESOURCES */

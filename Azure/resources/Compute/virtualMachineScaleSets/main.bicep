@@ -69,19 +69,19 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 
 /* EXTENSIONS */
 
-resource Insights_dataCollectionRuleAssociations_ 'Microsoft.Insights/dataCollectionRuleAssociations@2024-03-11' = [
-	for extension in extensions.Insights.dataCollectionRuleAssociations: {
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		Compute_virtualMachineScaleSets_.id,
+		extensions.Authorization.roleAssignments
+	): {
 		name: extension.name
 		properties: extension.properties
 		scope: Compute_virtualMachineScaleSets_
 	}
 ]
 
-resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
-		Compute_virtualMachineScaleSets_.id,
-		extensions.Authorization.roleAssignments
-	): {
+resource Insights_dataCollectionRuleAssociations_ 'Microsoft.Insights/dataCollectionRuleAssociations@2024-03-11' = [
+	for extension in extensions.Insights.dataCollectionRuleAssociations: {
 		name: extension.name
 		properties: extension.properties
 		scope: Compute_virtualMachineScaleSets_
@@ -99,7 +99,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 
 /* OUTPUTS */
 
-@description('The ID.')
+@description('The id.')
 output id string = Compute_virtualMachineScaleSets_.id
 
 @description('The name.')

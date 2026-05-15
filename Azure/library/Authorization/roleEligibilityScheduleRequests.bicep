@@ -10,7 +10,7 @@ metadata description = 'Provides reusable types and functions for Microsoft.Auth
 @export()
 @sealed()
 type PropertiesInput = {
-	@description('The principal ID.')
+	@description('The principal id.')
 	principalId: string
 	@description('The role definition name.')
 	roleName: string

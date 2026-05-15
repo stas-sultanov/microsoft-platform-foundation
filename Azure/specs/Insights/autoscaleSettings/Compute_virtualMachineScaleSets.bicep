@@ -6,9 +6,7 @@ metadata description = 'Provisions a Microsoft.Insights/autoscaleSettings resour
 
 /* IMPORTS */
 
-import {
-	CreateResourceArrayWithLogAnalyticsWorkspace as InsightsDiagnosticSetting
-} from '../../../library/Insights/diagnosticSettings.bicep'
+import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* TYPES */
 
@@ -84,9 +82,10 @@ type ScaleRule = {
 /* PARAMETERS */
 
 @description('The extensions settings.')
+@sealed()
 param extensions {
 	Insights: {
-		diagnosticSettings: InsightsDiagnosticSetting[]
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
@@ -119,7 +118,7 @@ param tags resourceInput<'Microsoft.Insights/autoscaleSettings@2022-10-01'>.tags
 
 /* EXISTING RESOURCES */
 
-resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2025-04-01' existing = {
+resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2025-11-01' existing = {
 	name: properties.virtualMachineScaleSetId.name
 	scope: resourceGroup(
 		properties.virtualMachineScaleSetId.subscriptionId,
@@ -169,6 +168,8 @@ resource Insights_autoscaleSettings_ 'Microsoft.Insights/autoscaleSettings@2022-
 	}
 	tags: tags
 }
+
+/* EXTENSIONS */
 
 #disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [

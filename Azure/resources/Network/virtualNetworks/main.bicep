@@ -6,16 +6,15 @@ metadata description = 'Provisions a Virtual Network and assigns Insights Diagno
 
 /* IMPORTS */
 
-import {
-	Resource as InsightsDiagnosticSetting
-} from '../../../library/Insights/diagnosticSettings.bicep'
+import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
 
 @description('The extensions settings.')
+@sealed()
 param extensions {
 	Insights: {
-		diagnosticSettings: InsightsDiagnosticSetting[]
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 

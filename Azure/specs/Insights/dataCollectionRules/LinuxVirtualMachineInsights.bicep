@@ -14,7 +14,7 @@ import {
 
 @export()
 type Properties = {
-	@description('The ID of the destination Log Analytics workspace')
+	@description('The id of the destination Log Analytics workspace')
 	workspaceId: string
 }
 

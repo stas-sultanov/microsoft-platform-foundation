@@ -44,7 +44,7 @@ param properties {
 	@maxValue(100)
 	@minValue(0)
 	samplingPercentage: int
-	@description('The ID of the Microsoft.OperationalInsights/workspaces resource which the data will be ingested to.')
+	@description('The id of the Microsoft.OperationalInsights/workspaces resource which the data will be ingested to.')
 	workspaceResourceId: string
 }
 
@@ -90,15 +90,15 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 
 /* OUTPUTS */
 
-@description('The ID.')
+@description('The id.')
 output id string = Insights_components_.id
 
 @description('The name.')
 output name string = Insights_components_.name
 
-@description('The application properties.')
+@description('The properties.')
 output properties {
-	@description('The application ID.')
+	@description('The application id.')
 	appId: string
 	@description('The instrumentation key.')
 	instrumentationKey: string

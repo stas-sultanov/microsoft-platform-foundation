@@ -30,7 +30,7 @@ param network_dnsZones_a__TTL int = 3600
 @minValue(1)
 param network_dnsZones_txt__TTL int = 3600
 
-@description('Id of the Network/frontDoorWebApplicationFirewallPolicies resource.')
+@description('The id of the Network/frontDoorWebApplicationFirewallPolicies resource.')
 param Network_frontDoorWebApplicationFirewallPolicies__id string
 
 @description('Tags to put on the resources.')
