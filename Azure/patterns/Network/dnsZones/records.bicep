@@ -30,7 +30,7 @@ resource Network_dnsZones_ 'Microsoft.Network/dnsZones@2018-05-01' existing = {
 
 /* RESOURCES */
 
-resource Network_privateDnsZones_A_ 'Microsoft.Network/dnsZones/A@2018-05-01' = [
+resource Network_dnsZones_A_ 'Microsoft.Network/dnsZones/A@2018-05-01' = [
 	for record in A: {
 		parent: Network_dnsZones_
 		name: record.name
@@ -46,7 +46,7 @@ resource Network_privateDnsZones_A_ 'Microsoft.Network/dnsZones/A@2018-05-01' = 
 	}
 ]
 
-resource Network_privateDnsZones_NS_ 'Microsoft.Network/dnsZones/NS@2018-05-01' = [
+resource Network_dnsZones_NS_ 'Microsoft.Network/dnsZones/NS@2018-05-01' = [
 	for record in NS: {
 		parent: Network_dnsZones_
 		name: record.name

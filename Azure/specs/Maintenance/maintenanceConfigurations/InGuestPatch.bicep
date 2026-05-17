@@ -7,7 +7,7 @@ metadata description = 'Provisions a Microsoft.Maintenance/maintenanceConfigurat
 /* TYPES */
 
 @export()
-type Properties = {
+type PropertiesInput = {
 	@description('The maintenance window of the configuration.')
 	maintenanceWindow: {
 		@description('The recurrence interval of the maintenance window.')
@@ -33,7 +33,7 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties Properties
+param properties PropertiesInput
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.Maintenance/maintenanceConfigurations@2023-04-01'>.tags

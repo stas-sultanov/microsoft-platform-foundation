@@ -46,7 +46,7 @@ param sourceDatabaseId string = ''
 param sqlServerName string
 
 @description('Tags to put on the resource.')
-param tags object
+param tags resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.tags
 
 @description('The id of the OperationalInsights/Workspace resource.')
 param workspaceId string

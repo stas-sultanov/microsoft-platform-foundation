@@ -10,7 +10,9 @@ metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlRo
 param DocumentDB_databaseAccounts__name string
 
 @description('Collection of the principals.')
-param principals array
+param principals {
+	Id: string
+}[]
 
 @description('The unique identifier for the associated Role Definition.')
 param roleDefinitionId string

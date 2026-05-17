@@ -24,7 +24,7 @@ param location string
 param name string
 
 @description('Tags to put on the resource.')
-param tags object
+param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-10-15'>.tags
 
 @minValue(400)
 @maxValue(5000)

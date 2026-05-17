@@ -4,7 +4,7 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Compute/galleries resource.'
 
-/* TYPES */
+/* SCOPE */
 
 targetScope = 'resourceGroup'
 

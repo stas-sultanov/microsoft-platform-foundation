@@ -32,7 +32,7 @@ param name string
 @description('The properties.')
 param properties resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties
 
-@description('The tags.')
+@description('The SKU.')
 param sku resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.sku
 
 @description('The tags.')

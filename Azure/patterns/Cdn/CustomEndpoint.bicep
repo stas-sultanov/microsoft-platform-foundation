@@ -26,7 +26,7 @@ param network_dnsZones_cname__TTL int = 3600
 param network_dnsZones_txt__TTL int = 3600
 
 @description('Tags to put on the resources.')
-param tags object
+param tags resourceInput<'Microsoft.Cdn/profiles/afdEndpoints@2025-06-01'>.tags
 
 /* EXISTING RESOURCES */
 

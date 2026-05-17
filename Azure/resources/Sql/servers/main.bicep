@@ -130,7 +130,7 @@ resource Sql_servers_firewallRules__AllowAllWindowsAzureIps 'Microsoft.Sql/serve
 	}
 }
 
-resource Sql_servers_firewallRules__AllowPublicNetworkAccess 'Microsoft.Sql/servers/firewallRules@2025-01-01' = if (publicNetworkAccess == 'Enabled') {
+resource Sql_servers_firewallRules__AllowPublicNetworkAccess 'Microsoft.Sql/servers/firewallRules@2025-01-01' = if (properties.publicNetworkAccess == 'Enabled') {
 	name: 'AllowPublicNetworkAccess'
 	parent: Sql_servers_
 	properties: {
@@ -167,12 +167,14 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = Sql_servers_.id
 
 @description('The identity.')
-output identity object = Sql_servers_.identity
+output identity resourceOutput<'Microsoft.Sql/servers@2025-01-01'>.identity = Sql_servers_.identity
 
 @description('The name.')
 output name string = Sql_servers_.name
 
 @description('The properties.')
-output properties object = {
+output properties {
+	fullyQualifiedDomainName: string
+} = {
 	fullyQualifiedDomainName: Sql_servers_.properties.fullyQualifiedDomainName
 }

@@ -34,7 +34,7 @@ param network_dnsZones_txt__TTL int = 3600
 param Network_frontDoorWebApplicationFirewallPolicies__id string
 
 @description('Tags to put on the resources.')
-param tags object
+param tags resourceInput<'Microsoft.Cdn/profiles/afdEndpoints@2025-06-01'>.tags
 
 /* VARIABLES */
 
