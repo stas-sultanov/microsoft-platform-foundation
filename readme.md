@@ -103,6 +103,9 @@ Within each section, all declarations MUST be sorted alphabetically.
 - All declarations MUST be strongly typed.
 - Parameters and outputs MUST be explicit and predictable.
 
+#### Types
+- Type names MUST describe intent, such as `PropertiesInput`, `ResourceInput`, `Resource`, `ExtensionsInput`, or a scenario-specific name.
+
 #### Parameters
 - Every parameter MUST have a `@description` decorator.
 - Standard parameter names MUST be used where applicable: `extensions`, `identity`, `location`, `name`, `properties`, `sku`, and `tags`.
@@ -110,9 +113,8 @@ Within each section, all declarations MUST be sorted alphabetically.
 - `extensions` MUST represent extension resources grouped by provider or concern, such as `Authorization`, `Insights`, or `Maintenance`.
 - Optional parameters and default values MUST be safe and predictable.
 
-#### Symbols and Types
-- Resource symbols MUST be deterministic and MUST follow `<Provider>_<resourceType>_` or `<Provider>_<resourceType>_<nestedResourceType>_`.
-- Type names MUST describe intent, such as `PropertiesInput`, `ResourceInput`, `Resource`, `ExtensionsInput`, or a scenario-specific name.
+#### Resources
+- Resource names MUST be deterministic and MUST follow `<Provider>_<resourceType>_` or `<Provider>_<resourceType>_<nestedResourceType>_`.
 
 #### Outputs
 - Every output MUST have a `@description` decorator.
