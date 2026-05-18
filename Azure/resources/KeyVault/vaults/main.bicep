@@ -14,7 +14,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
-import * as KeyValutVaults from '../../../library/KeyVault/vaults.bicep'
+import * as KeyVaultVaults from '../../../library/KeyVault/vaults.bicep'
 
 /* PARAMETERS */
 
@@ -36,7 +36,7 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties KeyValutVaults.PropertiesInput
+param properties KeyVaultVaults.PropertiesInput
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.KeyVault/vaults@2024-11-01'>.tags
