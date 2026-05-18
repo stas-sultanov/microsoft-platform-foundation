@@ -26,7 +26,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 /* RESOURCES */
 
 @batchSize(1)
-resource CosmosAccount_SqlRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2025-10-15' = [
+resource CosmosAccount_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2025-10-15' = [
 	for principal in principals: {
 		name: guid(
 			subscription().id,

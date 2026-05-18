@@ -25,37 +25,37 @@ param sqlServerId string
 
 /* EXISTING RESOURCES */
 
-resource DataFactory_Factory 'Microsoft.DataFactory/factories@2018-06-01' existing = {
+resource DataFactory_factories_ 'Microsoft.DataFactory/factories@2018-06-01' existing = {
 	name: split(
 		dataFactoryId,
 		'/'
 	)[8]
 }
 
-resource Sql_Server 'Microsoft.Sql/servers@2025-01-01' existing = {
+resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' existing = {
 	name: split(
 		sqlServerId,
 		'/'
 	)[8]
 }
 
-resource Sql_Server_Database 'Microsoft.Sql/servers/databases@2025-01-01' existing = {
+resource Sql_servers_databases_ 'Microsoft.Sql/servers/databases@2025-01-01' existing = {
 	name: split(
 		sqlServerDatabaseId,
 		'/'
 	)[10]
-	parent: Sql_Server
+	parent: Sql_servers_
 }
 
 /* RESOURCES */
 
-resource DataFactory_Factory_LinkedService 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' = {
+resource DataFactory_factories_linkedServices_ 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' = {
 	name: name
-	parent: DataFactory_Factory
+	parent: DataFactory_factories_
 	properties: {
 		type: 'AzureSqlDatabase'
 		typeProperties: {
-			connectionString: 'Integrated Security=False;Encrypt=True;Connection Timeout=${connectionTimeout};Data Source=${Sql_Server.properties.fullyQualifiedDomainName};Initial Catalog=${Sql_Server_Database.name}'
+			connectionString: 'Integrated Security=False;Encrypt=True;Connection Timeout=${connectionTimeout};Data Source=${Sql_servers_.properties.fullyQualifiedDomainName};Initial Catalog=${Sql_servers_databases_.name}'
 		}
 	}
 }

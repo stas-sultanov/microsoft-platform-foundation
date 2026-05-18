@@ -6,7 +6,7 @@ Created by [Stas Sultanov](https://www.linkedin.com/in/stas-sultanov)
 
 ## About
 
-A Bicep module library that provides reusable building blocks, purpose-specific specs, and composition patterns for building secure and reliable solutions on Microsoft Azure and Microsoft Entra ID.
+A Bicep module library that provides reusable building blocks for building secure and reliable solutions on Microsoft Azure and Microsoft Entra ID.
 
 ## Table of Contents
 
@@ -17,9 +17,8 @@ A Bicep module library that provides reusable building blocks, purpose-specific 
   - [Security](#security)
   - [File Structure](#file-structure)
   - [Authoring Rules](#authoring-rules)
-  - [Bicep Configuration](#bicep-configuration)
+- [Compliance](#compliance)
 - [Resources](#resources)
-- [License](#license)
 
 ## Layout
 
@@ -121,11 +120,11 @@ Within each section, all declarations MUST be sorted alphabetically.
 - Output names SHOULD be short and stable, usually `id`, `name`, `identity`, or narrowly scoped property names.
 - Outputs SHOULD return precise values instead of broad resource objects.
 
-### Bicep Configuration
+## Compliance
 
-[bicepconfig.json](bicepconfig.json) is the source of truth for Bicep analyzer configuration.
+All modules MUST comply with the rules defined in [bicepconfig.json](bicepconfig.json).
 
-Modules MUST pass the configured checks when Bicep tooling is available.
+All modules MUST pass all configured checks at all times.
 
 Rule suppressions MUST be scoped to the smallest possible line and MUST include a clear reason in a comment.
 
@@ -134,7 +133,3 @@ Rule suppressions MUST be scoped to the smallest possible line and MUST include 
 - [Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
 - [Azure Resource Manager API Versions](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers)
 - [Bicep Best Practices](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/best-practices)
-
-## License
-
-See [license.md](license.md) for license information.
