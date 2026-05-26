@@ -16,7 +16,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 /* PARAMETERS */
 
-@description('The extensions settings.')
+@description('The extension settings.')
 @sealed()
 param extensions {
 	Authorization: {
@@ -27,6 +27,11 @@ param extensions {
 	}
 }
 
+@description('The identity.')
+param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.identity = {
+	type: 'None'
+}
+
 @description('The geo-location.')
 param location string
 
@@ -35,20 +40,28 @@ param name string
 
 @description('The configurable properties.')
 param properties {
-	@description('The account creation mode.')
-	createMode: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.createMode
-
+	@description('The policy for taking backups on an account.')
+	backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.backupPolicy
+	@description('The consistency policy for the Cosmos DB account.')
+	consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.consistencyPolicy
+	@description('Locations enabled for the Cosmos DB account.')
+	locations: {
+		@description('The primary region.')
+		Primary: {
+			@description('Flag to indicate whether or not this region is an AvailabilityZone region')
+			isZoneRedundant: bool
+		}
+		*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.locations[*]
+	}
 	@description('Whether requests from Public Network are allowed.')
 	publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.publicNetworkAccess
-
-	@description('The id of the restorable database account from which the restore has to be initiated.')
-	restoreSourceId: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.restoreParameters.restoreSource
-
-	@description('The point in time to restore. Used only when create mode is Restore.')
-	restoreTimestamp: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.restoreParameters.restoreTimestampInUtc
 }
 
-param capacityMode string = 'Static'
+@description('The capacity mode.')
+param capacityMode
+	| 'Static'
+	| 'Autoscale'
+	| 'Serverless'
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.tags
@@ -89,36 +102,41 @@ var ipRules = {
 	Enabled: []
 }
 
-var restoreParameters = {
-	Default: {}
-	Restore: {
-		restoreMode: 'PointInTime'
-		restoreSource: properties.restoreSourceId
-		restoreTimestampInUtc: properties.restoreTimestamp
-	}
-}
-
 /* RESOURCES */
 
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-10-15' = {
+	identity: identity
 	kind: 'GlobalDocumentDB'
 	location: location
 	name: name
 	properties: {
-		backupPolicy: {
-			type: 'Continuous'
-		}
+		backupPolicy: properties.backupPolicy
 		capabilities: capabilities[capacityMode]
-		createMode: properties.createMode
+		consistencyPolicy: properties.consistencyPolicy
+		createMode: 'Default'
 		databaseAccountOfferType: 'Standard'
+		disableLocalAuth: true
 		ipRules: ipRules[properties.publicNetworkAccess]
-		locations: [
-			{
-				locationName: location
-			}
-		]
+		locations: concat(
+			[
+				{
+					failoverPriority: 0
+					isZoneRedundant: properties.locations.Primary.isZoneRedundant
+					locationName: location
+				}
+			],
+			map(
+				filter(
+					items(properties.locations),
+					item =>
+						item.key != 'Primary'
+				),
+				item =>
+					item.value
+			)
+		)
+		minimalTlsVersion: 'Tls12'
 		publicNetworkAccess: properties.publicNetworkAccess
-		restoreParameters: restoreParameters[properties.createMode]
 	}
 	tags: union(
 		tags ?? {},
@@ -150,22 +168,27 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 	}
 ]
 
-#disable-next-line use-recent-api-versions
-resource Security_advancedThreatProtectionSettings_ 'Microsoft.Security/advancedThreatProtectionSettings@2019-01-01' = {
-	name: 'current'
-	properties: {
-		isEnabled: true
-	}
-	scope: DocumentDB_databaseAccounts_
-}
-
 /* OUTPUTS */
 
 @description('The id.')
 output id string = DocumentDB_databaseAccounts_.id
 
+@description('The identity.')
+output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.identity? = DocumentDB_databaseAccounts_.?identity
+
 @description('The name.')
 output name string = DocumentDB_databaseAccounts_.name
+
+@description('The properties.')
+output properties {
+	@description('The connection endpoint for the Cosmos DB database account.')
+	documentEndpoint: string
+	@description('The connection endpoint for the Cosmos DB SQL API.')
+	sqlEndpoint: string
+} = {
+	documentEndpoint: DocumentDB_databaseAccounts_.properties.documentEndpoint
+	sqlEndpoint: DocumentDB_databaseAccounts_.properties.documentEndpoint
+}
 
 @description('The restore id.')
 output restoreId string = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.DocumentDB/locations/${DocumentDB_databaseAccounts_.location}/restorableDatabaseAccounts/${DocumentDB_databaseAccounts_.properties.instanceId}'

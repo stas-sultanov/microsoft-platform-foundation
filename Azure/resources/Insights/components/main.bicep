@@ -34,10 +34,10 @@ param properties {
 	@description('Specifies whether to purge data immediately after 30 days.')
 	immediatePurgeDataOn30Days: bool
 	@description('Specifies whether the network access type for accessing Application Insights ingestion is enabled.')
-	publicNetworkAccessForIngestionEnabled: bool?
+	publicNetworkAccessForIngestion: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForIngestion
 	@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
-	publicNetworkAccessForQueryEnabled: bool?
-	@description('The retention period in days.')
+	publicNetworkAccessForQuery: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForQuery
+	@description('The retention per2od in days.')
 	@minValue(30)
 	retentionInDays: int
 	@description('The percentage of the data produced by the application being monitored that is being sampled for Application Insights telemetry.')
@@ -62,12 +62,8 @@ resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' = {
 		DisableIpMasking: true
 		DisableLocalAuth: true
 		ImmediatePurgeDataOn30Days: properties.immediatePurgeDataOn30Days
-		publicNetworkAccessForIngestion: properties.?publicNetworkAccessForIngestionEnabled ?? true
-			? 'Enabled'
-			: 'Disabled'
-		publicNetworkAccessForQuery: properties.?publicNetworkAccessForQueryEnabled ?? true
-			? 'Enabled'
-			: 'Disabled'
+		publicNetworkAccessForIngestion: properties.publicNetworkAccessForIngestion
+		publicNetworkAccessForQuery: properties.?publicNetworkAccessForQuery
 		RetentionInDays: properties.retentionInDays
 		SamplingPercentage: properties.samplingPercentage
 		WorkspaceResourceId: properties.workspaceResourceId

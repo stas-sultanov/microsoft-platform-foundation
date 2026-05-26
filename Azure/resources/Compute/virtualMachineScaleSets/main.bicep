@@ -102,5 +102,8 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 @description('The id.')
 output id string = Compute_virtualMachineScaleSets_.id
 
+@description('The identity.')
+output identity resourceOutput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.identity? = Compute_virtualMachineScaleSets_.?identity
+
 @description('The name.')
 output name string = Compute_virtualMachineScaleSets_.name

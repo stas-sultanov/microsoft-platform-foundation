@@ -167,7 +167,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = Sql_servers_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Sql/servers@2025-01-01'>.identity = Sql_servers_.identity
+output identity resourceOutput<'Microsoft.Sql/servers@2025-01-01'>.identity? = Sql_servers_.?identity
 
 @description('The name.')
 output name string = Sql_servers_.name

@@ -17,7 +17,9 @@ type PropertiesInput = {
 	@description('Rules governing the accessibility of the key vault from specific network locations.')
 	networkAcls: resourceInput<'Microsoft.KeyVault/vaults@2021-10-01'>.properties.networkAcls?
 	@description('Specifies whether the vault accepts traffic from the public internet.')
-	publicNetworkAccessEnabled: bool?
+	publicNetworkAccess:
+		| 'Enabled'
+		| 'Disabled'
 	@description('The \'soft delete\' data retention days.')
 	@maxValue(90)
 	@minValue(7)

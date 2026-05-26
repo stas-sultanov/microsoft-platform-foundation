@@ -53,9 +53,7 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2025-05-01' = {
 		enableRbacAuthorization: true
 		enableSoftDelete: properties.enableSoftDelete
 		networkAcls: properties.?networkAcls ?? {}
-		publicNetworkAccess: (properties.?publicNetworkAccessEnabled ?? true)
-			? 'enabled'
-			: 'disabled'
+		publicNetworkAccess: properties.publicNetworkAccess
 		sku: {
 			family: 'A'
 			name: 'standard'

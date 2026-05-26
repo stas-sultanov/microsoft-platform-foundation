@@ -23,6 +23,11 @@ param extensions {
 	}
 }
 
+@description('The identity.')
+param identity resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.identity = {
+	type: 'None'
+}
+
 @description('The geo-location.')
 param location string
 
@@ -41,6 +46,7 @@ param tags resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.ta
 /* RESOURCES */
 
 resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2025-11-01' = {
+	identity: identity
 	location: location
 	name: name
 	properties: properties
@@ -74,6 +80,9 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 @description('The id.')
 output id string = ContainerRegistry_registries_.id
+
+@description('The identity.')
+output identity resourceOutput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.identity? = ContainerRegistry_registries_.?identity
 
 @description('The name.')
 output name string = ContainerRegistry_registries_.name

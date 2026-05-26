@@ -45,8 +45,8 @@ param name string
 param properties {
 	@description('Specifies whether to enable purge protection on the configuration store.')
 	enablePurgeProtection: bool?
-	@description('Specifies whether to allow public endpoint connectivity to the configuration store.')
-	publicNetworkAccessEnabled: bool
+	@description('Control permission for data plane traffic coming from public networks while private endpoint is enabled.')
+	publicNetworkAccess: resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.properties.publicNetworkAccess
 	@description('The amount of time in days that the configuration store will be retained when it is soft deleted.')
 	@maxValue(7)
 	@minValue(1)
@@ -56,10 +56,21 @@ param properties {
 }
 
 @description('The SKU.')
-param sku resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-06-01-preview'>.sku
+param sku {
+	@description('The SKU name of the configuration store.')
+	name:
+		| 'Developer'
+		| 'Free'
+		| 'Premium'
+		| 'Standard'
+}
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-06-01-preview'>.tags
+
+/* VARIABLES */
+
+var isSoftDeleteAndPurgeProtectionSupported = sku.name == 'Premium' || sku.name == 'Standard'
 
 /* RESOURCES */
 
@@ -74,16 +85,20 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 			authenticationMode: 'Pass-through'
 		}
 		disableLocalAuth: true
-		enablePurgeProtection: properties.?enablePurgeProtection
-		publicNetworkAccess: properties.publicNetworkAccessEnabled
-			? 'Enabled'
-			: 'Disabled'
-		softDeleteRetentionInDays: properties.?softDeleteRetentionInDays
+		enablePurgeProtection: isSoftDeleteAndPurgeProtectionSupported
+			? properties.?enablePurgeProtection
+			: null
+		publicNetworkAccess: properties.publicNetworkAccess
+		softDeleteRetentionInDays: isSoftDeleteAndPurgeProtectionSupported
+			? properties.?softDeleteRetentionInDays
+			: null
 		telemetry: {
 			resourceId: properties.telemetryResourceId
 		}
 	}
-	sku: sku
+	sku: {
+		name: sku.name
+	}
 	tags: tags
 }
 
@@ -113,6 +128,9 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 @description('The id.')
 output id string = AppConfiguration_configurationStores_.id
+
+@description('The identity.')
+output identity resourceOutput<'Microsoft.AppConfiguration/configurationStores@2025-06-01-preview'>.identity? = AppConfiguration_configurationStores_.?identity
 
 @description('The name.')
 output name string = AppConfiguration_configurationStores_.name

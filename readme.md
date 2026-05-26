@@ -8,6 +8,11 @@ Created by [Stas Sultanov](https://www.linkedin.com/in/stas-sultanov)
 
 A Bicep module library that provides reusable building blocks for building secure and reliable solutions on Microsoft Azure and Microsoft Entra ID.
 
+**Important Note:**
+All templates in this repository:
+- are designed for general purpose use which is a majority of cases.
+- are not designed for use of Customer Managed Keys (CMK).
+
 ## Table of Contents
 
 - [Layout](#layout)
@@ -109,7 +114,7 @@ Within each section, all declarations MUST be sorted alphabetically.
 - Every parameter MUST have a `@description` decorator.
 - Standard parameter names MUST be used where applicable: `extensions`, `identity`, `location`, `name`, `properties`, `sku`, and `tags`.
 - `properties` MUST represent strongly typed configurable resource properties.
-- `extensions` MUST represent extension resources grouped by provider or concern, such as `Authorization`, `Insights`, or `Maintenance`.
+- `extensions` MUST represent extension resources grouped by provider or concern, such as `Authorization`, `Insights`, `Maintenance`, or other.
 - Optional parameters and default values MUST be safe and predictable.
 
 #### Resources
