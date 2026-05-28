@@ -1,18 +1,16 @@
 metadata author = {
 	fullName: 'Stas Sultanov'
-	profile: 'https://github.com/stas-sultanov'
+	profiles: {
+		gitHub: 'https://github.com/stas-sultanov'
+		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
+	}
 }
 metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlDatabases resource.'
 
 /* PARAMETERS */
 
 @description('The capacity mode for database operations.')
-@allowed([
-	'Autoscale'
-	'Serverless'
-	'Static'
-])
-param capacityMode string = 'Serverless'
+param capacityMode 'Autoscale' | 'Serverless' | 'Static'
 
 @description('Name of the Microsoft.DocumentDB/databaseAccounts resource.')
 param DocumentDB_databaseAccounts__name string

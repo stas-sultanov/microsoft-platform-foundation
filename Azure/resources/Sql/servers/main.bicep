@@ -1,6 +1,9 @@
 metadata author = {
 	fullName: 'Stas Sultanov'
-	profile: 'https://github.com/stas-sultanov'
+	profiles: {
+		gitHub: 'https://github.com/stas-sultanov'
+		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
+	}
 }
 metadata description = 'Provisions a Microsoft.Sql/servers resource.'
 
@@ -12,11 +15,13 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 /* TYPES */
 
+@secure()
 type EntraPrincipalType =
 	| 'Application'
 	| 'Group'
 	| 'User'
 
+@sealed()
 type EntraPrincipal = {
 	@description('Name of the principal within the Entra tenant.')
 	name: string
@@ -54,6 +59,7 @@ param location string
 param name string
 
 @description('The configurable properties.')
+@sealed()
 param properties {
 	@description('The server Entra ID administrator.')
 	administrators: {

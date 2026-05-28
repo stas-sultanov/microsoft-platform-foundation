@@ -1,6 +1,9 @@
 metadata author = {
 	fullName: 'Stas Sultanov'
-	profile: 'https://github.com/stas-sultanov'
+	profiles: {
+		gitHub: 'https://github.com/stas-sultanov'
+		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
+	}
 }
 metadata description = 'Provisions an Entra application with password credentials.'
 

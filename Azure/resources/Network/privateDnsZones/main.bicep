@@ -1,6 +1,9 @@
 metadata author = {
 	fullName: 'Stas Sultanov'
-	profile: 'https://github.com/stas-sultanov'
+	profiles: {
+		gitHub: 'https://github.com/stas-sultanov'
+		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
+	}
 }
 metadata description = 'Provisions a private DNS zone.'
 
@@ -10,6 +13,7 @@ import * as NetworkDnsZones from '../../../library/Network/dnsZones.bicep'
 
 /* TYPES */
 
+@sealed()
 type Resources = {
 	@description('The array of virtual network links.')
 	A: NetworkDnsZones.ARecord[]
@@ -17,6 +21,7 @@ type Resources = {
 	virtualNetworkLinks: VirtualNetworkLinkResource[]
 }
 
+@sealed()
 type VirtualNetworkLinkResource = {
 	@description('The resource name.')
 	name: string

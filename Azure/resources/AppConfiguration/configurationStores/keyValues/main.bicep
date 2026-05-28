@@ -1,6 +1,9 @@
 metadata author = {
 	fullName: 'Stas Sultanov'
-	profile: 'https://github.com/stas-sultanov'
+	profiles: {
+		gitHub: 'https://github.com/stas-sultanov'
+		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
+	}
 }
 metadata description = 'Provisions a Microsoft.AppConfiguration/configurationStores/keyValues resource.'
 
@@ -8,16 +11,17 @@ metadata description = 'Provisions a Microsoft.AppConfiguration/configurationSto
 
 targetScope = 'resourceGroup'
 
-/* PARAMETERS */
+/* IMPORTS */
 
-@description('The key-value name.')
-param name string
+import * as AppConfigurationConfigurationStores from '../../../../library/AppConfiguration/configurationStores.bicep'
+
+/* PARAMETERS */
 
 @description('The name of the parent resource of Microsoft.AppConfiguration/configurationStores type.')
 param parentName string
 
-@description('The properties.')
-param properties resourceInput<'Microsoft.AppConfiguration/configurationStores/keyValues@2024-06-01'>.properties = {}
+@description('The child resources.')
+param resources AppConfigurationConfigurationStores.KeyValueChildResource[]
 
 /* EXISTING RESOURCES */
 
@@ -27,13 +31,11 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 
 /* RESOURCES */
 
-resource AppConfiguration_configurationStores_keyValues_ 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-06-01' = {
-	name: name
-	parent: AppConfiguration_configurationStores_
-	properties: properties
-}
-
-/* OUTPUTS */
-
-@description('The name.')
-output name string = AppConfiguration_configurationStores_keyValues_.name
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+resource AppConfiguration_configurationStores_keyValues_ 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-08-01-preview' = [
+	for resource in resources: {
+		name: resource.name
+		parent: AppConfiguration_configurationStores_
+		properties: resource.properties
+	}
+]

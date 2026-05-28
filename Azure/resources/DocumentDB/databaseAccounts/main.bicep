@@ -1,6 +1,6 @@
 metadata author = {
 	fullName: 'Stas Sultanov'
-	profile: 'https://github.com/stas-sultanov'
+	profile: 'https://www.linkedin.com/in/stas-sultanov'
 }
 metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts resource with extensions.'
 
@@ -28,7 +28,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.identity = {
+param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.identity = {
 	type: 'None'
 }
 
@@ -39,11 +39,18 @@ param location string
 param name string
 
 @description('The configurable properties.')
+@sealed()
 param properties {
 	@description('The policy for taking backups on an account.')
-	backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.backupPolicy
+	backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.backupPolicy
+	@description('Properties related to capacity enforcement on an account.')
+	capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.capacity?
+	@description('The capacity mode for the Cosmos DB account.')
+	capacityMode: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.capacityMode
 	@description('The consistency policy for the Cosmos DB account.')
-	consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.consistencyPolicy
+	consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.consistencyPolicy
+	@description('List of IpRules.')
+	ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.ipRules
 	@description('Locations enabled for the Cosmos DB account.')
 	locations: {
 		@description('The primary region.')
@@ -51,72 +58,34 @@ param properties {
 			@description('Flag to indicate whether or not this region is an AvailabilityZone region')
 			isZoneRedundant: bool
 		}
-		*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.locations[*]
+		*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.locations[*]
 	}
 	@description('Whether requests from Public Network are allowed.')
-	publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.properties.publicNetworkAccess
+	publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.publicNetworkAccess
 }
-
-@description('The capacity mode.')
-param capacityMode
-	| 'Static'
-	| 'Autoscale'
-	| 'Serverless'
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.tags
-
-/* VARIABLES */
-
-var capabilities = {
-	Static: []
-	Autoscale: []
-	Serverless: [
-		{
-			name: 'EnableServerless'
-		}
-	]
-}
-
-var ipRules = {
-	Disabled: [
-		{
-			ipAddressOrRange: '0.0.0.0'
-		}
-		{
-			ipAddressOrRange: '40.76.54.131'
-		}
-		{
-			ipAddressOrRange: '52.169.50.45'
-		}
-		{
-			ipAddressOrRange: '52.176.6.30'
-		}
-		{
-			ipAddressOrRange: '52.187.184.26'
-		}
-		{
-			ipAddressOrRange: '104.42.195.92'
-		}
-	]
-	Enabled: []
-}
+param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.tags
 
 /* RESOURCES */
 
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-10-15' = {
+#disable-diagnostics use-recent-api-versions // have to use it because of properties.capacityMode
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' = {
 	identity: identity
 	kind: 'GlobalDocumentDB'
 	location: location
 	name: name
 	properties: {
 		backupPolicy: properties.backupPolicy
-		capabilities: capabilities[capacityMode]
+		capacity: properties.capacityMode == 'Provisioned'
+			? properties.?capacity
+			: null
+		capacityMode: properties.capacityMode
 		consistencyPolicy: properties.consistencyPolicy
 		createMode: 'Default'
 		databaseAccountOfferType: 'Standard'
 		disableLocalAuth: true
-		ipRules: ipRules[properties.publicNetworkAccess]
+		ipRules: properties.ipRules
 		locations: concat(
 			[
 				{
@@ -138,12 +107,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 		minimalTlsVersion: 'Tls12'
 		publicNetworkAccess: properties.publicNetworkAccess
 	}
-	tags: union(
-		tags ?? {},
-		{
-			capacityMode: capacityMode
-		}
-	)
+	tags: tags
 }
 
 /* EXTENSIONS */

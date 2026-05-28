@@ -1,6 +1,9 @@
 metadata author = {
 	fullName: 'Stas Sultanov'
-	profile: 'https://github.com/stas-sultanov'
+	profiles: {
+		gitHub: 'https://github.com/stas-sultanov'
+		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
+	}
 }
 metadata description = 'Provisions a Microsoft.AppConfiguration/configurationStores resource with extensions.'
 
@@ -9,6 +12,8 @@ metadata description = 'Provisions a Microsoft.AppConfiguration/configurationSto
 targetScope = 'resourceGroup'
 
 /* IMPORTS */
+
+import * as AppConfigurationConfigurationStores from '../../../library/AppConfiguration/configurationStores.bicep'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
@@ -28,7 +33,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.identity = {
+param identity resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity = {
 	type: 'None'
 }
 
@@ -55,7 +60,14 @@ param properties {
 	telemetryResourceId: string
 }
 
+@description('The child resources.')
+@sealed()
+param resources {
+	keyValues: AppConfigurationConfigurationStores.KeyValueChildResource[]
+}
+
 @description('The SKU.')
+@sealed()
 param sku {
 	@description('The SKU name of the configuration store.')
 	name:
@@ -74,9 +86,8 @@ var isSoftDeleteAndPurgeProtectionSupported = sku.name == 'Premium' || sku.name 
 
 /* RESOURCES */
 
-// to use telemetry, preview version of resource is required
-#disable-next-line use-recent-api-versions
-resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/configurationStores@2025-06-01-preview' = {
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview' = {
 	identity: identity
 	location: location
 	name: name
@@ -101,6 +112,15 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 	}
 	tags: tags
 }
+
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+resource AppConfiguration_configurationStores_keyValues_ 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-08-01-preview' = [
+	for resource in resources.keyValues: {
+		name: resource.name
+		parent: AppConfiguration_configurationStores_
+		properties: resource.properties
+	}
+]
 
 /* EXTENSIONS */
 
