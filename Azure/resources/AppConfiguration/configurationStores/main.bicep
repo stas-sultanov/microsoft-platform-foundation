@@ -116,6 +116,9 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource AppConfiguration_configurationStores_keyValues_ 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-08-01-preview' = [
 	for resource in resources.keyValues: {
+		dependsOn: [
+			Authorization_roleAssignments_ // deployer must have authorization before creating this child resources
+		]
 		name: resource.name
 		parent: AppConfiguration_configurationStores_
 		properties: resource.properties
