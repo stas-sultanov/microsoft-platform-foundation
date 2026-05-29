@@ -25,7 +25,8 @@ param resources AppConfigurationConfigurationStores.KeyValueChildResource[]
 
 /* EXISTING RESOURCES */
 
-resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/configurationStores@2024-06-01' existing = {
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview' existing = {
 	name: parentName
 }
 

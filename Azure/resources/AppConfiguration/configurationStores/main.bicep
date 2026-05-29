@@ -13,8 +13,6 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import * as AppConfigurationConfigurationStores from '../../../library/AppConfiguration/configurationStores.bicep'
-
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
@@ -51,19 +49,13 @@ param properties {
 	@description('Specifies whether to enable purge protection on the configuration store.')
 	enablePurgeProtection: bool?
 	@description('Control permission for data plane traffic coming from public networks while private endpoint is enabled.')
-	publicNetworkAccess: resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.properties.publicNetworkAccess
+	publicNetworkAccess: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.properties.publicNetworkAccess
 	@description('The amount of time in days that the configuration store will be retained when it is soft deleted.')
 	@maxValue(7)
 	@minValue(1)
 	softDeleteRetentionInDays: int?
 	@description('The id of the Microsoft.Insights/components resource.')
 	telemetryResourceId: string
-}
-
-@description('The child resources.')
-@sealed()
-param resources {
-	keyValues: AppConfigurationConfigurationStores.KeyValueChildResource[]
 }
 
 @description('The SKU.')
@@ -78,7 +70,7 @@ param sku {
 }
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-06-01-preview'>.tags
+param tags resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.tags
 
 /* VARIABLES */
 
@@ -113,18 +105,6 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 	tags: tags
 }
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
-resource AppConfiguration_configurationStores_keyValues_ 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-08-01-preview' = [
-	for resource in resources.keyValues: {
-		dependsOn: [
-			Authorization_roleAssignments_ // deployer must have authorization before creating this child resources
-		]
-		name: resource.name
-		parent: AppConfiguration_configurationStores_
-		properties: resource.properties
-	}
-]
-
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
@@ -153,7 +133,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = AppConfiguration_configurationStores_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.AppConfiguration/configurationStores@2025-06-01-preview'>.identity? = AppConfiguration_configurationStores_.?identity
+output identity resourceOutput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity? = AppConfiguration_configurationStores_.?identity
 
 @description('The name.')
 output name string = AppConfiguration_configurationStores_.name
