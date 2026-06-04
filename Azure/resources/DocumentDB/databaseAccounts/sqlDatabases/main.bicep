@@ -9,67 +9,70 @@ metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlDa
 
 /* PARAMETERS */
 
-@description('The capacity mode for database operations.')
-param capacityMode 'Autoscale' | 'Serverless' | 'Static'
+@description('The identity.')
+param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview'>.identity = {
+	type: 'None'
+}
 
-@description('Name of the Microsoft.DocumentDB/databaseAccounts resource.')
-param DocumentDB_databaseAccounts__name string
-
-@description('Location to deploy the resources.')
+@description('The geo-location.')
 param location string
 
-@description('Name of the resource.')
+@description('The name.')
 param name string
+
+@description('Name of the Microsoft.DocumentDB/databaseAccounts resource.')
+param parentName string
+
+@description('The configurable properties.')
+@sealed()
+param properties {
+	@description('The database options. Note: Either throughput or autoscaleSettings is required, but not both.')
+	options: {
+		@description('The autoscale settings.')
+		autoscaleSettings: {
+			@maxValue(10000000)
+			@minValue(4000)
+			@description('The maximum throughput the database can autoscale to.')
+			maxThroughput: int
+		}?
+		@description('Request Units per second.')
+		@maxValue(10000000)
+		@minValue(400)
+		throughput: int?
+	}
+}
 
 @description('Tags to put on the resource.')
 param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-10-15'>.tags
 
-@minValue(400)
-@maxValue(5000)
-@description('Request Units per second.')
-param throughput int = 400
-
-@minValue(4000)
-@maxValue(10000)
-@description('Maximal Request Units per second.')
-param throughputMax int = 4000
-
-/* VARIABLES */
-
-var options = {
-	Autoscale: {
-		autoscaleSettings: {
-			maxThroughput: throughputMax
-		}
-	}
-	Serverless: {}
-	Static: {
-		throughput: throughput
-	}
-}
-
 /* EXISTING RESOURCES */
 
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-10-15' existing = {
-	name: DocumentDB_databaseAccounts__name
+#disable-next-line use-recent-api-versions
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' existing = {
+	name: parentName
 }
 
 /* RESOURCES */
 
-resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-10-15' = {
+#disable-next-line use-recent-api-versions // We need to use the preview API version to set the identity property.
+resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview' = {
+	identity: identity
 	location: location
 	name: name
 	parent: DocumentDB_databaseAccounts_
 	properties: {
-		options: options[capacityMode]
+		options: {
+			throughput: properties.options.?throughput
+			autoscaleSettings: properties.options.?autoscaleSettings
+		}
 		resource: {
 			id: name
 		}
 	}
-	tags: union(
-		tags,
-		{
-			capacityMode: capacityMode
-		}
-	)
+	tags: tags
 }
+
+/* OUTPUTS */
+
+@description('The identity.')
+output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview'>.identity? = DocumentDB_databaseAccounts_sqlDatabases_.?identity
