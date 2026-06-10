@@ -34,15 +34,10 @@ param name string
 @description('The configurable properties.')
 @sealed()
 param properties {
-	@description('Specifies whether to purge data immediately after 30 days.')
-	immediatePurgeDataOn30Days: bool
 	@description('Specifies whether the network access type for accessing Application Insights ingestion is enabled.')
 	publicNetworkAccessForIngestion: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForIngestion
 	@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
 	publicNetworkAccessForQuery: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForQuery
-	@description('The retention per2od in days.')
-	@minValue(30)
-	retentionInDays: int
 	@description('The percentage of the data produced by the application being monitored that is being sampled for Application Insights telemetry.')
 	@maxValue(100)
 	@minValue(0)
@@ -64,10 +59,8 @@ resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' = {
 		Application_Type: 'web'
 		DisableIpMasking: true
 		DisableLocalAuth: true
-		ImmediatePurgeDataOn30Days: properties.immediatePurgeDataOn30Days
 		publicNetworkAccessForIngestion: properties.publicNetworkAccessForIngestion
 		publicNetworkAccessForQuery: properties.?publicNetworkAccessForQuery
-		RetentionInDays: properties.retentionInDays
 		SamplingPercentage: properties.samplingPercentage
 		WorkspaceResourceId: properties.workspaceResourceId
 	}
