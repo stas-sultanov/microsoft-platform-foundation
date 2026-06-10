@@ -38,10 +38,6 @@ param properties {
 	publicNetworkAccessForIngestion: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForIngestion
 	@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
 	publicNetworkAccessForQuery: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForQuery
-	@description('The percentage of the data produced by the application being monitored that is being sampled for Application Insights telemetry.')
-	@maxValue(100)
-	@minValue(0)
-	samplingPercentage: int
 	@description('The id of the Microsoft.OperationalInsights/workspaces resource which the data will be ingested to.')
 	workspaceResourceId: string
 }
@@ -61,7 +57,6 @@ resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' = {
 		DisableLocalAuth: true
 		publicNetworkAccessForIngestion: properties.publicNetworkAccessForIngestion
 		publicNetworkAccessForQuery: properties.?publicNetworkAccessForQuery
-		SamplingPercentage: properties.samplingPercentage
 		WorkspaceResourceId: properties.workspaceResourceId
 	}
 	tags: tags
