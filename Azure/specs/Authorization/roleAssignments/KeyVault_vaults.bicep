@@ -11,30 +11,33 @@ metadata description = 'Provisions role assignments for a resource of Microsoft.
 
 targetScope = 'resourceGroup'
 
-/* PARAMETERS */
+/* IMPORTS */
 
-@description('Collection of role assignments.')
-param assignmentsProperties resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties[]
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
+/* PARAMETERS */
 
 @description('Name of the Microsoft.KeyVault/vaults resource.')
 param name string
 
+@description('Collection of role assignments.')
+param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
+
 /* EXISTING RESOURCES */
 
-resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
+resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-02-01' existing = {
 	name: name
 }
 
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for properties in assignmentsProperties: {
-		name: sys.guid(
-			KeyVault_vaults_.id,
-			properties.roleDefinitionId,
-			properties.principalId
-		)
-		properties: properties
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		KeyVault_vaults_.id,
+		roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
 		scope: KeyVault_vaults_
 	}
 ]

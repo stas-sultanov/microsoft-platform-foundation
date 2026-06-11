@@ -54,7 +54,6 @@ resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2025-05
 
 /* EXTENSIONS */
 
-#disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name

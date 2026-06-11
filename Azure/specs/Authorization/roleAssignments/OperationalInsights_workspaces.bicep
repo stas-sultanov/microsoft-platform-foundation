@@ -11,13 +11,17 @@ metadata description = 'Provisions role assignments for a resource of Microsoft.
 
 targetScope = 'resourceGroup'
 
-/* PARAMETERS */
+/* IMPORTS */
 
-@description('Collection of role assignments.')
-param assignmentsProperties resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties[]
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
+/* PARAMETERS */
 
 @description('Name of the Microsoft.OperationalInsights/workspaces resource.')
 param name string
+
+@description('Collection of role assignments.')
+param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
@@ -28,13 +32,12 @@ resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspac
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for properties in assignmentsProperties: {
-		name: sys.guid(
-			OperationalInsights_workspaces_.id,
-			properties.roleDefinitionId,
-			properties.principalId
-		)
-		properties: properties
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		OperationalInsights_workspaces_.id,
+		roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
 		scope: OperationalInsights_workspaces_
 	}
 ]

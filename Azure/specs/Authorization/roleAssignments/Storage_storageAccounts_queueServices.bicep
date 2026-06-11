@@ -11,10 +11,14 @@ metadata description = 'Provisions role assignments for a resource of Microsoft.
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
 /* PARAMETERS */
 
 @description('Collection of role assignments.')
-param assignmentsProperties resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties[]
+param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 @description('Name of the Microsoft.Storage/storageAccounts resource.')
 param storageAccountName string
@@ -37,13 +41,12 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2025-08-01'
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for properties in assignmentsProperties: {
-		name: sys.guid(
-			Storage_storageAccounts_::queueServices_::queues_.id,
-			properties.roleDefinitionId,
-			properties.principalId
-		)
-		properties: properties
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		Storage_storageAccounts_::queueServices_::queues_.id,
+		roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
 		scope: Storage_storageAccounts_::queueServices_::queues_
 	}
 ]

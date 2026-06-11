@@ -22,7 +22,6 @@ var scope = az.managementGroup()
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleEligibilityScheduleRequests@2022-04-01-preview' = [
 	for properties in requestsProperties: {
 		name: sys.guid(

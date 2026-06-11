@@ -11,10 +11,14 @@ metadata description = 'Provisions role assignments for a subscription.'
 
 targetScope = 'subscription'
 
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
 /* PARAMETERS */
 
 @description('Collection of role assignments.')
-param assignmentsProperties resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties[]
+param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* VARIABLES */
 
@@ -23,13 +27,12 @@ var scope = az.subscription()
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for properties in assignmentsProperties: {
-		name: sys.guid(
-			scope.id,
-			properties.roleDefinitionId,
-			properties.principalId
-		)
-		properties: properties
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		scope.id,
+		roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
 		scope: scope
 	}
 ]

@@ -92,7 +92,6 @@ resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2
 
 /* EXTENSIONS */
 
-#disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name

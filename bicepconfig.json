@@ -75,7 +75,7 @@
 					"level": "error"
 				},
 				"use-recent-api-versions": {
-					"level": "error",
+					"level": "info",
 					"maxAgeInDays": 0
 				},
 				"use-recent-az-powershell-version": {

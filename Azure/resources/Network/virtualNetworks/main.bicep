@@ -35,7 +35,7 @@ param tags resourceInput<'Microsoft.Network/virtualNetworks@2025-05-01'>.tags
 
 /* RESOURCES */
 
-resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-05-01' = {
+resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-07-01' = {
 	location: location
 	name: name
 	properties: properties
@@ -44,7 +44,6 @@ resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-05-01'
 
 /* EXTENSIONS */
 
-#disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name
@@ -62,4 +61,4 @@ output id string = Network_virtualNetworks_.id
 output name string = Network_virtualNetworks_.name
 
 @description('A list of subnets in a Virtual Network.')
-output subnets resourceOutput<'Microsoft.Network/virtualNetworks@2025-05-01'>.properties.subnets = Network_virtualNetworks_.properties.subnets
+output subnets resourceOutput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.subnets = Network_virtualNetworks_.properties.subnets

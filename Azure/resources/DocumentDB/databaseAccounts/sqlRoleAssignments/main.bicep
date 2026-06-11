@@ -22,14 +22,14 @@ param roleDefinitionId string
 
 /* EXISTING RESOURCES */
 
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-10-15' existing = {
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
 	name: DocumentDB_databaseAccounts__name
 }
 
 /* RESOURCES */
 
 @batchSize(1)
-resource CosmosAccount_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2025-10-15' = [
+resource CosmosAccount_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-03-15' = [
 	for principal in principals: {
 		name: guid(
 			subscription().id,

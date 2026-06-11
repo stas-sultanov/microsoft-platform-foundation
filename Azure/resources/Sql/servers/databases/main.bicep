@@ -102,7 +102,6 @@ resource Sql_servers_databases_Source 'Microsoft.Sql/servers/databases@2025-01-0
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
 	name: OperationalInsights_workspaces_.name
 	properties: {

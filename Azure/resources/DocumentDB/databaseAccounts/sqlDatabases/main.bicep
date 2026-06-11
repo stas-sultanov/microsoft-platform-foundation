@@ -10,7 +10,7 @@ metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlDa
 /* PARAMETERS */
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview'>.identity = {
+param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.identity = {
 	type: 'None'
 }
 
@@ -43,19 +43,18 @@ param properties {
 }
 
 @description('Tags to put on the resource.')
-param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-10-15'>.tags
+param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.tags
 
 /* EXISTING RESOURCES */
 
-#disable-next-line use-recent-api-versions
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' existing = {
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // We need to use the preview API version to set the identity property.
-resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview' = {
+// We need to use the preview API version to set the identity property.
+resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15' = {
 	identity: identity
 	location: location
 	name: name
@@ -75,4 +74,4 @@ resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databas
 /* OUTPUTS */
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview'>.identity? = DocumentDB_databaseAccounts_sqlDatabases_.?identity
+output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.identity? = DocumentDB_databaseAccounts_sqlDatabases_.?identity

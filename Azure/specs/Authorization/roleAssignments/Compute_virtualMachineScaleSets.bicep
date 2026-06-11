@@ -11,13 +11,17 @@ metadata description = 'Provisions role assignments for a resource of Microsoft.
 
 targetScope = 'resourceGroup'
 
-/* PARAMETERS */
+/* IMPORTS */
 
-@description('Collection of role assignments.')
-param assignmentsProperties resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties[]
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
+/* PARAMETERS */
 
 @description('Name of the Microsoft.Compute/virtualMachineScaleSets resource.')
 param name string
+
+@description('Collection of role assignments.')
+param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
@@ -28,13 +32,12 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for properties in assignmentsProperties: {
-		name: sys.guid(
-			Compute_virtualMachineScaleSets_.id,
-			properties.roleDefinitionId,
-			properties.principalId
-		)
-		properties: properties
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		Compute_virtualMachineScaleSets_.id,
+		roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
 		scope: Compute_virtualMachineScaleSets_
 	}
 ]

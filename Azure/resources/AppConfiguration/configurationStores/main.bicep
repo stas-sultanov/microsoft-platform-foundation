@@ -78,7 +78,7 @@ var isSoftDeleteAndPurgeProtectionSupported = sku.name == 'Premium' || sku.name 
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+// to use new features, preview version of resource is required
 resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview' = {
 	identity: identity
 	location: location
@@ -118,7 +118,6 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name

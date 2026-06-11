@@ -11,10 +11,14 @@ metadata description = 'Provisions role assignments for the tenant root.'
 
 targetScope = 'tenant'
 
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
 /* PARAMETERS */
 
 @description('Collection of role assignments.')
-param assignmentsProperties resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties[]
+param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* VARIABLES */
 
@@ -23,12 +27,12 @@ var scope = az.tenant()
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for properties in assignmentsProperties: {
-		name: sys.guid(
-			properties.roleDefinitionId,
-			properties.principalId
-		)
-		properties: properties
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		scope.tenantId,
+		roleAssignments
+	): {
+		name: extension.name
+		properties: extension.properties
 		scope: scope
 	}
 ]

@@ -31,7 +31,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.identity = {
+param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.identity = {
 	type: 'None'
 }
 
@@ -45,15 +45,15 @@ param name string
 @sealed()
 param properties {
 	@description('The policy for taking backups on an account.')
-	backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.backupPolicy
+	backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.backupPolicy
 	@description('Properties related to capacity enforcement on an account.')
-	capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.capacity?
+	capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.capacity?
 	@description('The capacity mode for the Cosmos DB account.')
-	capacityMode: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.capacityMode
+	capacityMode: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacityMode
 	@description('The consistency policy for the Cosmos DB account.')
-	consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.consistencyPolicy
+	consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.consistencyPolicy
 	@description('List of IpRules.')
-	ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.ipRules
+	ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.ipRules
 	@description('Locations enabled for the Cosmos DB account.')
 	locations: {
 		@description('The primary region.')
@@ -61,19 +61,18 @@ param properties {
 			@description('Flag to indicate whether or not this region is an AvailabilityZone region')
 			isZoneRedundant: bool
 		}
-		*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.locations[*]
+		*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.locations[*]
 	}
 	@description('Whether requests from Public Network are allowed.')
-	publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.publicNetworkAccess
+	publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.publicNetworkAccess
 }
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.tags
+param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.tags
 
 /* RESOURCES */
 
-#disable-diagnostics use-recent-api-versions // have to use it because of properties.capacityMode
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' = {
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' = {
 	identity: identity
 	kind: 'GlobalDocumentDB'
 	location: location
@@ -126,7 +125,6 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name

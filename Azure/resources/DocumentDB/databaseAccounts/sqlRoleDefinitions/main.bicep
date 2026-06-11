@@ -17,13 +17,13 @@ param name string
 
 /* EXISTING RESOURCES */
 
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-10-15' existing = {
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
 	name: DocumentDB_databaseAccounts__name
 }
 
 /* RESOURCES */
 
-resource CosmosAccount_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2025-10-15' = {
+resource CosmosAccount_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-03-15' = {
 	name: guid(
 		subscription().id,
 		DocumentDB_databaseAccounts_.id,
