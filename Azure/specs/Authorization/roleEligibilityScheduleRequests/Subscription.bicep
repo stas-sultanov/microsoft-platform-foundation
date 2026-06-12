@@ -22,7 +22,7 @@ var scope = az.subscription()
 
 /* RESOURCES */
 
-resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleEligibilityScheduleRequests@2022-04-01-preview' = [
+resource Authorization_roleEligibilityScheduleRequests_ 'Microsoft.Authorization/roleEligibilityScheduleRequests@2022-04-01-preview' = [
 	for properties in requestsProperties: {
 		name: sys.guid(
 			scope.id,

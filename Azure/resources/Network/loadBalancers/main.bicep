@@ -38,7 +38,7 @@ param tags resourceInput<'Microsoft.Network/loadBalancers@2025-05-01'>.tags
 
 /* RESOURCES */
 
-resource Network_loadBalancers_ 'Microsoft.Network/loadBalancers@2025-05-01' = {
+resource Network_loadBalancers_ 'Microsoft.Network/loadBalancers@2025-07-01' = {
 	location: location
 	name: name
 	properties: properties

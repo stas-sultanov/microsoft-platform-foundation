@@ -58,7 +58,7 @@ var network_frontDoorWebApplicationFirewallPolicies__id_split = split(
 
 /* EXISTING RESOURCES */
 
-resource Cdn_profiles_ 'Microsoft.Cdn/profiles@2025-06-01' existing = {
+resource Cdn_profiles_ 'Microsoft.Cdn/profiles@2025-12-01' existing = {
 	name: Cdn_profiles__name
 }
 
@@ -76,7 +76,7 @@ resource Network_frontDoorWebApplicationFirewallPolicies_ 'Microsoft.Network/Fro
 
 /* RESOURCES */
 
-resource Cdn_profiles_afdEndpoints_ 'Microsoft.Cdn/profiles/afdEndpoints@2025-06-01' = {
+resource Cdn_profiles_afdEndpoints_ 'Microsoft.Cdn/profiles/afdEndpoints@2025-12-01' = {
 	location: 'global'
 	name: name
 	parent: Cdn_profiles_
@@ -86,7 +86,7 @@ resource Cdn_profiles_afdEndpoints_ 'Microsoft.Cdn/profiles/afdEndpoints@2025-06
 	tags: tags
 }
 
-resource Cdn_profiles_customDomains_ 'Microsoft.Cdn/profiles/customDomains@2025-06-01' = {
+resource Cdn_profiles_customDomains_ 'Microsoft.Cdn/profiles/customDomains@2025-12-01' = {
 	name: cdn_profiles_customDomains__name
 	parent: Cdn_profiles_
 	properties: {
@@ -101,7 +101,7 @@ resource Cdn_profiles_customDomains_ 'Microsoft.Cdn/profiles/customDomains@2025-
 	}
 }
 
-resource Cdn_profiles_securityPolicies_ 'Microsoft.Cdn/profiles/securityPolicies@2025-06-01' = {
+resource Cdn_profiles_securityPolicies_ 'Microsoft.Cdn/profiles/securityPolicies@2025-12-01' = {
 	name: name
 	parent: Cdn_profiles_
 	properties: {

@@ -14,9 +14,9 @@ metadata description = 'Provides reusable types for Microsoft.Insights/diagnosti
 @sealed()
 type PropertiesInput = {
 	@description('The list of logs settings.')
-	logs: resourceInput<'Microsoft.Insights/diagnosticSettings@2021-05-01-preview'>.properties.logs
+	logs: resourceInput<'Microsoft.Insights/diagnosticSettings@2021-05-01-preview'>.properties.logs?
 	@description('The list of metric settings.')
-	metrics: resourceInput<'Microsoft.Insights/diagnosticSettings@2021-05-01-preview'>.properties.metrics
+	metrics: resourceInput<'Microsoft.Insights/diagnosticSettings@2021-05-01-preview'>.properties.metrics?
 }
 
 @description('The configuration of a Microsoft.Insights/diagnosticSettings resource.')
@@ -41,8 +41,8 @@ func CreateResourceWithLogAnalyticsWorkspace(
 	name: name
 	properties: {
 		logAnalyticsDestinationType: 'Dedicated'
-		logs: properties.logs
-		metrics: properties.metrics
+		logs: properties.?logs ?? []
+		metrics: properties.?metrics ?? []
 		workspaceId: workspaceId
 	}
 }

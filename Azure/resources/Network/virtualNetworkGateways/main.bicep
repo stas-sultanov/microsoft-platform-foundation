@@ -54,7 +54,7 @@ param tags resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-01-01'>.
 
 /* RESOURCES */
 
-resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2025-05-01' = {
+resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2025-07-01' = {
 	identity: identity
 	location: location
 	name: name

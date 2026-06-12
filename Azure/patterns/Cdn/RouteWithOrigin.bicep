@@ -101,23 +101,23 @@ param route RouteSettings
 
 /* EXISTING RESOURCES */
 
-resource Cdn_profiles_ 'Microsoft.Cdn/profiles@2025-06-01' existing = {
+resource Cdn_profiles_ 'Microsoft.Cdn/profiles@2025-12-01' existing = {
 	name: Cdn_profiles__name
 }
 
-resource Cdn_profiles_afdEndpoints_ 'Microsoft.Cdn/profiles/afdEndpoints@2025-06-01' existing = {
+resource Cdn_profiles_afdEndpoints_ 'Microsoft.Cdn/profiles/afdEndpoints@2025-12-01' existing = {
 	name: Cdn_profiles_afdEndpoints__name
 	parent: Cdn_profiles_
 }
 
-resource Cdn_profiles_customDomains_ 'Microsoft.Cdn/profiles/customDomains@2025-06-01' existing = {
+resource Cdn_profiles_customDomains_ 'Microsoft.Cdn/profiles/customDomains@2025-12-01' existing = {
 	name: Cdn_profiles_customDomains__name
 	parent: Cdn_profiles_
 }
 
 /* RESOURCES */
 
-resource Cdn_profiles_afdEndpoints_routes_ 'Microsoft.Cdn/profiles/afdEndpoints/routes@2025-06-01' = {
+resource Cdn_profiles_afdEndpoints_routes_ 'Microsoft.Cdn/profiles/afdEndpoints/routes@2025-12-01' = {
 	dependsOn: [
 		Cdn_profiles_originGroups_origins_
 	]
@@ -152,7 +152,7 @@ resource Cdn_profiles_afdEndpoints_routes_ 'Microsoft.Cdn/profiles/afdEndpoints/
 	}
 }
 
-resource Cdn_profiles_originGroups_ 'Microsoft.Cdn/profiles/originGroups@2025-06-01' = {
+resource Cdn_profiles_originGroups_ 'Microsoft.Cdn/profiles/originGroups@2025-12-01' = {
 	name: originGroup.name
 	parent: Cdn_profiles_
 	properties: {
@@ -170,7 +170,7 @@ resource Cdn_profiles_originGroups_ 'Microsoft.Cdn/profiles/originGroups@2025-06
 	}
 }
 
-resource Cdn_profiles_originGroups_origins_ 'Microsoft.Cdn/profiles/originGroups/origins@2025-06-01' = {
+resource Cdn_profiles_originGroups_origins_ 'Microsoft.Cdn/profiles/originGroups/origins@2025-12-01' = {
 	name: origin.name
 	parent: Cdn_profiles_originGroups_
 	properties: {

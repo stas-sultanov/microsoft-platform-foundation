@@ -43,7 +43,7 @@ param zones string[]
 
 /* RESOURCES */
 
-resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2025-05-01' = {
+resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2025-07-01' = {
 	location: location
 	name: name
 	properties: properties

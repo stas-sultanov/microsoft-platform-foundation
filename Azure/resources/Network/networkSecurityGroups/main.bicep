@@ -35,7 +35,7 @@ param tags resourceInput<'Microsoft.Network/networkSecurityGroups@2025-05-01'>.t
 
 /* RESOURCES */
 
-resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups@2025-05-01' = {
+resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups@2025-07-01' = {
 	location: location
 	name: name
 	properties: properties
