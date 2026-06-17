@@ -21,12 +21,12 @@ import * as KeyVaultVaults from '../../../library/KeyVault/vaults.bicep'
 
 /* PARAMETERS */
 
-@description('The extension settings.')
+@description('The extensions settings.')
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-	}
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -72,7 +72,7 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-02-01' = {
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for extension in AuthorizationRoleAssignments.CreateArray(
 		KeyVault_vaults_.id,
-		extensions.Authorization.roleAssignments
+		extensions.?Authorization.?roleAssignments ?? []
 	): {
 		name: extension.name
 		properties: extension.properties

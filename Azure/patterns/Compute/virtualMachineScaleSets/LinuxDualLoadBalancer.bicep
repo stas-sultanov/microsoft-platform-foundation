@@ -20,8 +20,8 @@ import * as MaintenanceConfigurationAssignments from '../../../library/Maintenan
 @export()
 type Extensions = {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-	}
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
 	Insights: {
 		dataCollectionRuleAssociations: InsightsDataCollectionRuleAssociations.Resource[]
 	}
@@ -251,7 +251,7 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for extension in AuthorizationRoleAssignments.CreateArray(
 		Compute_virtualMachineScaleSets_.id,
-		extensions.Authorization.roleAssignments
+		extensions.?Authorization.?roleAssignments ?? []
 	): {
 		name: extension.name
 		properties: extension.properties

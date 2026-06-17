@@ -41,12 +41,12 @@ type StorageAccountPropertiesInput = {
 
 /* PARAMETERS */
 
-@description('The extension settings.')
+@description('The extensions settings.')
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-	}
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -110,7 +110,7 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for extension in AuthorizationRoleAssignments.CreateArray(
 		Storage_storageAccounts_.id,
-		extensions.Authorization.roleAssignments
+		extensions.?Authorization.?roleAssignments ?? []
 	): {
 		name: extension.name
 		properties: extension.properties

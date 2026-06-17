@@ -19,8 +19,8 @@ import * as InsightsDiagnosticSetting from '../../../library/Insights/diagnostic
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-	}
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSetting.Resource[]
 	}
@@ -62,7 +62,7 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for extension in AuthorizationRoleAssignments.CreateArray(
 		ContainerRegistry_registries_.id,
-		extensions.Authorization.roleAssignments
+		extensions.?Authorization.?roleAssignments ?? []
 	): {
 		name: extension.name
 		properties: extension.properties

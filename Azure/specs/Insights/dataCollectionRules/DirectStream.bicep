@@ -19,7 +19,7 @@ import {
 
 /* PARAMETERS */
 
-@description('The extension settings.')
+@description('The extensions settings.')
 @sealed()
 param extensions {
 	Insights: {

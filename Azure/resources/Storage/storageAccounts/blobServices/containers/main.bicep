@@ -11,7 +11,19 @@ metadata description = 'Provisions a Microsoft.Storage/storageAccounts/blobServi
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../../../library/Authorization/roleAssignments.bicep'
+
 /* PARAMETERS */
+
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
+}?
 
 @description('The name.')
 @maxLength(63)
@@ -65,6 +77,19 @@ resource Storage_storageAccounts_blobServices_containers_immutabilityPolicies__D
 	parent: Storage_storageAccounts_blobServices_containers_
 	properties: resources!.immutabilityPolicies!.Default!.properties
 }
+
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		Storage_storageAccounts_blobServices_containers_.id,
+		extensions.?Authorization.?roleAssignments ?? []
+	): {
+		name: extension.name
+		properties: extension.properties
+		scope: Storage_storageAccounts_blobServices_containers_
+	}
+]
 
 /* OUTPUTS */
 

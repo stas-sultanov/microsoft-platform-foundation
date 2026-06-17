@@ -17,13 +17,13 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('The extension settings.')
+@description('The extensions settings.')
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-	}
-}
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
+}?
 
 @description('The geo-location.')
 param location string
@@ -67,7 +67,7 @@ resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' = {
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for extension in AuthorizationRoleAssignments.CreateArray(
 		Insights_components_.id,
-		extensions.Authorization.roleAssignments
+		extensions.?Authorization.?roleAssignments ?? []
 	): {
 		name: extension.name
 		properties: extension.properties
