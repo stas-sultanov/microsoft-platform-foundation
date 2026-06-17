@@ -15,7 +15,7 @@ param location string
 @description('The name.')
 param name string
 
-@description('The name.')
+@description('The name of the parent Microsoft.ContainerRegistry/registries resource.')
 param parentName string
 
 @description('The configurable properties.')

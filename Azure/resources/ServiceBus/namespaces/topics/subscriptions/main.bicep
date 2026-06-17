@@ -17,10 +17,10 @@ targetScope = 'resourceGroup'
 @minLength(1)
 param name string
 
-@description('The name of the parent resource of Microsoft.ServiceBus/namespaces type.')
+@description('The name of the parent Microsoft.ServiceBus/namespaces resource.')
 param parentNamespaceName string
 
-@description('The name of the parent resource of Microsoft.ServiceBus/namespaces/topics type.')
+@description('The name of the parent Microsoft.ServiceBus/namespaces/topics resource.')
 param parentTopicName string
 
 @description('The properties.')

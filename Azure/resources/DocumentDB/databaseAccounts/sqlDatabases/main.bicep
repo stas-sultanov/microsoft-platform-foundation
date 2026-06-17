@@ -20,7 +20,7 @@ param location string
 @description('The name.')
 param name string
 
-@description('Name of the Microsoft.DocumentDB/databaseAccounts resource.')
+@description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
 param parentName string
 
 @description('The configurable properties.')

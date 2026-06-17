@@ -9,8 +9,8 @@ metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlRo
 
 /* PARAMETERS */
 
-@description('Name of the Microsoft.DocumentDB/databaseAccounts resource.')
-param DocumentDB_databaseAccounts__name string
+@description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
+param parentName string
 
 @description('Name of the resource.')
 param name string
@@ -18,7 +18,7 @@ param name string
 /* EXISTING RESOURCES */
 
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
-	name: DocumentDB_databaseAccounts__name
+	name: parentName
 }
 
 /* RESOURCES */

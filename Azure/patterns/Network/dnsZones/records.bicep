@@ -22,7 +22,7 @@ param A ARecord[] = []
 @description('The NS records.')
 param NS NSRecord[] = []
 
-@description('The parent name.')
+@description('The name of the parent Microsoft.Network/dnsZones resource.')
 param parentName string
 
 /* EXISTING RESOURCES */

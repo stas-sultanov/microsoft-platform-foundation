@@ -18,7 +18,7 @@ targetScope = 'resourceGroup'
 @minLength(4)
 param name string
 
-@description('The name of the parent resource of Microsoft.OperationalInsights/workspaces type.')
+@description('The name of the parent Microsoft.OperationalInsights/workspaces resource.')
 param parentName string
 
 @description('The properties.')
