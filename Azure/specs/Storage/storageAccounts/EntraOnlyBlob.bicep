@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Storage/storageAccounts resource.'
+metadata description = 'Provisions a Microsoft.Storage/storageAccounts resource for blobs with Entra based access.'
 
 /* SCOPE */
 
@@ -21,19 +21,19 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 @sealed()
 type StorageAccountPropertiesInput = {
-	accessTier: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.accessTier?
+	accessTier:
+		| 'Hot'
+		| 'Cool'
+		| 'Cold'
+		| 'Smart'?
 	allowCrossTenantReplication: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.allowCrossTenantReplication?
 	allowedCopyScope: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.allowedCopyScope?
-	azureFilesIdentityBasedAuthentication: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.azureFilesIdentityBasedAuthentication?
-	customDomain: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.customDomain?
 	dnsEndpointType: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.dnsEndpointType?
 	dualStackEndpointPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.dualStackEndpointPreference?
 	enableExtendedGroups: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.enableExtendedGroups?
-	encryption: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.encryption?
 	geoPriorityReplicationStatus: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.geoPriorityReplicationStatus?
 	immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.immutableStorageWithVersioning?
 	isHnsEnabled: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.isHnsEnabled?
-	largeFileSharesState: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.largeFileSharesState?
 	networkAcls: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.networkAcls?
 	publicNetworkAccess: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.publicNetworkAccess?
 	routingPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.routingPreference?
@@ -65,26 +65,45 @@ param location string
 @minLength(3)
 param name string
 
-@description('The resource kind.')
-param kind resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.kind
-
 @description('The configurable properties.')
 param properties StorageAccountPropertiesInput
 
+@description('The resources.')
+@sealed()
+param resources {
+	blobServices: {
+		Default: {
+			extensions: {
+				Insights: {
+					diagnosticSettings: InsightsDiagnosticSettings.Resource[]
+				}
+			}
+		}
+	}
+}
+
 @description('The SKU.')
-param sku resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.sku
+param sku {
+	name:
+		| 'Standard_LRS'
+		| 'Standard_GRS'
+		| 'Standard_RAGRS'
+		| 'Standard_ZRS'
+		| 'Standard_GZRS'
+		| 'Standard_RAGZRS'
+}
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.tags
 
 @description('The pinned logical availability zones.')
-param zones resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.zones
+param zones resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.zones?
 
 /* RESOURCES */
 
 resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' = {
 	identity: identity
-	kind: kind
+	kind: 'StorageV2'
 	location: location
 	name: name
 	properties: union(
@@ -103,6 +122,9 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 	sku: sku
 	tags: tags
 	zones: zones
+	resource blobServices_ 'blobServices' = {
+		name: 'default'
+	}
 }
 
 /* EXTENSIONS */
@@ -118,11 +140,19 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+resource Insights_diagnosticSettings__Storage_storageAccounts_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name
 		properties: extension.properties
 		scope: Storage_storageAccounts_
+	}
+]
+
+resource Insights_diagnosticSettings__Storage_storageAccounts__blobServices_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for extension in resources.blobServices.Default.extensions.Insights.diagnosticSettings: {
+		name: extension.name
+		properties: extension.properties
+		scope: Storage_storageAccounts_::blobServices_
 	}
 ]
 
