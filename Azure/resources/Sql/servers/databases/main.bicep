@@ -7,150 +7,114 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Sql/servers/databases resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../../library/Authorization/roleAssignments.bicep'
+
+import * as InsightsDiagnosticSettings from '../../../../library/Insights/diagnosticSettings.bicep'
+
 /* PARAMETERS */
 
-@description('The mode of database creation.')
-@allowed([
-	'Default'
-	'Copy'
-])
-param createMode string = 'Default'
-
-@description('Location to deploy the resources.')
-param location string
-
-@description('Name of the resource.')
-param name string
-
-@description('Specifies the SKU of the sql database.')
-@allowed([
-	'Basic'
-	'S0'
-	'S1'
-	'S2'
-	'S3'
-	'GP_Gen5_2'
-	'GP_Gen5_4'
-	'GP_Gen5_6'
-	'GP_Gen5_8'
-	'GP_Gen5_10'
-	'GP_S_Gen5_1'
-	'GP_S_Gen5_2'
-	'GP_S_Gen5_4'
-	'GP_S_Gen5_6'
-	'GP_S_Gen5_8'
-])
-param sku string = 'Basic'
-
-@description('The id of the Sql/servers/databases resource which is used by different creation modes.')
-param sourceDatabaseId string = ''
-
-@description('Name of the Sql/servers resource.')
-param sqlServerName string
-
-@description('Tags to put on the resource.')
-param tags resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.tags
-
-@description('The id of the OperationalInsights/Workspace resource.')
-param workspaceId string
-
-/* VARIABLES */
-
-var databaseProperties = {
-	Default: {
-		createMode: 'Default'
-	}
-	Copy: {
-		createMode: 'Copy'
-		sourceDatabaseId: createMode == 'Default'
-			? ''
-			: Sql_servers_databases_Source.id
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
+	Insights: {
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
-var operationalInsights_workspaces__id_split = split(
-	workspaceId,
-	'/'
-)
+@description('The identity.')
+param identity resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.identity = {
+	type: 'None'
+}
 
-var sql_servers_databases_Source_id_split = split(
-	sourceDatabaseId,
-	'/'
-)
+@description('The geo-location.')
+param location string
+
+@description('The name.')
+param name string
+
+@description('The name of the parent Microsoft.Sql/servers resource.')
+param parentName string
+
+@description('The configurable properties.')
+param properties resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.properties
+
+@description('The resources.')
+@sealed()
+param resources {
+	auditingSettings: {
+		Default: {
+			properties: resourceInput<'Microsoft.Sql/servers/databases/auditingSettings@2025-01-01'>.properties
+		}?
+	}?
+}?
+
+@description('The SKU.')
+param sku resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.sku
+
+@description('The tags.')
+param tags resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.tags
 
 /* EXISTING RESOURCES */
 
-resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspaces@2025-07-01' existing = {
-	name: operationalInsights_workspaces__id_split[8]
-	scope: resourceGroup(
-		operationalInsights_workspaces__id_split[2],
-		operationalInsights_workspaces__id_split[4]
-	)
-}
-
 resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' existing = {
-	name: sqlServerName
-}
-
-resource Sql_servers_databases_Source 'Microsoft.Sql/servers/databases@2025-01-01' existing = if (createMode != 'Default') {
-	name: sql_servers_databases_Source_id_split[8]
-	scope: resourceGroup(
-		sql_servers_databases_Source_id_split[2],
-		sql_servers_databases_Source_id_split[4]
-	)
+	name: parentName
 }
 
 /* RESOURCES */
 
-resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-	name: OperationalInsights_workspaces_.name
-	properties: {
-		logAnalyticsDestinationType: 'Dedicated'
-		logs: [
-			{
-				categoryGroup: 'allLogs'
-				enabled: true
-			}
-			{
-				categoryGroup: 'audit'
-				enabled: true
-			}
-		]
-		metrics: [
-			{
-				enabled: true
-				timeGrain: 'PT1M'
-			}
-		]
-		workspaceId: OperationalInsights_workspaces_.id
-	}
-	scope: Sql_servers_databases_
-}
-
 resource Sql_servers_databases_ 'Microsoft.Sql/servers/databases@2025-01-01' = {
+	identity: identity
 	location: location
 	name: name
 	parent: Sql_servers_
-	properties: databaseProperties[createMode]
-	sku: {
-		name: sku
-	}
+	properties: properties
+	sku: sku
 	tags: tags
 }
 
-resource Sql_servers_databases_auditingSettings_ 'Microsoft.Sql/servers/databases/auditingSettings@2025-01-01' = {
+resource Sql_servers_databases_auditingSettings__Default 'Microsoft.Sql/servers/databases/auditingSettings@2025-01-01' = if (resources.?auditingSettings.?Default != null) {
 	name: 'default'
 	parent: Sql_servers_databases_
-	properties: {
-		isAzureMonitorTargetEnabled: true
-		state: 'Enabled'
-	}
+	properties: resources!.auditingSettings!.Default!.properties
 }
+
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		Sql_servers_databases_.id,
+		extensions.?Authorization.?roleAssignments ?? []
+	): {
+		name: extension.name
+		properties: extension.properties
+		scope: Sql_servers_databases_
+	}
+]
+
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for extension in extensions.Insights.diagnosticSettings: {
+		name: extension.name
+		properties: extension.properties
+		scope: Sql_servers_databases_
+	}
+]
 
 /* OUTPUTS */
 
 @description('The id.')
 output id string = Sql_servers_databases_.id
+
+@description('The identity.')
+output identity resourceOutput<'Microsoft.Sql/servers/databases@2025-01-01'>.identity? = Sql_servers_databases_.?identity
 
 @description('The name.')
 output name string = Sql_servers_databases_.name
