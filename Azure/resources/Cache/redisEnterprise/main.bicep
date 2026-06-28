@@ -1,0 +1,108 @@
+metadata author = {
+	fullName: 'Stas Sultanov'
+	profiles: {
+		gitHub: 'https://github.com/stas-sultanov'
+		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
+	}
+}
+metadata description = 'Provisions a Microsoft.Cache/redisEnterprise resource with extensions.'
+
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
+import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
+
+/* PARAMETERS */
+
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
+	Insights: {
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
+	}
+}
+
+@description('The identity.')
+param identity resourceInput<'Microsoft.Cache/redisEnterprise@2025-07-01'>.identity = {
+	type: 'None'
+}
+
+@description('The geo-location.')
+param location string
+
+@description('The name.')
+param name string
+
+@description('The configurable properties.')
+@sealed()
+param properties {
+	@description('Dataset replication configuration for the Redis Enterprise cluster.')
+	highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.highAvailability
+	@description('Cluster-level maintenance configuration.')
+	maintenanceConfiguration: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.maintenanceConfiguration
+	@description('Whether or not public network traffic can access the Redis cluster.')
+	publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.publicNetworkAccess
+}
+
+@description('The SKU.')
+param sku resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.sku
+
+@description('The tags.')
+param tags resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.tags
+
+@description('The zones.')
+param zones resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.zones = []
+
+/* RESOURCES */
+
+#disable-diagnostics use-recent-api-versions // maintance window configuration is available in preview only
+resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-02-01-preview' = {
+	identity: identity
+	location: location
+	name: name
+	properties: {
+		highAvailability: properties.highAvailability
+		maintenanceConfiguration: properties.maintenanceConfiguration
+		minimumTlsVersion: '1.2'
+		publicNetworkAccess: properties.publicNetworkAccess
+	}
+	sku: sku
+	tags: tags
+	zones: zones
+}
+
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for extension in AuthorizationRoleAssignments.CreateArray(
+		Cache_redisEnterprise_.id,
+		extensions.?Authorization.?roleAssignments ?? []
+	): {
+		name: extension.name
+		properties: extension.properties
+		scope: Cache_redisEnterprise_
+	}
+]
+
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for extension in extensions.Insights.diagnosticSettings: {
+		name: extension.name
+		properties: extension.properties
+		scope: Cache_redisEnterprise_
+	}
+]
+
+/* OUTPUTS */
+
+@description('The id.')
+output id string = Cache_redisEnterprise_.id
+
+@description('The identity.')
+output identity resourceOutput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.identity? = Cache_redisEnterprise_.?identity
+
+@description('The name.')
+output name string = Cache_redisEnterprise_.name
