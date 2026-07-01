@@ -37,8 +37,33 @@ param location string
 @description('The name.')
 param name string
 
-@description('The properties.')
-param properties resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties
+@description('The configurable properties.')
+@sealed()
+param properties {
+	@description('Enable a single data endpoint per region for serving data.')
+	dataEndpointEnabled: bool?
+	@description('Whether or not Tasks allowed to bypass the network rules for this container registry.')
+	networkRuleBypassAllowedForTasks: bool?
+	@description('Whether to allow trusted Azure services to access a network restricted registry.')
+	networkRuleBypassOptions: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.networkRuleBypassOptions?
+	@description('The network rule set for a container registry.')
+	networkRuleSet: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.networkRuleSet?
+	@description('The policies for a container registry.')
+	policies: {
+		@description('The export policy for a container registry.')
+		exportPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.policies.exportPolicy?
+		@description('The quarantine policy for a container registry.')
+		quarantinePolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.policies.quarantinePolicy?
+		@description('The retention policy for a container registry.')
+		retentionPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.policies.retentionPolicy?
+		@description('The content trust policy for a container registry.')
+		trustPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.policies.trustPolicy?
+	}?
+	@description('Whether or not public network access is allowed for the container registry.')
+	publicNetworkAccess: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.publicNetworkAccess?
+	@description('Whether or not zone redundancy is enabled for this container registry.')
+	zoneRedundancy: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.zoneRedundancy?
+}
 
 @description('The SKU.')
 param sku resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.sku
@@ -52,7 +77,26 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 	identity: identity
 	location: location
 	name: name
-	properties: properties
+	properties: {
+		adminUserEnabled: false
+		anonymousPullEnabled: false
+		dataEndpointEnabled: properties.?dataEndpointEnabled
+		networkRuleBypassAllowedForTasks: properties.?networkRuleBypassAllowedForTasks
+		networkRuleBypassOptions: properties.?networkRuleBypassOptions
+		networkRuleSet: properties.?networkRuleSet
+		policies: {
+			azureADAuthenticationAsArmPolicy: {
+				status: 'enabled'
+			}
+			exportPolicy: properties.?policies.?exportPolicy
+			quarantinePolicy: properties.?policies.?quarantinePolicy
+			retentionPolicy: properties.?policies.?retentionPolicy
+			trustPolicy: properties.?policies.?trustPolicy
+		}
+		publicNetworkAccess: properties.?publicNetworkAccess
+		roleAssignmentMode: 'AbacRepositoryPermissions'
+		zoneRedundancy: properties.?zoneRedundancy
+	}
 	sku: sku
 	tags: tags
 }
