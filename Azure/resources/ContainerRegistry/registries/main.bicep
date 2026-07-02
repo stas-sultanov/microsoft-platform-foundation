@@ -48,19 +48,19 @@ param properties {
 	endpointProtocol: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.endpointProtocol
 	@description('The metadata search setting for the container registry.')
 	metadataSearch: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.metadataSearch
-	@description('Whether or not Tasks allowed to bypass the network rules for this container registry. Premium SKU only.')
+	@description('Whether or not Tasks allowed to bypass the network rules for this container registry. Requires: sku.name == \'Premium\'.')
 	networkRuleBypassAllowedForTasks: bool?
-	@description('Whether to allow trusted Azure services to access a network restricted registry. Premium SKU only.')
+	@description('Whether to allow trusted Azure services to access a network restricted registry. Requires: sku.name == \'Premium\'.')
 	networkRuleBypassOptions: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.networkRuleBypassOptions?
-	@description('The network rule set for a container registry. Premium SKU only.')
+	@description('The network rule set for a container registry. Requires: sku.name == \'Premium\'.')
 	networkRuleSet: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.networkRuleSet?
 	@description('The policies for a container registry.')
 	policies: {
-		@description('The export policy for a container registry. Premium SKU only.')
+		@description('The export policy for a container registry. Requires: sku.name == \'Premium\' && properties.publicNetworkAccess == \'Disabled\'.')
 		exportPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.policies.exportPolicy
 		@description('The quarantine policy for a container registry.')
 		quarantinePolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.policies.quarantinePolicy
-		@description('The retention policy for a container registry. Premium SKU only.')
+		@description('The retention policy for a container registry. Requires: sku.name == \'Premium\'.')
 		retentionPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.policies.retentionPolicy
 		@description('The soft-delete policy for a container registry.')
 		softDeletePolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.policies.softDeletePolicy
@@ -69,7 +69,7 @@ param properties {
 	publicNetworkAccess: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.publicNetworkAccess
 	@description('Whether or not regional endpoints are enabled for this container registry.')
 	regionalEndpoints: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.regionalEndpoints
-	@description('Whether or not zone redundancy is enabled for this container registry. Supported only for Premium SKU.')
+	@description('Whether or not zone redundancy is enabled for this container registry. Requires: sku.name == \'Premium\'.')
 	zoneRedundancy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-01-01-preview'>.properties.zoneRedundancy
 }
 
@@ -113,7 +113,7 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 			azureADAuthenticationAsArmPolicy: {
 				status: 'enabled'
 			}
-			exportPolicy: isPremiumSku
+			exportPolicy: isPremiumSku && properties.publicNetworkAccess == 'Disabled'
 				? properties.policies.exportPolicy
 				: null
 			quarantinePolicy: properties.policies.quarantinePolicy
