@@ -59,7 +59,7 @@ param zones resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.
 
 /* RESOURCES */
 
-#disable-diagnostics use-recent-api-versions // maintance window configuration is available in preview only
+#disable-diagnostics use-recent-api-versions // maintenance window configuration is available in preview only
 resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-02-01-preview' = {
 	identity: identity
 	location: location
