@@ -38,24 +38,24 @@ param resources {
 
 /* EXISTING RESOURCES */
 
-resource ServiceBus_namespaces_ 'Microsoft.ServiceBus/namespaces@2024-01-01' existing = {
+resource ServiceBus_namespaces_ 'Microsoft.ServiceBus/namespaces@2026-01-01' existing = {
 	name: parentNamespaceName
 }
 
-resource ServiceBus_namespaces_topics_ 'Microsoft.ServiceBus/namespaces/topics@2024-01-01' existing = {
+resource ServiceBus_namespaces_topics_ 'Microsoft.ServiceBus/namespaces/topics@2026-01-01' existing = {
 	name: parentTopicName
 	parent: ServiceBus_namespaces_
 }
 
 /* RESOURCES */
 
-resource ServiceBus_namespaces_topics_subscriptions_ 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2024-01-01' = {
+resource ServiceBus_namespaces_topics_subscriptions_ 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2026-01-01' = {
 	name: name
 	parent: ServiceBus_namespaces_topics_
 	properties: properties
 }
 
-resource ServiceBus_namespaces_topics_subscriptions_rules_ 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2024-01-01' = [
+resource ServiceBus_namespaces_topics_subscriptions_rules_ 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2026-01-01' = [
 	for resource in resources.?rules ?? []: {
 		name: resource.name
 		parent: ServiceBus_namespaces_topics_subscriptions_

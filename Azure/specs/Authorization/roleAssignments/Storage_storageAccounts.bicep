@@ -25,7 +25,7 @@ param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
-resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2025-08-01' existing = {
+resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
 	name: name
 }
 

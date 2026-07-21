@@ -25,7 +25,7 @@ param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
-resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2025-11-01' existing = {
+resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' existing = {
 	name: name
 }
 

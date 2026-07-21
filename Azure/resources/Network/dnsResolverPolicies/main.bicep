@@ -90,6 +90,7 @@ resource Network_dnsResolverPolicies_virtualNetworkLinks_ 'Microsoft.Network/dns
 
 /* EXTENSIONS */
 
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name

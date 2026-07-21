@@ -36,7 +36,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.identity = {
+param identity resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity = {
 	type: 'None'
 }
 
@@ -47,20 +47,20 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.properties
+param properties resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties
 
 @description('The SKU.')
-param sku resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.sku
+param sku resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.sku
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.tags
+param tags resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.tags
 
 @description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
 param zones string[]
 
 /* RESOURCES */
 
-resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2025-11-01' = {
+resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' = {
 	identity: identity
 	location: location
 	name: name
@@ -106,7 +106,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 output id string = Compute_virtualMachineScaleSets_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.identity? = Compute_virtualMachineScaleSets_.?identity
+output identity resourceOutput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity? = Compute_virtualMachineScaleSets_.?identity
 
 @description('The name.')
 output name string = Compute_virtualMachineScaleSets_.name

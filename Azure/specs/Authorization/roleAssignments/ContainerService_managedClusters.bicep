@@ -25,7 +25,7 @@ param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
-resource ContainerService_managedClusters_ 'Microsoft.ContainerService/managedClusters@2026-03-01' existing = {
+resource ContainerService_managedClusters_ 'Microsoft.ContainerService/managedClusters@2026-04-01' existing = {
 	name: name
 }
 

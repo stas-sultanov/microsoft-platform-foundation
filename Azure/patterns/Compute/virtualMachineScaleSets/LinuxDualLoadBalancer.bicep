@@ -140,7 +140,7 @@ param zones string[]
 
 /* RESOURCES */
 
-resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2025-11-01' = {
+resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' = {
 	identity: identity
 	location: location
 	name: name

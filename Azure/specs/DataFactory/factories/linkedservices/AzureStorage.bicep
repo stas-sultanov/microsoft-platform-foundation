@@ -34,7 +34,7 @@ resource DataFactory_factories_ 'Microsoft.DataFactory/factories@2018-06-01' exi
 	name: DataFactory_factories__name
 }
 
-resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2025-08-01' existing = {
+resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
 	name: storage_storageAccounts__Id_split[8]
 	scope: resourceGroup(
 		storage_storageAccounts__Id_split[2],

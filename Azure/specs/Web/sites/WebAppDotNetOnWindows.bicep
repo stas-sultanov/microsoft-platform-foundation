@@ -156,6 +156,7 @@ resource Web_serverFarms_ 'Microsoft.Web/serverfarms@2025-03-01' existing = {
 
 /* RESOURCES */
 
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
 	name: OperationalInsights_workspaces_.name
 	properties: {

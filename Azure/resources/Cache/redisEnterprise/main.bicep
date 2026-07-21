@@ -41,21 +41,21 @@ param name string
 @sealed()
 param properties {
 	@description('Dataset replication configuration for the Redis Enterprise cluster.')
-	highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.highAvailability
+	highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2025-07-01'>.properties.highAvailability
 	@description('Cluster-level maintenance configuration.')
 	maintenanceConfiguration: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.maintenanceConfiguration
 	@description('Whether or not public network traffic can access the Redis cluster.')
-	publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.publicNetworkAccess
+	publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2025-07-01'>.properties.publicNetworkAccess
 }
 
 @description('The SKU.')
-param sku resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.sku
+param sku resourceInput<'Microsoft.Cache/redisEnterprise@2025-07-01'>.sku
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.tags
+param tags resourceInput<'Microsoft.Cache/redisEnterprise@2025-07-01'>.tags
 
 @description('The zones.')
-param zones resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.zones = []
+param zones resourceInput<'Microsoft.Cache/redisEnterprise@2025-07-01'>.zones = []
 
 /* RESOURCES */
 
@@ -88,6 +88,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name
@@ -102,7 +103,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = Cache_redisEnterprise_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.identity? = Cache_redisEnterprise_.?identity
+output identity resourceOutput<'Microsoft.Cache/redisEnterprise@2025-07-01'>.identity? = Cache_redisEnterprise_.?identity
 
 @description('The name.')
 output name string = Cache_redisEnterprise_.name

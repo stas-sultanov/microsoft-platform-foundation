@@ -140,6 +140,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings__Storage_storageAccounts_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name
@@ -148,6 +149,7 @@ resource Insights_diagnosticSettings__Storage_storageAccounts_ 'Microsoft.Insigh
 	}
 ]
 
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings__Storage_storageAccounts__blobServices_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in resources.blobServices.Default.extensions.Insights.diagnosticSettings: {
 		name: extension.name

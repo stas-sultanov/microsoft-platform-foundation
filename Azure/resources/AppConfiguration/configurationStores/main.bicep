@@ -31,7 +31,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity = {
+param identity resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.identity = {
 	type: 'None'
 }
 
@@ -70,7 +70,7 @@ param sku {
 }
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.tags
+param tags resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.tags
 
 /* VARIABLES */
 
@@ -78,7 +78,7 @@ var isSoftDeleteAndPurgeProtectionSupported = sku.name == 'Premium' || sku.name 
 
 /* RESOURCES */
 
-// to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview' = {
 	identity: identity
 	location: location
@@ -118,6 +118,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name
@@ -132,7 +133,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = AppConfiguration_configurationStores_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity? = AppConfiguration_configurationStores_.?identity
+output identity resourceOutput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.identity? = AppConfiguration_configurationStores_.?identity
 
 @description('The name.')
 output name string = AppConfiguration_configurationStores_.name

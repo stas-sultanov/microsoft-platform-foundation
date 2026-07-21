@@ -19,17 +19,17 @@ param name string
 param parentName string
 
 @description('The configurable properties.')
-param properties resourceInput<'Microsoft.Compute/galleries/applications@2024-03-03'>.properties
+param properties resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.properties
 
 /* EXISTING RESOURCES */
 
-resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-03-03' existing = {
+resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
-resource Compute_galleries_applications_ 'Microsoft.Compute/galleries/applications@2025-03-03' = {
+resource Compute_galleries_applications_ 'Microsoft.Compute/galleries/applications@2025-12-03' = {
 	location: location
 	name: name
 	parent: Compute_galleries_

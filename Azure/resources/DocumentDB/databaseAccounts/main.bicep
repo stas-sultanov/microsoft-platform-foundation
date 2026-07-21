@@ -72,6 +72,7 @@ param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.tag
 
 /* RESOURCES */
 
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' = {
 	identity: identity
 	kind: 'GlobalDocumentDB'
@@ -125,6 +126,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name
@@ -139,7 +141,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = DocumentDB_databaseAccounts_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts@2025-10-15'>.identity? = DocumentDB_databaseAccounts_.?identity
+output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.identity? = DocumentDB_databaseAccounts_.?identity
 
 @description('The name.')
 output name string = DocumentDB_databaseAccounts_.name

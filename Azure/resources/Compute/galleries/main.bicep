@@ -27,7 +27,7 @@ param tags resourceInput<'Microsoft.Compute/galleries@2025-03-03'>.tags
 
 /* RESOURCES */
 
-resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-03-03' = {
+resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' = {
 	location: location
 	name: name
 	properties: properties

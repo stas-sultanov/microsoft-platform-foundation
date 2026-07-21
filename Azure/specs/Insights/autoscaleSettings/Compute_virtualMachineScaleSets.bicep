@@ -121,7 +121,7 @@ param tags resourceInput<'Microsoft.Insights/autoscaleSettings@2022-10-01'>.tags
 
 /* EXISTING RESOURCES */
 
-resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2025-11-01' existing = {
+resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' existing = {
 	name: properties.virtualMachineScaleSetId.name
 	scope: resourceGroup(
 		properties.virtualMachineScaleSetId.subscriptionId,
@@ -174,6 +174,7 @@ resource Insights_autoscaleSettings_ 'Microsoft.Insights/autoscaleSettings@2022-
 
 /* EXTENSIONS */
 
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for extension in extensions.Insights.diagnosticSettings: {
 		name: extension.name
