@@ -30,6 +30,9 @@ param extensions {
 @minLength(3)
 param name string
 
+@description('The name of the parent Microsoft.Storage/storageAccounts resource.')
+param parentAccountName string
+
 @description('The configurable properties.')
 @sealed()
 param properties {
@@ -40,9 +43,6 @@ param properties {
 	immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.immutableStorageWithVersioning?
 	metadata: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.metadata?
 }
-
-@description('The name of the parent Microsoft.Storage/storageAccounts resource.')
-param parentAccountName string
 
 @sealed()
 param resources {
