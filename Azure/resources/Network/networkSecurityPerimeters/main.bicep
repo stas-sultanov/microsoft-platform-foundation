@@ -17,19 +17,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
-/* TYPES */
-
-type ResourceAssociationResource = {
-	@description('The resource name.')
-	name: string
-	@description('Properties of the NSP resource association.')
-	properties: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties
-}
-
-type Resources = {
-	@description('The array of resource associations.')
-	resourceAssociations: ResourceAssociationResource[]
-}
+import * as NetworkSecurityPerimeters from '../../../library/Network/networkSecurityPerimeters.bicep'
 
 /* PARAMETERS */
 
@@ -51,8 +39,9 @@ param location string
 param name string
 
 @description('The child resources settings.')
-param resources Resources = {
-	resourceAssociations: []
+@sealed()
+param resources {
+	resourceAssociations: NetworkSecurityPerimeters.ResourceAssociationChildResource[]
 }
 
 @description('The tags.')
@@ -104,11 +93,3 @@ output id string = Network_networkSecurityPerimeters_.id
 
 @description('The name.')
 output name string = Network_networkSecurityPerimeters_.name
-
-@description('The ids of created resource associations.')
-output resourceAssociationIds string[] = [
-	for i in range(
-		0,
-		length(resources.resourceAssociations)
-	): Network_networkSecurityPerimeters_resourceAssociations_[i].id
-]

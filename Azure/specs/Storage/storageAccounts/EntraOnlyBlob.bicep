@@ -35,6 +35,7 @@ type StorageAccountPropertiesInput = {
 	immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.immutableStorageWithVersioning?
 	isHnsEnabled: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.isHnsEnabled?
 	networkAcls: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.networkAcls?
+	@description('The network access mode.')
 	publicNetworkAccess: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.publicNetworkAccess?
 	routingPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.routingPreference?
 }

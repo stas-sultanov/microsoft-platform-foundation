@@ -48,7 +48,7 @@ param name string
 param properties {
 	@description('Specifies whether to enable purge protection on the configuration store. Requires: sku.name == \'Premium\' or sku.name == \'Standard\'.')
 	enablePurgeProtection: bool?
-	@description('Control permission for data plane traffic coming from public networks while private endpoint is enabled.')
+	@description('The network access mode.')
 	publicNetworkAccess: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.properties.publicNetworkAccess
 	@description('The amount of time in days that the configuration store will be retained when it is soft deleted. Requires: sku.name == \'Premium\' or sku.name == \'Standard\'.')
 	@maxValue(7)

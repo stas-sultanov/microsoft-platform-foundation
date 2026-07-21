@@ -50,7 +50,7 @@ param properties {
 	}
 	@description('Specifies whether or not public endpoint access is allowed for this server.')
 	isIPv6Enabled: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.isIPv6Enabled
-	@description('Specifies whether or not public endpoint access is allowed for this server.')
+	@description('The network access mode.')
 	publicNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.publicNetworkAccess
 	@description('The resource id of a user assigned identity to be used by default.')
 	primaryUserAssignedIdentityId: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.primaryUserAssignedIdentityId

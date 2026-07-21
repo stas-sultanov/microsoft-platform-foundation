@@ -63,7 +63,7 @@ param properties {
 		}
 		*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.locations[*]
 	}
-	@description('Whether requests from Public Network are allowed.')
+	@description('The network access mode.')
 	publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.publicNetworkAccess
 }
 

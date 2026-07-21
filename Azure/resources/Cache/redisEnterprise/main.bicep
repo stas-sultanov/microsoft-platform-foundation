@@ -44,7 +44,7 @@ param properties {
 	highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2025-07-01'>.properties.highAvailability
 	@description('Cluster-level maintenance configuration.')
 	maintenanceConfiguration: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.maintenanceConfiguration
-	@description('Whether or not public network traffic can access the Redis cluster.')
+	@description('The network access mode.')
 	publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2025-07-01'>.properties.publicNetworkAccess
 }
 

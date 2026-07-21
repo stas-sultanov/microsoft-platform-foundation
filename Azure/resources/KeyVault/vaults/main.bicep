@@ -17,8 +17,6 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
-import * as KeyVaultVaults from '../../../library/KeyVault/vaults.bicep'
-
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -39,10 +37,27 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties KeyVaultVaults.PropertiesInput
+@sealed()
+param properties {
+	@description('Specifies whether protection against purge is enabled for this vault.')
+	enablePurgeProtection: bool
+	@description('Specifies whether the \'soft delete\' functionality is enabled for this key vault.')
+	enableSoftDelete: bool
+	@description('Rules governing the accessibility of the key vault from specific network locations.')
+	networkAcls: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.properties.networkAcls?
+	@description('The network access mode.')
+	publicNetworkAccess:
+		| 'Enabled'
+		| 'Disabled'
+		| 'SecuredByPerimeter'
+	@description('The \'soft delete\' data retention days.')
+	@maxValue(90)
+	@minValue(7)
+	softDeleteRetentionInDays: int?
+}
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.KeyVault/vaults@2024-11-01'>.tags
+param tags resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.tags
 
 /* RESOURCES */
 

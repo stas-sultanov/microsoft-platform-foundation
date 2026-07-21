@@ -54,7 +54,7 @@ param properties {
 	premiumMessagingPartitions: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.premiumMessagingPartitions?
 	@description('Private endpoint connections for the namespace.')
 	privateEndpointConnections: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.privateEndpointConnections?
-	@description('This determines if traffic is allowed over public network.')
+	@description('The network access mode.')
 	publicNetworkAccess: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.publicNetworkAccess
 	@description('Value that indicates whether this namespace is zone-redundant. Requires: sku.name == \'Premium\'.')
 	zoneRedundant: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.zoneRedundant
