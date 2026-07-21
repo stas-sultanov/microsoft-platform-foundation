@@ -13,7 +13,7 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import * as AppConfigurationConfigurationStores from '../../../../library/AppConfiguration/configurationStores.bicep'
+import * as AppConfigurationConfigurationStores from '../../../library/AppConfiguration/configurationStores.bicep'
 
 /* PARAMETERS */
 
