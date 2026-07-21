@@ -7,6 +7,16 @@ metadata author = {
 }
 metadata description = 'Provides reusable types for Microsoft.Network/networkSecurityPerimeters resources.'
 
+@description('The configuration of a Microsoft.Network/networkSecurityPerimeters/profiles/accessRules resource.')
+@export()
+@sealed()
+type AccessRuleChildResource = {
+	@description('The resource name.')
+	name: string
+	@description('Properties of the NSP access rule.')
+	properties: resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles/accessRules@2025-07-01'>.properties
+}
+
 @description('The configuration of a Microsoft.Network/networkSecurityPerimeters/resourceAssociations resource.')
 @export()
 @sealed()
