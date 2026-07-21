@@ -44,11 +44,24 @@ param name string
 @description('The configurable properties.')
 @sealed()
 param properties {
+	@description('The default data collection rule resource id.')
+	defaultDataCollectionRuleResourceId: string?
+	@description('The features of the workspace.')
+	features: {
+		@description('Whether to immediately purge data after 30 days. Requires: retentionInDays == 30.')
+		immediatePurgeDataOn30Days: bool?
+	}
+	@description('The network access type for ingestion.')
+	publicNetworkAccessForIngestion: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.publicNetworkAccessForIngestion
+	@description('The network access type for query.')
+	publicNetworkAccessForQuery: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.publicNetworkAccessForQuery
 	@description('The workspace data retention in days.')
 	@minValue(30)
 	retentionInDays: int
 	@description('The SKU of the workspace.')
 	sku: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.sku
+	@description('The daily volume cap for ingestion.')
+	workspaceCapping: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.workspaceCapping?
 }
 
 @description('The tags.')
@@ -61,16 +74,20 @@ resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspac
 	location: location
 	name: name
 	properties: {
+		defaultDataCollectionRuleResourceId: properties.?defaultDataCollectionRuleResourceId
 		features: {
 			disableLocalAuth: true
+			enableLogAccessUsingOnlyResourcePermissions: true
+			immediatePurgeDataOn30Days: properties.?features.?immediatePurgeDataOn30Days
 		}
+		publicNetworkAccessForIngestion: properties.?publicNetworkAccessForIngestion
+		publicNetworkAccessForQuery: properties.?publicNetworkAccessForQuery
 		retentionInDays: properties.retentionInDays
 		sku: properties.sku
+		workspaceCapping: properties.?workspaceCapping
 	}
 	tags: tags
 }
-
-/* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for extension in AuthorizationRoleAssignments.CreateArray(
