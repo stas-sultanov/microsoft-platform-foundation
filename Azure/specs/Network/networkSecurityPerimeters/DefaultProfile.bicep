@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Network/networkSecurityPerimeters resource and optionally configures extensions and resource associations.'
+metadata description = 'Provisions a Microsoft.Network/networkSecurityPerimeters resource with one profile and associations.'
 
 /* SCOPE */
 
@@ -17,7 +17,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
-import * as NetworkSecurityPerimeters from '../../../library/Network/networkSecurityPerimeters.bicep'
+import * as NetworkNetworkSecurityPerimeters from '../../../library/Network/networkSecurityPerimeters.bicep'
 
 /* PARAMETERS */
 
@@ -38,10 +38,28 @@ param location string
 @description('The name.')
 param name string
 
-@description('The child resources settings.')
+@description('The child resources.')
 @sealed()
 param resources {
-	resourceAssociations: NetworkSecurityPerimeters.ResourceAssociationChildResource[]
+	profiles: {
+		Default: {
+			@description('The name.')
+			name: string
+			@description('The child resources.')
+			resources: {
+				accessRules: NetworkNetworkSecurityPerimeters.AccessRuleChildResource[]
+			}
+		}
+	}
+	resourceAssociations: {
+		@description('The name.')
+		name: string
+		@description('The configurable properties.')
+		properties: {
+			accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.accessMode
+			privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.privateLinkResource
+		}
+	}[]
 }
 
 @description('The tags.')
@@ -56,32 +74,51 @@ resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPe
 	tags: tags
 }
 
+resource Network_networkSecurityPerimeters_profiles__Default 'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01' = {
+	name: resources.profiles.Default.name
+	parent: Network_networkSecurityPerimeters_
+	properties: {}
+}
+
+resource Network_networkSecurityPerimeters_profiles_accessRules__Default 'Microsoft.Network/networkSecurityPerimeters/profiles/accessRules@2025-07-01' = [
+	for item in resources.profiles.Default.resources.accessRules: {
+		name: item.name
+		parent: Network_networkSecurityPerimeters_profiles__Default
+		properties: item.properties
+	}
+]
+
 resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01' = [
-	for resource in resources.resourceAssociations: {
-		name: resource.name
+	for item in resources.resourceAssociations: {
+		name: item.name
 		parent: Network_networkSecurityPerimeters_
-		properties: resource.properties
+		properties: {
+			...item.properties
+			profile: {
+				id: Network_networkSecurityPerimeters_profiles__Default.id
+			}
+		}
 	}
 ]
 
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Network_networkSecurityPerimeters_.id,
 		extensions.?Authorization.?roleAssignments ?? []
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Network_networkSecurityPerimeters_
 	}
 ]
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
+	for item in extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
 		scope: Network_networkSecurityPerimeters_
 	}
 ]
@@ -93,3 +130,18 @@ output id string = Network_networkSecurityPerimeters_.id
 
 @description('The name.')
 output name string = Network_networkSecurityPerimeters_.name
+
+@description('The child resources.')
+output resources {
+	profiles: {
+		Default: {
+			name: string
+		}
+	}
+} = {
+	profiles: {
+		Default: {
+			name: resources.profiles.Default.name
+		}
+	}
+}

@@ -30,16 +30,16 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 
 @batchSize(1)
 resource CosmosAccount_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-03-15' = [
-	for principal in principals: {
+	for item in principals: {
 		name: guid(
 			subscription().id,
 			DocumentDB_databaseAccounts_.id,
 			roleDefinitionId,
-			principal.Id
+			item.Id
 		)
 		parent: DocumentDB_databaseAccounts_
 		properties: {
-			principalId: principal.Id
+			principalId: item.Id
 			roleDefinitionId: roleDefinitionId
 			scope: DocumentDB_databaseAccounts_.id
 		}

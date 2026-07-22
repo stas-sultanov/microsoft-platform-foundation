@@ -32,12 +32,12 @@ resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' existin
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Insights_components_.id,
 		roleAssignments
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Insights_components_
 	}
 ]

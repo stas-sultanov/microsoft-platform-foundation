@@ -32,12 +32,12 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		ContainerRegistry_registries_.id,
 		roleAssignments
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: ContainerRegistry_registries_
 	}
 ]

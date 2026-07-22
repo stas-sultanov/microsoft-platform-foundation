@@ -32,12 +32,12 @@ resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Insights_dataCollectionRules_.id,
 		roleAssignments
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Insights_dataCollectionRules_
 	}
 ]

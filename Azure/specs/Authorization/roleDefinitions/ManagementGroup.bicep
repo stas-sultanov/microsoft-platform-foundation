@@ -19,9 +19,9 @@ param definitionsProperties resourceInput<'Microsoft.Authorization/roleDefinitio
 /* VARIABLES */
 
 var definitions = [
-	for properties in definitionsProperties: {
-		name: sys.guid(properties.roleName)
-		properties: properties
+	for item in definitionsProperties: {
+		name: sys.guid(item.roleName)
+		properties: item
 	}
 ]
 
@@ -30,9 +30,9 @@ var scope = az.managementGroup()
 /* RESOURCES */
 
 resource Authorization_roleDefinitions_ 'Microsoft.Authorization/roleDefinitions@2022-04-01' = [
-	for definition in definitions: {
-		name: definition.name
-		properties: definition.properties
+	for item in definitions: {
+		name: item.name
+		properties: item.properties
 		scope: scope
 	}
 ]
@@ -41,5 +41,5 @@ resource Authorization_roleDefinitions_ 'Microsoft.Authorization/roleDefinitions
 
 @description('The names.')
 output names string[] = [
-	for definition in definitions: definition.name
+	for item in definitions: item.name
 ]

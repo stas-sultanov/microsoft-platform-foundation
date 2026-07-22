@@ -76,21 +76,21 @@ resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-02-01-prev
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Cache_redisEnterprise_.id,
 		extensions.?Authorization.?roleAssignments ?? []
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Cache_redisEnterprise_
 	}
 ]
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
+	for item in extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
 		scope: Cache_redisEnterprise_
 	}
 ]

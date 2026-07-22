@@ -136,21 +136,21 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		ContainerRegistry_registries_.id,
 		extensions.?Authorization.?roleAssignments ?? []
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: ContainerRegistry_registries_
 	}
 ]
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
+	for item in extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
 		scope: ContainerRegistry_registries_
 	}
 ]

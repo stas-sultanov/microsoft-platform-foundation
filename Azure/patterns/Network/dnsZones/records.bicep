@@ -34,33 +34,33 @@ resource Network_dnsZones_ 'Microsoft.Network/dnsZones@2018-05-01' existing = {
 /* RESOURCES */
 
 resource Network_dnsZones_A_ 'Microsoft.Network/dnsZones/A@2018-05-01' = [
-	for record in A: {
+	for item in A: {
 		parent: Network_dnsZones_
-		name: record.name
+		name: item.name
 		properties: {
 			ARecords: sys.map(
-				record.values,
+				item.values,
 				value => {
 					ipv4Address: value
 				}
 			)
-			TTL: record.ttl
+			TTL: item.ttl
 		}
 	}
 ]
 
 resource Network_dnsZones_NS_ 'Microsoft.Network/dnsZones/NS@2018-05-01' = [
-	for record in NS: {
+	for item in NS: {
 		parent: Network_dnsZones_
-		name: record.name
+		name: item.name
 		properties: {
 			NSRecords: sys.map(
-				record.values,
+				item.values,
 				value => {
 					nsdname: value
 				}
 			)
-			TTL: record.ttl
+			TTL: item.ttl
 		}
 	}
 ]

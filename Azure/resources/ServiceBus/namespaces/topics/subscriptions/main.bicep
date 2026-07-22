@@ -56,10 +56,10 @@ resource ServiceBus_namespaces_topics_subscriptions_ 'Microsoft.ServiceBus/names
 }
 
 resource ServiceBus_namespaces_topics_subscriptions_rules_ 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2026-01-01' = [
-	for resource in resources.?rules ?? []: {
-		name: resource.name
+	for item in resources.?rules ?? []: {
+		name: item.name
 		parent: ServiceBus_namespaces_topics_subscriptions_
-		properties: resource.properties
+		properties: item.properties
 	}
 ]
 

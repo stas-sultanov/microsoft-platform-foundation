@@ -54,28 +54,28 @@ resource Network_privateDnsZones_ 'Microsoft.Network/privateDnsZones@2024-06-01'
 }
 
 resource Network_privateDnsZones_A_ 'Microsoft.Network/privateDnsZones/A@2024-06-01' = [
-	for aRecord in resources.A: {
+	for item in resources.A: {
 		parent: Network_privateDnsZones_
-		name: aRecord.name
+		name: item.name
 		properties: {
 			aRecords: sys.map(
-				aRecord.values,
+				item.values,
 				value => {
 					ipv4Address: value
 				}
 			)
-			ttl: aRecord.ttl
+			ttl: item.ttl
 		}
 	}
 ]
 
 resource Network_privateDnsZones_virtualNetworkLinks_ 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = [
-	for resource in resources.virtualNetworkLinks: {
+	for item in resources.virtualNetworkLinks: {
 		location: location
-		name: resource.name
+		name: item.name
 		parent: Network_privateDnsZones_
-		properties: resource.properties
-		tags: resource.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 

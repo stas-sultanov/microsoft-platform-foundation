@@ -152,31 +152,31 @@ resource Sql_servers_databases__Master 'Microsoft.Sql/servers/databases@2025-01-
 }
 
 resource Sql_servers_firewallRules_ 'Microsoft.Sql/servers/firewallRules@2025-01-01' = [
-	for firewallRule in resources.firewallRules: {
-		name: firewallRule.name
+	for item in resources.firewallRules: {
+		name: item.name
 		parent: Sql_servers_
-		properties: firewallRule.properties
+		properties: item.properties
 	}
 ]
 
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Sql_servers_.id,
 		extensions.Authorization.roleAssignments
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Sql_servers_
 	}
 ]
 
 #disable-next-line use-recent-api-versions
 resource Sql_servers_databases__master__Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in resources.databases.Master.extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
+	for item in resources.databases.Master.extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
 		scope: Sql_servers_databases__Master
 	}
 ]

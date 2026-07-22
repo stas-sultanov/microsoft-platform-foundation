@@ -44,9 +44,9 @@ resource Network_networkSecurityPerimeters_profiles_ 'Microsoft.Network/networkS
 }
 
 resource Network_networkSecurityPerimeters_profiles_accessRules_ 'Microsoft.Network/networkSecurityPerimeters/profiles/accessRules@2025-07-01' = [
-	for rule in (resources.?accessRules ?? []): {
-		name: rule.name
+	for item in (resources.?accessRules ?? []): {
+		name: item.name
 		parent: Network_networkSecurityPerimeters_profiles_
-		properties: rule.properties
+		properties: item.properties
 	}
 ]

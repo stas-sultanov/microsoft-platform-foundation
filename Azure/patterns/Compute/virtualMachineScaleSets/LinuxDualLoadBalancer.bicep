@@ -249,29 +249,29 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Compute_virtualMachineScaleSets_.id,
 		extensions.?Authorization.?roleAssignments ?? []
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Compute_virtualMachineScaleSets_
 	}
 ]
 
 resource Insights_dataCollectionRuleAssociations_ 'Microsoft.Insights/dataCollectionRuleAssociations@2024-03-11' = [
-	for extension in extensions.Insights.dataCollectionRuleAssociations: {
-		name: extension.name
-		properties: extension.properties
+	for item in extensions.Insights.dataCollectionRuleAssociations: {
+		name: item.name
+		properties: item.properties
 		scope: Compute_virtualMachineScaleSets_
 	}
 ]
 
 resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurationAssignments@2023-04-01' = [
-	for extension in extensions.Maintenance.configurationAssignments: {
+	for item in extensions.Maintenance.configurationAssignments: {
 		location: location
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Compute_virtualMachineScaleSets_
 	}
 ]

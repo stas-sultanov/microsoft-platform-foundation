@@ -44,11 +44,11 @@ resource Network_networkSecurityPerimeters_profile_ 'Microsoft.Network/networkSe
 /* RESOURCES */
 
 resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01' = [
-	for association in resourceAssociations: {
-		name: association.name
+	for item in resourceAssociations: {
+		name: item.name
 		parent: Network_networkSecurityPerimeters_
 		properties: {
-			...association.properties
+			...item.properties
 			profile: {
 				id: Network_networkSecurityPerimeters_profile_.id
 			}

@@ -38,12 +38,12 @@ resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-07-01'
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Network_virtualNetworks_::subnets_.id,
 		roleAssignments
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Network_virtualNetworks_::subnets_
 	}
 ]

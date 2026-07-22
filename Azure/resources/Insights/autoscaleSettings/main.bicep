@@ -46,9 +46,9 @@ resource Insights_autoscaleSettings_ 'Microsoft.Insights/autoscaleSettings@2022-
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
+	for item in extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
 		scope: Insights_autoscaleSettings_
 	}
 ]

@@ -32,12 +32,12 @@ resource ContainerService_managedClusters_ 'Microsoft.ContainerService/managedCl
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		ContainerService_managedClusters_.id,
 		roleAssignments
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: ContainerService_managedClusters_
 	}
 ]

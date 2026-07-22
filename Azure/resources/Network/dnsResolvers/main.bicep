@@ -61,22 +61,22 @@ resource Network_dnsResolvers_ 'Microsoft.Network/dnsResolvers@2025-05-01' = {
 }
 
 resource Network_dnsResolvers_inboundEndpoints_ 'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01' = [
-	for resource in resources.inboundEndpoints: {
+	for item in resources.inboundEndpoints: {
 		location: location
-		name: resource.name
+		name: item.name
 		parent: Network_dnsResolvers_
-		properties: resource.properties
-		tags: resource.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 
 resource Network_dnsResolvers_outboundEndpoints_ 'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01' = [
-	for resource in resources.outboundEndpoints: {
+	for item in resources.outboundEndpoints: {
 		location: location
-		name: resource.name
+		name: item.name
 		parent: Network_dnsResolvers_
-		properties: resource.properties
-		tags: resource.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 

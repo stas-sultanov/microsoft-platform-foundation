@@ -86,17 +86,17 @@ resource Graph_applications_ 'Microsoft.Graph/applications@beta' = {
 }
 
 resource Graph_applications_federatedIdentityCredentials_ 'Microsoft.Graph/applications/federatedIdentityCredentials@beta' = [
-	for credential in (settings.?federatedIdentityCredentials ?? []): {
+	for item in (settings.?federatedIdentityCredentials ?? []): {
 		audiences: [
 			'api://AzureADTokenExchange'
 		]
 		dependsOn: [
 			Graph_applications_
 		]
-		description: credential.description
-		issuer: credential.issuer
-		name: '${uniqueName}/${credential.id}'
-		subject: credential.subject
+		description: item.description
+		issuer: item.issuer
+		name: '${uniqueName}/${item.id}'
+		subject: item.subject
 	}
 ]
 

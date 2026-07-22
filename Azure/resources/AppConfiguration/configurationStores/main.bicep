@@ -108,21 +108,21 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		AppConfiguration_configurationStores_.id,
 		extensions.?Authorization.?roleAssignments ?? []
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: AppConfiguration_configurationStores_
 	}
 ]
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
+	for item in extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
 		scope: AppConfiguration_configurationStores_
 	}
 ]

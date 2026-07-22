@@ -35,9 +35,9 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 
 // to use new features, preview version of resource is required
 resource AppConfiguration_configurationStores_keyValues_ 'Microsoft.AppConfiguration/configurationStores/keyValues@2024-06-01' = [
-	for resource in resources: {
-		name: resource.name
+	for item in resources: {
+		name: item.name
 		parent: AppConfiguration_configurationStores_
-		properties: resource.properties
+		properties: item.properties
 	}
 ]

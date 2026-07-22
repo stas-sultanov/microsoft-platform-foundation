@@ -32,12 +32,12 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Storage_storageAccounts_.id,
 		roleAssignments
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Storage_storageAccounts_
 	}
 ]

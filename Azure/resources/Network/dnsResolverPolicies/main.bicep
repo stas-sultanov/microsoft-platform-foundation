@@ -69,22 +69,22 @@ resource Network_dnsResolverPolicies_ 'Microsoft.Network/dnsResolverPolicies@202
 }
 
 resource Network_dnsResolverPolicies_dnsSecurityRules_ 'Microsoft.Network/dnsResolverPolicies/dnsSecurityRules@2025-05-01' = [
-	for resource in resources.dnsSecurityRules: {
+	for item in resources.dnsSecurityRules: {
 		location: location
-		name: resource.name
+		name: item.name
 		parent: Network_dnsResolverPolicies_
-		properties: resource.properties
-		tags: resource.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 
 resource Network_dnsResolverPolicies_virtualNetworkLinks_ 'Microsoft.Network/dnsResolverPolicies/virtualNetworkLinks@2025-05-01' = [
-	for resource in resources.virtualNetworkLinks: {
+	for item in resources.virtualNetworkLinks: {
 		location: location
-		name: resource.name
+		name: item.name
 		parent: Network_dnsResolverPolicies_
-		properties: resource.properties
-		tags: resource.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 
@@ -92,9 +92,9 @@ resource Network_dnsResolverPolicies_virtualNetworkLinks_ 'Microsoft.Network/dns
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
+	for item in extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
 		scope: Network_dnsResolverPolicies_
 	}
 ]

@@ -129,30 +129,30 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Storage_storageAccounts_.id,
 		extensions.?Authorization.?roleAssignments ?? []
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Storage_storageAccounts_
 	}
 ]
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings__Storage_storageAccounts_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
+	for item in extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
 		scope: Storage_storageAccounts_
 	}
 ]
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings__Storage_storageAccounts__blobServices_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-	for extension in resources.blobServices.Default.extensions.Insights.diagnosticSettings: {
-		name: extension.name
-		properties: extension.properties
+	for item in resources.blobServices.Default.extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
 		scope: Storage_storageAccounts_::blobServices_
 	}
 ]

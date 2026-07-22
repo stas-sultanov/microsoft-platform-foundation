@@ -32,12 +32,12 @@ resource DataFactory_factories_ 'Microsoft.DataFactory/factories@2018-06-01' exi
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		DataFactory_factories_.id,
 		roleAssignments
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: DataFactory_factories_
 	}
 ]

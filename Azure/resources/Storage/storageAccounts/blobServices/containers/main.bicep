@@ -81,12 +81,12 @@ resource Storage_storageAccounts_blobServices_containers_immutabilityPolicies__D
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		Storage_storageAccounts_blobServices_containers_.id,
 		extensions.?Authorization.?roleAssignments ?? []
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: Storage_storageAccounts_blobServices_containers_
 	}
 ]

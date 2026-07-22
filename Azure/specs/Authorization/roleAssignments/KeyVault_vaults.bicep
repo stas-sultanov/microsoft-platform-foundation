@@ -32,12 +32,12 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-02-01' existing = {
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-	for extension in AuthorizationRoleAssignments.CreateArray(
+	for item in AuthorizationRoleAssignments.CreateArray(
 		KeyVault_vaults_.id,
 		roleAssignments
 	): {
-		name: extension.name
-		properties: extension.properties
+		name: item.name
+		properties: item.properties
 		scope: KeyVault_vaults_
 	}
 ]
