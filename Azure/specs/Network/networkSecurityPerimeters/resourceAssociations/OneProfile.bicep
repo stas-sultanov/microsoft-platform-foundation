@@ -5,23 +5,30 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Network/networkSecurityPerimeters/resourceAssociations resource.'
+metadata description = 'Provisions Microsoft.Network/networkSecurityPerimeters/resourceAssociations resources and assigns them to one existing profile.'
 
 /* SCOPE */
 
 targetScope = 'resourceGroup'
-
-/* IMPORTS */
-
-import * as NetworkNetworkSecurityPerimeters from '../../../../library/Network/networkSecurityPerimeters.bicep'
 
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.Network/networkSecurityPerimeters resource.')
 param parentName string
 
-@description('The child resources.')
-param resources NetworkNetworkSecurityPerimeters.ResourceAssociationChildResource[]
+@description('The name of the Microsoft.Network/networkSecurityPerimeters/profiles resource under the parent perimeter specified by parentName.')
+param parentProfileName string
+
+@description('The collection of resource associations.')
+param resourceAssociations {
+	@description('The resource name.')
+	name: string
+	@description('The configurable properties.')
+	properties: {
+		accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.accessMode
+		privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.privateLinkResource
+	}
+}[]
 
 /* EXISTING RESOURCES */
 
@@ -29,12 +36,22 @@ resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPe
 	name: parentName
 }
 
+resource Network_networkSecurityPerimeters_profile_ 'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01' existing = {
+	name: parentProfileName
+	parent: Network_networkSecurityPerimeters_
+}
+
 /* RESOURCES */
 
 resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01' = [
-	for resource in resources: {
-		name: resource.name
+	for association in resourceAssociations: {
+		name: association.name
 		parent: Network_networkSecurityPerimeters_
-		properties: resource.properties
+		properties: {
+			...association.properties
+			profile: {
+				id: Network_networkSecurityPerimeters_profile_.id
+			}
+		}
 	}
 ]
