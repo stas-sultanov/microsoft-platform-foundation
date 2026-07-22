@@ -13,8 +13,6 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import * as ActionGroups from '../../../library/Insights/actionGroups.bicep'
-
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
 /* PARAMETERS */
@@ -34,7 +32,15 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties ActionGroups.PropertiesInput
+@sealed()
+param properties {
+	@description('Indicates whether this action group is enabled.')
+	enabled: bool
+	@description('The short name of the action group.')
+	groupShortName: resourceInput<'Microsoft.Insights/actionGroups@2023-01-01'>.properties.groupShortName
+	@description('The webhook receivers.')
+	webhookReceivers: resourceInput<'Microsoft.Insights/actionGroups@2023-01-01'>.properties.webhookReceivers
+}
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.Insights/actionGroups@2023-01-01'>.tags
@@ -44,11 +50,7 @@ param tags resourceInput<'Microsoft.Insights/actionGroups@2023-01-01'>.tags
 resource Insights_actionGroups_ 'Microsoft.Insights/actionGroups@2023-01-01' = {
 	location: location
 	name: name
-	properties: {
-		enabled: properties.?enabled ?? true
-		groupShortName: properties.groupShortName
-		webhookReceivers: properties.webhookReceivers
-	}
+	properties: properties
 	tags: tags
 }
 
