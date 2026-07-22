@@ -43,10 +43,9 @@ resource Maintenance_maintenanceConfigurations_ 'Microsoft.Maintenance/maintenan
 		}
 		maintenanceScope: 'Resource'
 		maintenanceWindow: {
+			...properties.maintenanceWindow
 			duration: '05:00' // This is the hard requirement on the date of writing this
 			recurEvery: '1Day' // This is the hard requirement on the date of writing this
-			startDateTime: properties.maintenanceWindow.startDateTime
-			timeZone: properties.maintenanceWindow.timeZone
 		}
 		visibility: properties.?visibility ?? 'Custom'
 	}

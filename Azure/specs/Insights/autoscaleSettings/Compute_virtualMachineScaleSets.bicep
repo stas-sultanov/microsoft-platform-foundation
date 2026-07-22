@@ -150,16 +150,9 @@ resource Insights_autoscaleSettings_ 'Microsoft.Insights/autoscaleSettings@2022-
 					profile.rules,
 					rule => {
 						metricTrigger: {
-							dividePerInstance: rule.metricTrigger.dividePerInstance
-							metricName: rule.metricTrigger.metricName
+								...rule.metricTrigger
 							metricNamespace: 'Microsoft.Compute/virtualMachineScaleSets'
 							metricResourceUri: Compute_virtualMachineScaleSets_.id
-							operator: rule.metricTrigger.operator
-							statistic: rule.metricTrigger.statistic
-							threshold: rule.metricTrigger.threshold
-							timeAggregation: rule.metricTrigger.timeAggregation
-							timeGrain: rule.metricTrigger.timeGrain
-							timeWindow: rule.metricTrigger.timeWindow
 						}
 						scaleAction: rule.scaleAction
 					}

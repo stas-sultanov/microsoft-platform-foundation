@@ -107,19 +107,17 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 	kind: 'StorageV2'
 	location: location
 	name: name
-	properties: union(
-		properties,
-		{
-			allowBlobPublicAccess: false
-			allowSharedKeyAccess: false
-			defaultToOAuthAuthentication: true
-			isLocalUserEnabled: false
-			isNfsV3Enabled: false
-			isSftpEnabled: false
-			minimumTlsVersion: 'TLS1_2'
-			supportsHttpsTrafficOnly: true
-		}
-	)
+	properties: {
+		...properties
+		allowBlobPublicAccess: false
+		allowSharedKeyAccess: false
+		defaultToOAuthAuthentication: true
+		isLocalUserEnabled: false
+		isNfsV3Enabled: false
+		isSftpEnabled: false
+		minimumTlsVersion: 'TLS1_2'
+		supportsHttpsTrafficOnly: true
+	}
 	sku: sku
 	tags: tags
 	zones: zones

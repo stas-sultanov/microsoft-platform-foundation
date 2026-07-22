@@ -54,10 +54,8 @@ resource Maintenance_maintenanceConfigurations_ 'Microsoft.Maintenance/maintenan
 		}
 		maintenanceScope: 'InGuestPatch'
 		maintenanceWindow: {
+			...properties.maintenanceWindow
 			duration: '04:00' // This is the hard requirement on the date of writing this
-			recurEvery: properties.maintenanceWindow.recurEvery
-			startDateTime: properties.maintenanceWindow.startDateTime
-			timeZone: properties.maintenanceWindow.timeZone
 		}
 		visibility: properties.?visibility ?? 'Custom'
 	}
