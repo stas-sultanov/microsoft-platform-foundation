@@ -74,17 +74,12 @@ resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspac
 	location: location
 	name: name
 	properties: {
-		defaultDataCollectionRuleResourceId: properties.?defaultDataCollectionRuleResourceId
+		...properties
 		features: {
 			disableLocalAuth: true
 			enableLogAccessUsingOnlyResourcePermissions: true
-			immediatePurgeDataOn30Days: properties.?features.?immediatePurgeDataOn30Days
+			immediatePurgeDataOn30Days: properties.features.?immediatePurgeDataOn30Days
 		}
-		publicNetworkAccessForIngestion: properties.?publicNetworkAccessForIngestion
-		publicNetworkAccessForQuery: properties.?publicNetworkAccessForQuery
-		retentionInDays: properties.retentionInDays
-		sku: properties.sku
-		workspaceCapping: properties.?workspaceCapping
 	}
 	tags: tags
 }

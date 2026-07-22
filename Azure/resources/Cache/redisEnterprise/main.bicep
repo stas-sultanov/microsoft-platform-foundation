@@ -65,10 +65,8 @@ resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-02-01-prev
 	location: location
 	name: name
 	properties: {
-		highAvailability: properties.highAvailability
-		maintenanceConfiguration: properties.maintenanceConfiguration
+		...properties
 		minimumTlsVersion: '1.2'
-		publicNetworkAccess: properties.publicNetworkAccess
 	}
 	sku: sku
 	tags: tags

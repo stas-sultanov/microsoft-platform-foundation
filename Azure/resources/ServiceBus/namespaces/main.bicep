@@ -77,16 +77,12 @@ resource ServiceBus_namespaces_ 'Microsoft.ServiceBus/namespaces@2026-01-01' = {
 	location: location
 	name: name
 	properties: {
-		alternateName: properties.?alternateName
+		...properties
 		disableLocalAuth: true
-		geoDataReplication: properties.?geoDataReplication
-		ipAddressType: properties.ipAddressType
 		minimumTlsVersion: '1.3'
 		premiumMessagingPartitions: isPremiumSku
 			? properties.?premiumMessagingPartitions
 			: null
-		privateEndpointConnections: properties.?privateEndpointConnections
-		publicNetworkAccess: properties.publicNetworkAccess
 		zoneRedundant: isPremiumSku
 			? properties.zoneRedundant
 			: false
