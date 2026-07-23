@@ -25,6 +25,11 @@ param extensions {
 	}?
 }?
 
+@description('The identity.')
+param identity resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.identity = {
+	type: 'None'
+}
+
 @description('The geo-location.')
 param location string
 
@@ -37,9 +42,9 @@ param properties {
 	@description('Indicates whether this action group is enabled.')
 	enabled: bool
 	@description('The short name of the action group.')
-	groupShortName: resourceInput<'Microsoft.Insights/actionGroups@2023-01-01'>.properties.groupShortName
+	groupShortName: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.properties.groupShortName
 	@description('The webhook receivers.')
-	webhookReceivers: resourceInput<'Microsoft.Insights/actionGroups@2023-01-01'>.properties.webhookReceivers
+	webhookReceivers: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.properties.webhookReceivers
 }
 
 @description('The tags.')
@@ -47,7 +52,9 @@ param tags resourceInput<'Microsoft.Insights/actionGroups@2023-01-01'>.tags
 
 /* RESOURCES */
 
-resource Insights_actionGroups_ 'Microsoft.Insights/actionGroups@2023-01-01' = {
+#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+resource Insights_actionGroups_ 'Microsoft.Insights/actionGroups@2024-10-01-preview' = {
+	identity: identity
 	location: location
 	name: name
 	properties: properties
@@ -71,6 +78,9 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 
 @description('The id.')
 output id string = Insights_actionGroups_.id
+
+@description('The identity.')
+output identity resourceOutput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.identity? = Insights_actionGroups_.?identity
 
 @description('The name.')
 output name string = Insights_actionGroups_.name
