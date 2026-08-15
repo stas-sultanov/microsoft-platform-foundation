@@ -13,14 +13,6 @@ import {
 	Resource as InsightsDiagnosticSetting
 } from '../../../library/Insights/diagnosticSettings.bicep'
 
-/* TYPES */
-
-@export()
-type Properties = {
-	@description('The id of the destination Log Analytics workspace')
-	workspaceId: string
-}
-
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -42,7 +34,10 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties Properties
+param properties {
+	@description('The id of the destination Log Analytics workspace')
+	workspaceId: string
+}
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags

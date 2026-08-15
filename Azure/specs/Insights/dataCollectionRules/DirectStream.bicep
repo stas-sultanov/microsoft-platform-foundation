@@ -13,17 +13,20 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import {
-	Resource as InsightsDiagnosticSetting
-} from '../../../library/Insights/diagnosticSettings.bicep'
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
+import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
 
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
 	Insights: {
-		diagnosticSettings: InsightsDiagnosticSetting[]
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
@@ -36,6 +39,8 @@ param name string
 @description('The configurable properties.')
 @sealed()
 param properties {
+	@description('The resource ID of the data collection endpoint that this rule can be used with.')
+	dataCollectionEndpointId: string?
 	@description('Data flow configuration.')
 	dataFlow: {
 		@description('The stream name used in destinations.')
@@ -64,11 +69,11 @@ param tags resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.ta
 /* RESOURCES */
 
 resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2024-03-11' = {
-	kind: 'Direct'
+	kind: 'Direct' // mandatory setting, but not specified in the api spec
 	location: location
 	name: name
 	properties: {
-		dataCollectionEndpointId: null // No data collection endpoint is used for direct ingestion.
+		dataCollectionEndpointId: properties.?dataCollectionEndpointId
 		dataFlows: [
 			{
 				destinations: properties.dataFlow.destinations
@@ -91,6 +96,17 @@ resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2
 }
 
 /* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for item in AuthorizationRoleAssignments.CreateArray(
+		Insights_dataCollectionRules_.id,
+		extensions.?Authorization.?roleAssignments ?? []
+	): {
+		name: item.name
+		properties: item.properties
+		scope: Insights_dataCollectionRules_
+	}
+]
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
