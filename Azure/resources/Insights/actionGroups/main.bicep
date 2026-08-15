@@ -48,11 +48,11 @@ param properties {
 }
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Insights/actionGroups@2023-01-01'>.tags
+param tags resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.tags
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // Managed identity support is available only in the preview API.
 resource Insights_actionGroups_ 'Microsoft.Insights/actionGroups@2024-10-01-preview' = {
 	identity: identity
 	location: location

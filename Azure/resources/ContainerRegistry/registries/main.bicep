@@ -27,7 +27,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.identity = {
+param identity resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.identity = {
 	type: 'None'
 }
 
@@ -51,33 +51,33 @@ param properties {
 	@description('Whether or not Tasks allowed to bypass the network rules for this container registry. Requires: sku.name == \'Premium\'.')
 	networkRuleBypassAllowedForTasks: bool?
 	@description('Whether to allow trusted Azure services to access a network restricted registry. Requires: sku.name == \'Premium\'.')
-	networkRuleBypassOptions: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.networkRuleBypassOptions?
+	networkRuleBypassOptions: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.networkRuleBypassOptions?
 	@description('The network rule set. Requires: sku.name == \'Premium\'.')
-	networkRuleSet: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.networkRuleSet?
+	networkRuleSet: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.networkRuleSet?
 	@description('The policies.')
 	policies: {
 		@description('The export policy. Requires: sku.name == \'Premium\' && properties.publicNetworkAccess == \'Disabled\'.')
-		exportPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.policies.exportPolicy
+		exportPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.policies.exportPolicy
 		@description('The quarantine policy.')
-		quarantinePolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.policies.quarantinePolicy
+		quarantinePolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.policies.quarantinePolicy
 		@description('The retention policy. Requires: sku.name == \'Premium\'.')
-		retentionPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.policies.retentionPolicy
+		retentionPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.policies.retentionPolicy
 		@description('The soft-delete policy.')
 		softDeletePolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.policies.softDeletePolicy
 	}
 	@description('The network access mode.')
-	publicNetworkAccess: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.publicNetworkAccess
+	publicNetworkAccess: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.publicNetworkAccess
 	@description('Whether or not regional endpoints are enabled.')
 	regionalEndpoints: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.regionalEndpoints
 	@description('Whether or not zone redundancy is enabled. Requires: sku.name == \'Premium\'.')
-	zoneRedundancy: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.properties.zoneRedundancy
+	zoneRedundancy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.zoneRedundancy
 }
 
 @description('The SKU.')
-param sku resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.sku
+param sku resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.sku
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.tags
+param tags resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.tags
 
 /* VARIABLES */
 
@@ -86,7 +86,7 @@ var isZoneRedundancySupported = isPremiumSku
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // endpointProtocol, metadataSearch, and regionalEndpoints are available only in the preview API.
 resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2026-03-01-preview' = {
 	identity: identity
 	location: location
@@ -146,7 +146,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // 2021-05-01-preview is the newest Diagnostic Settings API; the newest stable version is 2016-09-01.
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name
@@ -161,7 +161,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = ContainerRegistry_registries_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.identity? = ContainerRegistry_registries_.?identity
+output identity resourceOutput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.identity? = ContainerRegistry_registries_.?identity
 
 @description('The name.')
 output name string = ContainerRegistry_registries_.name

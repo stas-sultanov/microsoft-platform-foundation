@@ -28,10 +28,10 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties resourceInput<'Microsoft.Network/virtualNetworks@2025-05-01'>.properties
+param properties resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Network/virtualNetworks@2025-05-01'>.tags
+param tags resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.tags
 
 /* RESOURCES */
 

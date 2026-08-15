@@ -32,15 +32,15 @@ type Extensions = {
 
 type Properties = {
 	@description('Policy for automatic repairs.')
-	automaticRepairsPolicy: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.properties.automaticRepairsPolicy
+	automaticRepairsPolicy: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.automaticRepairsPolicy
 	@description('The virtual machine profile.')
 	virtualMachineProfile: {
 		@description('Specifies a collection of settings for extensions installed on virtual machines in the scale set.')
-		extensionProfile: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.properties.virtualMachineProfile.extensionProfile
+		extensionProfile: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.extensionProfile
 		@description('Specifies properties of the network interfaces of the virtual machines in the scale set.')
 		networkProfile: {
 			@description('A reference to a load balancer probe used to determine the health of an instance in the virtual machine scale set.')
-			healthProbe: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.properties.virtualMachineProfile.networkProfile.healthProbe
+			healthProbe: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.networkProfile.healthProbe
 			@description('The list of network configurations.')
 			networkInterfaceConfigurations: {
 				Default: {
@@ -93,13 +93,13 @@ type Properties = {
 	@description('Specifies the storage settings for the virtual machine disks.')
 	storageProfile: {
 		@description('Specifies information about the image to use.')
-		imageReference: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.properties.virtualMachineProfile.storageProfile.imageReference
+		imageReference: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.storageProfile.imageReference
 		@description('Specifies information about the operating system disk used by the virtual machines in the scale set.')
 		osDisk: {
 			@description('The managed disk parameters.')
 			managedDisk: {
 				@description('Specifies the storage account type for the managed disk. NOTE: UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk.')
-				storageAccountType: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.properties.virtualMachineProfile.storageProfile.osDisk.managedDisk.storageAccountType
+				storageAccountType: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.storageProfile.osDisk.managedDisk.storageAccountType
 			}
 		}
 	}
@@ -116,7 +116,7 @@ type SubResource = {
 param extensions Extensions
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.identity = {
+param identity resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity = {
 	type: 'None'
 }
 
@@ -130,10 +130,10 @@ param name string
 param properties Properties
 
 @description('The sku.')
-param sku resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.sku
+param sku resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.sku
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.tags
+param tags resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.tags
 
 @description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
 param zones string[]
@@ -282,7 +282,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 output id string = Compute_virtualMachineScaleSets_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Compute/virtualMachineScaleSets@2024-11-01'>.identity? = Compute_virtualMachineScaleSets_.?identity
+output identity resourceOutput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity? = Compute_virtualMachineScaleSets_.?identity
 
 @description('The name.')
 output name string = Compute_virtualMachineScaleSets_.name

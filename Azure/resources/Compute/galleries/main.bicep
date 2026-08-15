@@ -20,10 +20,10 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties resourceInput<'Microsoft.Compute/galleries@2025-03-03'>.properties
+param properties resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.properties
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Compute/galleries@2025-03-03'>.tags
+param tags resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.tags
 
 /* RESOURCES */
 

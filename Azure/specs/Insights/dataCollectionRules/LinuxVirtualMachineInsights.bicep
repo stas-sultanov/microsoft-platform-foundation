@@ -31,7 +31,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.Insights/dataCollectionRules@2023-03-11'>.identity = {
+param identity resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.identity = {
 	type: 'None'
 }
 
@@ -45,7 +45,7 @@ param name string
 param properties Properties
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Insights/dataCollectionRules@2023-03-11'>.tags
+param tags resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags
 
 /* RESOURCES */
 
@@ -110,7 +110,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = Insights_dataCollectionRules_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Insights/dataCollectionRules@2023-03-11'>.identity? = Insights_dataCollectionRules_.?identity
+output identity resourceOutput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.identity? = Insights_dataCollectionRules_.?identity
 
 @description('The name.')
 output name string = Insights_dataCollectionRules_.name

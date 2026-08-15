@@ -43,13 +43,13 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties resourceInput<'Microsoft.Network/dnsResolvers@2024-07-01'>.properties
+param properties resourceInput<'Microsoft.Network/dnsResolvers@2025-05-01'>.properties
 
 @description('The child resources settings.')
 param resources Resources
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Network/dnsResolvers@2024-07-01'>.tags
+param tags resourceInput<'Microsoft.Network/dnsResolvers@2025-05-01'>.tags
 
 /* RESOURCES */
 

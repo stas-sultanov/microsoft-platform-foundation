@@ -14,7 +14,7 @@ targetScope = 'subscription'
 /* PARAMETERS */
 
 @description('Collection of role eligibility schedule request properties.')
-param requestsProperties resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2022-04-01-preview'>.properties[]
+param requestsProperties resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview'>.properties[]
 
 /* VARIABLES */
 

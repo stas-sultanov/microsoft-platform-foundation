@@ -31,7 +31,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.identity = {
+param identity resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity = {
 	type: 'None'
 }
 
@@ -70,7 +70,7 @@ param sku {
 }
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.tags
+param tags resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.tags
 
 /* VARIABLES */
 
@@ -133,7 +133,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = AppConfiguration_configurationStores_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.identity? = AppConfiguration_configurationStores_.?identity
+output identity resourceOutput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity? = AppConfiguration_configurationStores_.?identity
 
 @description('The name.')
 output name string = AppConfiguration_configurationStores_.name

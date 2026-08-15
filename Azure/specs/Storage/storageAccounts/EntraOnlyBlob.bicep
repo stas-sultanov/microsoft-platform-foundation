@@ -54,7 +54,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.Storage/storageAccounts@2025-06-01'>.identity = {
+param identity resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.identity = {
 	type: 'None'
 }
 

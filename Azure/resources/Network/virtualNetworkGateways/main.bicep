@@ -36,7 +36,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-01-01'>.identity = {
+param identity resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.identity = {
 	type: 'None'
 }
 
@@ -47,10 +47,10 @@ param location string
 param name string
 
 @description('The properties.')
-param properties resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-01-01'>.properties
+param properties resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.properties
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-01-01'>.tags
+param tags resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.tags
 
 /* RESOURCES */
 
@@ -99,7 +99,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 output id string = Network_virtualNetworkGateways_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Network/virtualNetworkGateways@2025-01-01'>.identity? = Network_virtualNetworkGateways_.?identity
+output identity resourceOutput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.identity? = Network_virtualNetworkGateways_.?identity
 
 @description('The name.')
 output name string = Network_virtualNetworkGateways_.name

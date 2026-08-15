@@ -28,15 +28,15 @@ param location string
 param name string
 
 @description('The configurable properties.')
-param properties resourceInput<'Microsoft.Network/publicIPAddresses@2025-05-01'>.properties = {
+param properties resourceInput<'Microsoft.Network/publicIPAddresses@2025-07-01'>.properties = {
 	publicIPAllocationMethod: 'Static'
 }
 
 @description('The SKU.')
-param sku resourceInput<'Microsoft.Network/publicIPAddresses@2025-05-01'>.sku
+param sku resourceInput<'Microsoft.Network/publicIPAddresses@2025-07-01'>.sku
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Network/publicIPAddresses@2025-05-01'>.tags
+param tags resourceInput<'Microsoft.Network/publicIPAddresses@2025-07-01'>.tags
 
 @description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
 param zones string[]

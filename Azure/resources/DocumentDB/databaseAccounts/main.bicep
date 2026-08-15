@@ -31,7 +31,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.identity = {
+param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.identity = {
 	type: 'None'
 }
 
@@ -45,15 +45,15 @@ param name string
 @sealed()
 param properties {
 	@description('The policy for taking backups on an account.')
-	backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.backupPolicy
+	backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.backupPolicy
 	@description('Properties related to capacity enforcement on an account.')
-	capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.capacity?
+	capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacity?
 	@description('The capacity mode for the Cosmos DB account.')
 	capacityMode: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacityMode
 	@description('The consistency policy for the Cosmos DB account.')
-	consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.consistencyPolicy
+	consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.consistencyPolicy
 	@description('List of IpRules.')
-	ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.ipRules
+	ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.ipRules
 	@description('Locations enabled for the Cosmos DB account.')
 	locations: {
 		@description('The primary region.')
@@ -61,18 +61,18 @@ param properties {
 			@description('Flag to indicate whether or not this region is an AvailabilityZone region')
 			isZoneRedundant: bool
 		}
-		*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.locations[*]
+		*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.locations[*]
 	}
 	@description('The network access mode.')
-	publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.properties.publicNetworkAccess
+	publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.publicNetworkAccess
 }
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.tags
+param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.tags
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // capacityMode is available only in the preview API.
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' = {
 	identity: identity
 	kind: 'GlobalDocumentDB'
@@ -141,7 +141,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = DocumentDB_databaseAccounts_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.identity? = DocumentDB_databaseAccounts_.?identity
+output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.identity? = DocumentDB_databaseAccounts_.?identity
 
 @description('The name.')
 output name string = DocumentDB_databaseAccounts_.name
