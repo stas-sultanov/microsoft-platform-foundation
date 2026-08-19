@@ -84,6 +84,8 @@ resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspac
 	tags: tags
 }
 
+/* EXTENSIONS */
+
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		OperationalInsights_workspaces_.id,

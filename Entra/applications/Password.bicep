@@ -11,7 +11,7 @@ metadata description = 'Provisions an Entra application with password credential
 
 targetScope = 'tenant'
 
-/* EXTENSIONS */
+/* BICEP EXTENSIONS */
 
 extension microsoftGraph
 

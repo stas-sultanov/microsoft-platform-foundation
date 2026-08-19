@@ -11,7 +11,7 @@ metadata description = 'Provisions an Entra application with federated identity 
 
 targetScope = 'tenant'
 
-/* EXTENSIONS */
+/* BICEP EXTENSIONS */
 
 extension microsoftGraph
 
