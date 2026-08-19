@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Sql/servers/databases resource.'
+metadata description = 'Provisions a Microsoft.Sql/servers/databases resource with extensions.'
 
 /* SCOPE */
 

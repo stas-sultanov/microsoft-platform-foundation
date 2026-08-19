@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Virtual Network and assigns Insights Diagnostic extensions.'
+metadata description = 'Provisions a Microsoft.Network/virtualNetworks resource with extensions.'
 
 /* IMPORTS */
 

@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Network/virtualNetworkGateways resource and optionally configures extensions.'
+metadata description = 'Provisions a Microsoft.Network/virtualNetworkGateways resource with extensions.'
 
 /* SCOPE */
 

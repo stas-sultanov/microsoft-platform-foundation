@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Load Balancer and assigns Insights Diagnostic extensions.'
+metadata description = 'Provisions a Microsoft.Network/loadBalancers resource with extensions.'
 
 /* IMPORTS */
 

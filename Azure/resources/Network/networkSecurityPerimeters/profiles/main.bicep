@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Network/networkSecurityPerimeters/profiles resource with access rules.'
+metadata description = 'Provisions a Microsoft.Network/networkSecurityPerimeters/profiles resource.'
 
 /* SCOPE */
 
