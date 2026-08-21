@@ -46,19 +46,3 @@ func CreateResourceWithLogAnalyticsWorkspace(
 		workspaceId: workspaceId
 	}
 }
-
-@description('Creates Resources from array of configurable properties.')
-@export()
-func CreateResourceArrayWithLogAnalyticsWorkspace(
-	settings object,
-	workspaceId string
-) Resource[] =>
-	sys.map(
-		sys.items(settings),
-		setting =>
-			CreateResourceWithLogAnalyticsWorkspace(
-				setting.key,
-				setting.value.properties,
-				workspaceId
-			)
-	)

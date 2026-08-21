@@ -14,10 +14,31 @@
 				"explicit-values-for-loc-params": {
 					"level": "error"
 				},
+				"max-asserts": {
+					"level": "error"
+				},
+				"max-outputs": {
+					"level": "error"
+				},
+				"max-params": {
+					"level": "error"
+				},
+				"max-resources": {
+					"level": "error"
+				},
+				"max-variables": {
+					"level": "error"
+				},
+				"nested-deployment-template-scoping": {
+					"level": "error"
+				},
 				"no-conflicting-metadata": {
 					"level": "error"
 				},
 				"no-deployments-resources": {
+					"level": "error"
+				},
+				"no-explicit-any": {
 					"level": "error"
 				},
 				"no-hardcoded-env-urls": {
@@ -26,8 +47,14 @@
 				"no-hardcoded-location": {
 					"level": "error"
 				},
+				"no-hardcoded-outputs": {
+					"level": "error"
+				},
 				"no-loc-expr-outside-params": {
 					"level": "error"
+				},
+				"no-module-name": {
+					"level": "off"
 				},
 				"no-unnecessary-dependson": {
 					"level": "error"
@@ -39,6 +66,9 @@
 					"level": "error"
 				},
 				"no-unused-params": {
+					"level": "error"
+				},
+				"no-unused-types": {
 					"level": "error"
 				},
 				"no-unused-vars": {
@@ -85,8 +115,11 @@
 				"use-recent-module-versions": {
 					"level": "error"
 				},
+				"use-recognized-resource-type": {
+					"level": "error"
+				},
 				"use-resource-id-functions": {
-					"level": "off"
+					"level": "error"
 				},
 				"use-resource-symbol-reference": {
 					"level": "error"
@@ -98,6 +131,12 @@
 					"level": "error"
 				},
 				"use-stable-resource-identifiers": {
+					"level": "error"
+				},
+				"use-stable-vm-image": {
+					"level": "error"
+				},
+				"use-user-defined-types": {
 					"level": "error"
 				},
 				"what-if-short-circuiting": {
