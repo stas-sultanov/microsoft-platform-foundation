@@ -9,29 +9,19 @@ metadata description = 'Provisions a private DNS zone.'
 
 /* IMPORTS */
 
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
 import * as NetworkDnsZones from '../../../library/Network/dnsZones.bicep'
 
-/* TYPES */
-
-@sealed()
-type Resources = {
-	@description('The array of virtual network links.')
-	A: NetworkDnsZones.ARecord[]
-	@description('The array of virtual network links.')
-	virtualNetworkLinks: VirtualNetworkLinkResource[]
-}
-
-@sealed()
-type VirtualNetworkLinkResource = {
-	@description('The resource name.')
-	name: string
-	@description('Properties of the virtual network link to the Private DNS zone.')
-	properties: resourceInput<'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01'>.properties
-	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01'>.tags
-}
-
 /* PARAMETERS */
+
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
+}
 
 @description('The geo-location.')
 param location string
@@ -40,7 +30,24 @@ param location string
 param name string
 
 @description('The child resources settings.')
-param resources Resources
+@sealed()
+param resources {
+	@description('The array of virtual network links.')
+	A: {
+		*: NetworkDnsZones.ARecord
+	}
+	@description('The array of virtual network links.')
+	virtualNetworkLinks: {
+		*: {
+			@description('The resource name.')
+			name: string
+			@description('Properties of the virtual network link to the Private DNS zone.')
+			properties: resourceInput<'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01'>.properties
+			@description('The tags.')
+			tags: resourceInput<'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01'>.tags
+		}
+	}
+}
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.Network/privateDnsZones@2024-06-01'>.tags
@@ -54,28 +61,41 @@ resource Network_privateDnsZones_ 'Microsoft.Network/privateDnsZones@2024-06-01'
 }
 
 resource Network_privateDnsZones_A_ 'Microsoft.Network/privateDnsZones/A@2024-06-01' = [
-	for item in resources.A: {
+	for item in items(resources.A): {
 		parent: Network_privateDnsZones_
-		name: item.name
+		name: item.value.name
 		properties: {
 			aRecords: sys.map(
-				item.values,
+				item.value.values,
 				value => {
 					ipv4Address: value
 				}
 			)
-			ttl: item.ttl
+			ttl: item.value.ttl
 		}
 	}
 ]
 
 resource Network_privateDnsZones_virtualNetworkLinks_ 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = [
-	for item in resources.virtualNetworkLinks: {
+	for item in items(resources.virtualNetworkLinks): {
 		location: location
-		name: item.name
+		name: item.value.name
 		parent: Network_privateDnsZones_
+		properties: item.value.properties
+		tags: item.value.tags
+	}
+]
+
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for item in AuthorizationRoleAssignments.CreateArray(
+		Network_privateDnsZones_.id,
+		extensions.?Authorization.?roleAssignments ?? []
+	): {
+		name: item.name
 		properties: item.properties
-		tags: item.tags
+		scope: Network_privateDnsZones_
 	}
 ]
 

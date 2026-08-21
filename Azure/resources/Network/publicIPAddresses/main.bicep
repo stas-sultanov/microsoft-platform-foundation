@@ -9,6 +9,8 @@ metadata description = 'Provisions a Microsoft.Network/publicIPAddresses resourc
 
 /* IMPORTS */
 
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
@@ -16,6 +18,9 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -53,6 +58,17 @@ resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2025-07
 }
 
 /* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for item in AuthorizationRoleAssignments.CreateArray(
+		Network_publicIPAddresses_.id,
+		extensions.?Authorization.?roleAssignments ?? []
+	): {
+		name: item.name
+		properties: item.properties
+		scope: Network_publicIPAddresses_
+	}
+]
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [

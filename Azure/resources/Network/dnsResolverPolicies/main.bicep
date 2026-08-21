@@ -9,6 +9,8 @@ metadata description = 'Provisions a Microsoft.Network/dnsResolverPolicies resou
 
 /* IMPORTS */
 
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* TYPES */
@@ -43,6 +45,9 @@ type VirtualNetworkLinkResource = {
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -89,6 +94,17 @@ resource Network_dnsResolverPolicies_virtualNetworkLinks_ 'Microsoft.Network/dns
 ]
 
 /* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for item in AuthorizationRoleAssignments.CreateArray(
+		Network_dnsResolverPolicies_.id,
+		extensions.?Authorization.?roleAssignments ?? []
+	): {
+		name: item.name
+		properties: item.properties
+		scope: Network_dnsResolverPolicies_
+	}
+]
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [

@@ -7,34 +7,19 @@ metadata author = {
 }
 metadata description = 'Provisions a DNS Resolver and Inbound Endpoints.'
 
-/* TYPES */
+/* IMPORTS */
 
-type InboundEndpointResource = {
-	@description('The resource name.')
-	name: string
-	@description('Properties of the inbound endpoint.')
-	properties: resourceInput<'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01'>.properties
-	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01'>.tags
-}
-
-type OutboundEndpointResource = {
-	@description('The resource name.')
-	name: string
-	@description('Properties of the outbound endpoint.')
-	properties: resourceInput<'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01'>.properties
-	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01'>.tags
-}
-
-type Resources = {
-	@description('The array of inbound endpoints.')
-	inboundEndpoints: InboundEndpointResource[]
-	@description('The array of outbound endpoints.')
-	outboundEndpoints: OutboundEndpointResource[]
-}
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
 /* PARAMETERS */
+
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
+}
 
 @description('The geo-location.')
 param location string
@@ -46,7 +31,31 @@ param name string
 param properties resourceInput<'Microsoft.Network/dnsResolvers@2025-05-01'>.properties
 
 @description('The child resources settings.')
-param resources Resources
+@sealed()
+param resources {
+	@description('The inbound endpoints.')
+	inboundEndpoints: {
+		*: {
+			@description('The resource name.')
+			name: string
+			@description('Properties of the inbound endpoint.')
+			properties: resourceInput<'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01'>.properties
+			@description('The tags.')
+			tags: resourceInput<'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01'>.tags
+		}
+	}
+	@description('The outbound endpoints.')
+	outboundEndpoints: {
+		*: {
+			@description('The resource name.')
+			name: string
+			@description('Properties of the outbound endpoint.')
+			properties: resourceInput<'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01'>.properties
+			@description('The tags.')
+			tags: resourceInput<'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01'>.tags
+		}
+	}
+}
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.Network/dnsResolvers@2025-05-01'>.tags
@@ -61,22 +70,35 @@ resource Network_dnsResolvers_ 'Microsoft.Network/dnsResolvers@2025-05-01' = {
 }
 
 resource Network_dnsResolvers_inboundEndpoints_ 'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01' = [
-	for item in resources.inboundEndpoints: {
+	for item in items(resources.inboundEndpoints): {
 		location: location
-		name: item.name
+		name: item.value.name
 		parent: Network_dnsResolvers_
-		properties: item.properties
-		tags: item.tags
+		properties: item.value.properties
+		tags: item.value.tags
 	}
 ]
 
 resource Network_dnsResolvers_outboundEndpoints_ 'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01' = [
-	for item in resources.outboundEndpoints: {
+	for item in items(resources.outboundEndpoints): {
 		location: location
-		name: item.name
+		name: item.value.name
 		parent: Network_dnsResolvers_
+		properties: item.value.properties
+		tags: item.value.tags
+	}
+]
+
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for item in AuthorizationRoleAssignments.CreateArray(
+		Network_dnsResolvers_.id,
+		extensions.?Authorization.?roleAssignments ?? []
+	): {
+		name: item.name
 		properties: item.properties
-		tags: item.tags
+		scope: Network_dnsResolvers_
 	}
 ]
 
