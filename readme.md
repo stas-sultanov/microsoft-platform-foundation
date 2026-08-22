@@ -39,7 +39,7 @@ The foundation follows these principles:
 
 ## Evolution and Compatibility
 
-Microsoft Platform Foundation is an evolving engineering foundation, not a backwards-compatible package ecosystem.
+Microsoft Platform Foundation is an evolving engineering foundation, not a backward-compatible package ecosystem.
 
 Azure evolves, security guidance evolves, and engineering practices evolve. The foundation is expected to evolve with them. This can intentionally introduce breaking changes to module interfaces when a better implementation, safer Azure capability, or clearer abstraction becomes available.
 
