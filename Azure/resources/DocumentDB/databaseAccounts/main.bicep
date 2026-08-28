@@ -39,7 +39,7 @@ param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-p
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
 
 @description('The configurable properties.')
 @sealed()

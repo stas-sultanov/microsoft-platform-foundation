@@ -27,7 +27,7 @@ param extensions {
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Network/privateDnsZones@2024-06-01'>.name
 
 @description('The child resources settings.')
 @sealed()

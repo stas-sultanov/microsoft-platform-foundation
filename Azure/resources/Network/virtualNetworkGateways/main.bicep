@@ -44,7 +44,7 @@ param identity resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-0
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.name
 
 @description('The properties.')
 param properties resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.properties

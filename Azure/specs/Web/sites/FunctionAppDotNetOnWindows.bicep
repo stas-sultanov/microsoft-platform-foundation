@@ -98,7 +98,7 @@ param identity resourceInput<'Microsoft.Web/sites@2025-03-01'>.identity
 param location string
 
 @description('Name of the resource.')
-param name string
+param name resourceInput<'Microsoft.Web/sites@2025-03-01'>.name
 
 @description('Service properties.')
 param properties Properties

@@ -13,7 +13,7 @@ metadata description = 'Provisions a Microsoft.Compute/galleries/applications re
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.name
 
 @description('The name of the parent Microsoft.Compute/galleries resource.')
 param parentName string

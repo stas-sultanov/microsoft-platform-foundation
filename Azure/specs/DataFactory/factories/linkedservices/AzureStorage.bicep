@@ -16,7 +16,7 @@ param credentialName string
 param DataFactory_factories__name string
 
 @description('Name of the resource.')
-param name string
+param name resourceInput<'Microsoft.DataFactory/factories/linkedservices@2018-06-01'>.name
 
 @description('The id of the Storage/storageAccounts resource.')
 param Storage_storageAccounts__id string

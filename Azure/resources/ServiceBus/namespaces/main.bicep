@@ -39,7 +39,7 @@ param identity resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.ident
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.name
 
 @description('The configurable properties.')
 @sealed()

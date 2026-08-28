@@ -39,9 +39,7 @@ param identity resourceInput<'Microsoft.AppConfiguration/configurationStores@202
 param location string
 
 @description('The name.')
-@maxLength(50)
-@minLength(5)
-param name string
+param name resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.name
 
 @description('The configurable properties.')
 @sealed()

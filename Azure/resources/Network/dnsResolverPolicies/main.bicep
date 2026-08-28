@@ -57,7 +57,7 @@ param extensions {
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Network/dnsResolverPolicies@2025-05-01'>.name
 
 @description('The child resources settings.')
 param resources Resources

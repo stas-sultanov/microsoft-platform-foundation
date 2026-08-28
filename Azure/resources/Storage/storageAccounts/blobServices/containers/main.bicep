@@ -28,7 +28,7 @@ param extensions {
 @description('The name.')
 @maxLength(63)
 @minLength(3)
-param name string
+param name resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.name
 
 @description('The name of the parent Microsoft.Storage/storageAccounts resource.')
 param parentAccountName string

@@ -124,7 +124,7 @@ param identity resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
 
 @description('The configurable properties.')
 param properties Properties

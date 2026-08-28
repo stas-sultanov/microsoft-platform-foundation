@@ -34,7 +34,7 @@ param extensions {
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.name
 
 @description('The configurable properties.')
 @sealed()

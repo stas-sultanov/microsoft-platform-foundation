@@ -16,7 +16,7 @@ targetScope = 'resourceGroup'
 @description('The table name. Must end with "_CL" to denote a custom log table.')
 @maxLength(63)
 @minLength(4)
-param name string
+param name resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2025-07-01'>.name
 
 @description('The name of the parent Microsoft.OperationalInsights/workspaces resource.')
 param parentName string

@@ -34,7 +34,7 @@ param identity resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.name
 
 @description('The configurable properties.')
 param properties resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties

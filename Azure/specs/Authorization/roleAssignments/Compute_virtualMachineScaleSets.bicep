@@ -18,7 +18,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 /* PARAMETERS */
 
 @description('Name of the Microsoft.Compute/virtualMachineScaleSets resource.')
-param name string
+param name resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]

@@ -96,7 +96,7 @@ param extensions {
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Insights/autoscaleSettings@2022-10-01'>.name
 
 @description('The configurable properties.')
 param properties {

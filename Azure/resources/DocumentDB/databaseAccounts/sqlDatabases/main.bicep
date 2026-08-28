@@ -18,7 +18,7 @@ param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.name
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
 param parentName string

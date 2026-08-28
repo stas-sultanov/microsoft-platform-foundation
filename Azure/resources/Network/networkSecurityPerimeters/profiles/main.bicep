@@ -19,7 +19,7 @@ import * as NetworkNetworkSecurityPerimeters from '../../../../library/Network/n
 
 @description('The name.')
 @maxLength(80)
-param name string
+param name resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01'>.name
 
 @description('The name of the parent Microsoft.Network/networkSecurityPerimeters resource.')
 param parentName string

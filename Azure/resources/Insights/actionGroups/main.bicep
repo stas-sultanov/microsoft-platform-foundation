@@ -34,7 +34,7 @@ param identity resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.name
 
 @description('The configurable properties.')
 @sealed()

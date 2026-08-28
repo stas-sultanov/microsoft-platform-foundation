@@ -39,7 +39,7 @@ param identity resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.ident
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.name
 
 @description('The name of the parent Microsoft.Sql/servers resource.')
 param parentName string

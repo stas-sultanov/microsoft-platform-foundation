@@ -17,7 +17,7 @@ targetScope = 'resourceGroup'
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2025-07-01'>.name
 
 @description('The name of the parent Microsoft.Network/networkWatchers resource.')
 param parentName string

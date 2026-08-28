@@ -36,7 +36,7 @@ param extensions {
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.name
 
 @description('The child resources.')
 @sealed()

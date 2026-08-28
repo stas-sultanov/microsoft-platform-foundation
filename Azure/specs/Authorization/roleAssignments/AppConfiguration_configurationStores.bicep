@@ -18,7 +18,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 /* PARAMETERS */
 
 @description('Name of the Microsoft.AppConfiguration/configurationStores resource.')
-param name string
+param name resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]

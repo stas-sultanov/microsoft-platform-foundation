@@ -13,7 +13,7 @@ metadata description = 'Provisions a Microsoft.Maintenance/maintenanceConfigurat
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Maintenance/maintenanceConfigurations@2023-04-01'>.name
 
 @description('The configurable properties.')
 @sealed()

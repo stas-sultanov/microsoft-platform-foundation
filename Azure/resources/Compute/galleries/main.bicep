@@ -34,7 +34,7 @@ param identity resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.identity 
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
 
 @description('The properties.')
 param properties resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.properties

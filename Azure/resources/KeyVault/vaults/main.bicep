@@ -34,7 +34,7 @@ param extensions {
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.name
 
 @description('The configurable properties.')
 @sealed()

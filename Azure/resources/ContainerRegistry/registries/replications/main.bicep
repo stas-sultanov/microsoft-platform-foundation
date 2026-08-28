@@ -13,7 +13,7 @@ metadata description = 'Provisions a Microsoft.ContainerRegistry/registries/repl
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.name
 
 @description('The name of the parent Microsoft.ContainerRegistry/registries resource.')
 param parentName string
