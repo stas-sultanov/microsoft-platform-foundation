@@ -24,6 +24,7 @@ param name resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles@2
 @description('The name of the parent Microsoft.Network/networkSecurityPerimeters resource.')
 param parentName string
 
+@description('The child resources.')
 @sealed()
 param resources {
 	accessRules: NetworkNetworkSecurityPerimeters.AccessRuleChildResource[]?

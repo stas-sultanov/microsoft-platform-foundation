@@ -7,6 +7,20 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Compute/galleries/images resource.'
 
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../../library/Authorization/roleAssignments.bicep'
+
+/* PARAMETERS */
+
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+	}?
+}
+
 /* PARAMETERS */
 
 @description('The geo-location.')
@@ -96,6 +110,19 @@ resource Compute_galleries_images_ 'Microsoft.Compute/galleries/images@2025-12-0
 	}
 	tags: tags
 }
+
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for item in AuthorizationRoleAssignments.CreateArray(
+		Compute_galleries_images_.id,
+		extensions.?Authorization.?roleAssignments ?? []
+	): {
+		name: item.name
+		properties: item.properties
+		scope: Compute_galleries_images_
+	}
+]
 
 /* OUTPUTS */
 

@@ -29,7 +29,7 @@ param location string
 @description('The name.')
 param name resourceInput<'Microsoft.Network/privateDnsZones@2024-06-01'>.name
 
-@description('The child resources settings.')
+@description('The child resources.')
 @sealed()
 param resources {
 	@description('The array of virtual network links.')

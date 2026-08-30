@@ -69,7 +69,7 @@ param name resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
 @description('The configurable properties.')
 param properties StorageAccountPropertiesInput
 
-@description('The resources.')
+@description('The child resources.')
 @sealed()
 param resources {
 	blobServices: {

@@ -1,61 +1,61 @@
 # Microsoft Platform Foundation
 
-A foundation for building secure and reliable IT solutions on Microsoft Azure and Microsoft Entra ID.
+An opinionated foundation for building secure and reliable IT solutions on Microsoft Azure and Microsoft Entra ID.
 
 Created by [Stas Sultanov](https://www.linkedin.com/in/stas-sultanov)
 
-## About
+## Purpose
 
-A Bicep module library that provides reusable building blocks for building secure and reliable solutions on Microsoft Azure and Microsoft Entra ID.
+Microsoft Platform Foundation is a Bicep module library that provides reusable, opinionated building blocks for Microsoft Azure and Microsoft Entra ID.
 
-**Important Note:**
-All templates in this repository:
-- are designed for general purpose use which is a majority of cases.
-- are not designed for use of Customer Managed Keys (CMK).
+It defines a small, current, strongly typed configuration surface for common platform capabilities so consuming solutions can configure workload intent without repeatedly making low-level Azure resource decisions.
 
-## Table of Contents
+## Scope
 
-- [Layout](#layout)
-- [Conventions](#conventions)
-  - [Module Types](#module-types)
-  - [Path Conventions](#path-conventions)
-  - [Security](#security)
-  - [File Structure](#file-structure)
-  - [Authoring Rules](#authoring-rules)
-- [Compliance](#compliance)
-- [Resources](#resources)
+The foundation is intentionally **not** a complete abstraction of Azure Resource Manager and is not intended to expose every capability, compatibility option, or historical property available in Azure APIs.
 
-## Layout
+Instead, it exposes the practices and capabilities considered appropriate for the majority of solutions that build on Azure and Microsoft Entra ID. When Azure provides multiple ways to achieve the same result, modules SHOULD expose the preferred foundation mechanism. Where no additional foundation opinion is required, modules MAY use native Azure resource API types directly.
 
-Repository layout.
+## Foundation Contract
 
-```bash
-./
-├─ Azure/
-│  ├─ library/       # Shared types, functions, and constants
-│  ├─ patterns/      # Composition modules that wire multiple resources
-│  ├─ resources/     # Modules for one primary resource with extensions
-│  └─ specs/         # Modules for one primary resource with a specific purpose
-├─ Entra/
-│  └─ applications/  # Microsoft Graph modules for Entra applications
-├─ bicepconfig.json  # Bicep analyzer and linting configuration
-├─ readme.md         # Repository guidance
-└─ license.md        # License information
-```
+The sections below define the contract this foundation is designed to enforce.
 
-## Conventions
+### Design Principles
 
-All modules in this repository MUST strictly follow the conventions described in this section.
+- **Opinionated by design.** Modules MUST encode architectural and security decisions instead of acting as thin wrappers around Azure resource APIs.
+- **Modern authentication.** Microsoft Entra ID-based authorization MUST be used as the data-plane authentication model wherever the Azure service supports it.
+- **Modern security baseline.** Legacy authentication mechanisms, obsolete configuration options, and weaker security modes MUST NOT be exposed to module consumers.
+- **Modern transport security.** TLS 1.3 MUST be used wherever the Azure service supports it.
+- **Pragmatic configuration.** Modules SHOULD curate properties when the foundation owns a decision and MAY reuse native Azure resource API types when the Azure resource shape is the intended configuration surface.
+- **Strong typing.** Module interfaces MUST make invalid or undesirable configurations difficult or impossible to express.
+- **Secure defaults are implementation decisions.** Consumers SHOULD configure business and workload requirements rather than repeatedly making low-level platform security decisions.
+- **Platform-managed keys by default.** Modules are designed for the common case where platform-managed encryption keys are sufficient.
+
+### Evolution and Compatibility
+
+Microsoft Platform Foundation is an evolving engineering foundation, not a backward-compatible package ecosystem.
+
+Azure evolves, security guidance evolves, and engineering practices evolve. The foundation is expected to evolve with them. This can intentionally introduce breaking changes to module interfaces when a better implementation, safer Azure capability, or clearer abstraction becomes available.
+
+Backward compatibility MUST NOT be preserved solely to keep obsolete properties, legacy mechanisms, or historical module interfaces working.
+
+Consumers are expected to adapt their infrastructure code when adopting a newer revision of the foundation.
+
+Projects that require a stable dependency MAY pin the foundation to a Git commit, tag, Git submodule revision, or an immutable module artifact. Updating that reference is an explicit adoption of the newer foundation contract and MAY require changes in the consuming project.
+
+This model favors a small, current, maintainable configuration surface over accumulating deprecated compatibility layers.
+
+## Module Organization
 
 ### Module Types
 
-| Area                 | Purpose | Rules |
-|----------------------|---------|-------|
-| `Azure/library`      | Shared types, functions, and constants | MUST NOT contain resources. |
-| `Azure/patterns`     | Reusable compositions that deploy and wire multiple resource types | MUST own the relationship between the resources they compose. |
-| `Azure/resources`    | Reusable modules for one primary Azure resource type | MAY deploy extension resources scoped to the primary resource. |
-| `Azure/specs`        | Reusable modules for one primary Azure resource type with settings for a specific purpose | MUST remain resource-specific and MUST be more opinionated than `Azure/resources` modules. |
-| `Entra/applications` | Entra application artifacts managed through Microsoft Graph | MUST be used for Microsoft Graph-driven Entra application artifacts. |
+| Area                 | Purpose                                                                      | Rules                                                                                                     |
+| -------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `Azure/library`      | Shared types, functions, and constants                                       | MUST NOT contain resources.                                                                               |
+| `Azure/patterns`     | Reusable compositions that deploy and wire multiple resource types           | MUST own the relationship between the resources they compose.                                             |
+| `Azure/resources`    | Opinionated canonical deployment modules for one primary Azure resource type | MUST implement the foundation baseline and MAY deploy extension resources scoped to the primary resource. |
+| `Azure/specs`        | Scenario-specific specializations of one primary Azure resource type         | MUST remain resource-specific and MUST be more constrained or opinionated than `Azure/resources` modules. |
+| `Entra/applications` | Entra application artifacts managed through Microsoft Graph                  | MUST be used for Microsoft Graph-driven Entra application artifacts.                                      |
 
 ### Path Conventions
 
@@ -64,27 +64,26 @@ All modules in this repository MUST strictly follow the conventions described in
 - `Azure/patterns/<Domain>/<Name>.bicep`
 - `Azure/patterns/<Domain>/<SubDomain>/<Name>.bicep`
 - `Azure/resources/<Provider>/<resourceType>/main.bicep`
-- `Azure/resources/<Provider>/<resourceType>/<nestedResourceType>/main.bicep`
+- `Azure/resources/<Provider>/<resourceType>/<childResourceType>/main.bicep`
+- `Azure/resources/<Provider>/<resourceType>/<childResourceType>/<childResourceType>/main.bicep`
 - `Azure/specs/<Provider>/<resourceType>/<Name>.bicep`
-- `Azure/specs/<Provider>/<resourceType>/<nestedResourceType>/<Name>.bicep`
+- `Azure/specs/<Provider>/<resourceType>/<childResourceType>/<Name>.bicep`
+- `Azure/specs/<Provider>/<resourceType>/<childResourceType>/<childResourceType>/<Name>.bicep`
 - `Entra/applications/<Name>.bicep`
 
-`Provider` and `resourceType` names MUST match Azure resource type name.
+Child resource type path segments MAY continue as deeply as the Azure resource type requires.
 
-### Security
+`Provider` and `resourceType` and `childResourceType` names MUST match the Azure resource type name.
 
-- Microsoft Entra ID-based authorization MUST be used for data-plane access where the service supports it.
-- Legacy authorization models, such as Key Vault access policies, MUST NOT be used where the service supports Microsoft Entra ID-based authorization.
-- Keys, shared secrets, and passwords MUST NOT be used for data-plane access where the service supports Microsoft Entra ID-based authorization.
-- Public access, firewall rules, and trusted-service exceptions MUST be explicit in the module interface.
-- The latest available version of TLS MUST be enforced when the service supports that configuration.
-- Outputs MUST NOT include secrets, passwords, or authentication keys.
+## Module Authoring Standard
+
+All modules in this repository MUST strictly follow the authoring standard described in this section.
 
 ### File Structure
 
 Bicep files MUST follow this section order. Sections MAY be omitted when they are not needed, but the relative order of present sections MUST be preserved.
 
-1. Metadata
+1. Metadata declarations
 2. Scope
 3. Imports
 4. Types
@@ -96,36 +95,60 @@ Bicep files MUST follow this section order. Sections MAY be omitted when they ar
 10. Extensions
 11. Outputs
 
-Metadata MUST include the author block and module description.
+Metadata declarations MUST appear at the top of the file, MUST NOT use a section header, and MUST include the author block and module description.
 
-Section headers in Bicep files MUST use block comments, such as `/* PARAMETERS */`.
+Section headers after metadata declarations MUST use block comments, such as `/* PARAMETERS */`.
 
 Within each section, all declarations MUST be sorted alphabetically.
 
-### Authoring Rules
+### General Rules
 
 - All declarations MUST be strongly typed.
 - Parameters and outputs MUST be explicit and predictable.
+- Module interfaces MUST represent the foundation contract and MAY reuse native Azure resource API types when that is the intended contract.
+- Obsolete, legacy, insecure, or foundation-controlled properties SHOULD NOT be exposed as configurable parameters.
+- A breaking interface change MAY be introduced when it produces a better foundation contract. Backward compatibility MUST NOT justify retaining an obsolete interface.
 
-#### Types
+### Security Rules
+
+- Data-plane access MUST use Microsoft Entra ID-based authorization where the service supports it.
+- Legacy authorization models, such as Key Vault access policies, MUST NOT be used where Microsoft Entra ID-based authorization is supported.
+- Keys, shared secrets, and passwords MUST NOT be used for data-plane access where Microsoft Entra ID-based authorization is supported.
+- Public access, firewall rules, and trusted-service exceptions MUST be explicit in the module interface.
+- TLS 1.3 MUST be enforced where the service supports it. Where TLS 1.3 is unavailable, the newest supported TLS version MUST be used.
+- Outputs MUST NOT include secrets, passwords, or authentication keys.
+- Customer Managed Keys (CMK) MUST NOT be assumed to be supported unless explicitly implemented by the module.
+
+### Types
+
 - Type names MUST describe intent, such as `PropertiesInput`, `ResourceInput`, `Resource`, `ExtensionsInput`, or a scenario-specific name.
+- Configurable property types SHOULD contain only properties that consumers are expected to control when the module defines a curated property contract.
+- Resource API types MAY be used in module interfaces or internally.
 
-#### Parameters
+### Parameters
+
 - Every parameter MUST have a `@description` decorator.
 - Standard parameter names MUST be used where applicable: `extensions`, `identity`, `location`, `name`, `properties`, `sku`, and `tags`.
-- `properties` MUST represent strongly typed configurable resource properties.
+- `properties` MUST represent the strongly typed configurable resource properties and MAY use `resourceInput<...>.properties` when the native Azure resource property shape is the intended contract.
 - `extensions` MUST represent extension resources grouped by provider or concern, such as `Authorization`, `Insights`, `Maintenance`, or other.
 - Optional parameters and default values MUST be safe and predictable.
 
-#### Resources
-- Resource names MUST be deterministic and MUST follow `<Provider>_<resourceType>_` or `<Provider>_<resourceType>_<nestedResourceType>_`.
+### Resources
 
-#### Outputs
+- Resource names MUST be deterministic and MUST follow the Azure resource type path converted to underscores, such as:
+- `<Provider>_<resourceType>_`
+- `<Provider>_<resourceType>_<childResourceType>_`
+- `<Provider>_<resourceType>_<childResourceType>_<childResourceType>_`
+
+Child resource type segments MAY continue as deeply as the Azure resource type requires.
+
+### Outputs
+
 - Every output MUST have a `@description` decorator.
 - Output names SHOULD be short and stable, usually `id`, `name`, `identity`, or narrowly scoped property names.
 - Outputs SHOULD return precise values instead of broad resource objects.
 
-## Compliance
+## Validation
 
 All modules MUST comply with the rules defined in [bicepconfig.json](bicepconfig.json).
 
@@ -133,7 +156,7 @@ All modules MUST pass all configured checks at all times.
 
 Rule suppressions MUST be scoped to the smallest possible line and MUST include a clear reason in a comment.
 
-## Resources
+## References
 
 - [Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
 - [Azure Resource Manager API Versions](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers)

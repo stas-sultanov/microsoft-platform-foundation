@@ -47,7 +47,7 @@ param parentName string
 @description('The configurable properties.')
 param properties resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.properties
 
-@description('The resources.')
+@description('The child resources.')
 @sealed()
 param resources {
 	auditingSettings: {

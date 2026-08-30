@@ -30,7 +30,7 @@ param name resourceInput<'Microsoft.Network/dnsResolvers@2025-05-01'>.name
 @description('The configurable properties.')
 param properties resourceInput<'Microsoft.Network/dnsResolvers@2025-05-01'>.properties
 
-@description('The child resources settings.')
+@description('The child resources.')
 @sealed()
 param resources {
 	@description('The inbound endpoints.')
