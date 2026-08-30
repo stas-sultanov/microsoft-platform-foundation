@@ -60,7 +60,7 @@ param properties {
 	retentionDays: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.retentionDays
 }
 
-@description('The resources.')
+@description('The child resources.')
 @sealed()
 param resources {
 	auditingSettings: {

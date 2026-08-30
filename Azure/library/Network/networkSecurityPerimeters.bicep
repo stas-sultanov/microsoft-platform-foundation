@@ -7,6 +7,8 @@ metadata author = {
 }
 metadata description = 'Provides reusable types for Microsoft.Network/networkSecurityPerimeters resources.'
 
+/* TYPES */
+
 @description('The configuration of a Microsoft.Network/networkSecurityPerimeters/profiles/accessRules resource.')
 @export()
 @sealed()

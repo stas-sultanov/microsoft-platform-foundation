@@ -44,6 +44,7 @@ param properties {
 	metadata: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.metadata?
 }
 
+@description('The child resources.')
 @sealed()
 param resources {
 	immutabilityPolicies: {
