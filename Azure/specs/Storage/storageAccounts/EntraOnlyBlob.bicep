@@ -64,7 +64,7 @@ param location string
 @description('The name.')
 @maxLength(24)
 @minLength(3)
-param name string
+param name resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
 
 @description('The configurable properties.')
 param properties StorageAccountPropertiesInput

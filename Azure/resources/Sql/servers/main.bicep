@@ -32,7 +32,7 @@ param identity resourceInput<'Microsoft.Sql/servers@2025-01-01'>.identity = {
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Sql/servers@2025-01-01'>.name
 
 @description('The configurable properties.')
 @sealed()

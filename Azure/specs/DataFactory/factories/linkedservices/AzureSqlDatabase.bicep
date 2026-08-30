@@ -18,7 +18,7 @@ param connectionTimeout int = 30
 param dataFactoryId string
 
 @description('The name of the linked service. It must be unique among the linked services in the factory.')
-param name string
+param name resourceInput<'Microsoft.DataFactory/factories/linkedservices@2018-06-01'>.name
 
 @description('The id of the SQL Database resource.')
 param sqlServerDatabaseId string

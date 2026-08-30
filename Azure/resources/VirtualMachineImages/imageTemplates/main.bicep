@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Compute/galleries resource.'
+metadata description = 'Provisions a Microsoft.VirtualMachineImages/imageTemplates resource with extensions.'
 
 /* SCOPE */
 
@@ -26,7 +26,7 @@ param extensions {
 }
 
 @description('The identity.')
-param identity resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.identity = {
+param identity resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.identity = {
 	type: 'None'
 }
 
@@ -34,17 +34,17 @@ param identity resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.identity 
 param location string
 
 @description('The name.')
-param name resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
+param name resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.name
 
-@description('The properties.')
-param properties resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.properties
+@description('The configurable properties.')
+param properties resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties
 
 @description('The tags.')
-param tags resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.tags
+param tags resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.tags
 
 /* RESOURCES */
 
-resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' = {
+resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01' = {
 	identity: identity
 	location: location
 	name: name
@@ -56,22 +56,22 @@ resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' = {
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
-		Compute_galleries_.id,
+		VirtualMachineImages_imageTemplates_.id,
 		extensions.?Authorization.?roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
-		scope: Compute_galleries_
+		scope: VirtualMachineImages_imageTemplates_
 	}
 ]
 
 /* OUTPUTS */
 
 @description('The id.')
-output id string = Compute_galleries_.id
+output id string = VirtualMachineImages_imageTemplates_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Compute/galleries@2025-12-03'>.identity? = Compute_galleries_.?identity
+output identity resourceOutput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.identity? = VirtualMachineImages_imageTemplates_.?identity
 
 @description('The name.')
-output name string = Compute_galleries_.name
+output name string = VirtualMachineImages_imageTemplates_.name

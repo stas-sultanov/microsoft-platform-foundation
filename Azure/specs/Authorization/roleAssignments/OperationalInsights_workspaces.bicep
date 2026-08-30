@@ -18,7 +18,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 /* PARAMETERS */
 
 @description('Name of the Microsoft.OperationalInsights/workspaces resource.')
-param name string
+param name resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]

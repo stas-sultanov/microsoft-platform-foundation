@@ -35,7 +35,7 @@ param identity resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.name
 
 @description('The configurable properties.')
 @sealed()

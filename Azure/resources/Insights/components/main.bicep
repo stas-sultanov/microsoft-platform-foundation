@@ -29,7 +29,7 @@ param extensions {
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.Insights/components@2020-02-02'>.name
 
 @description('The configurable properties.')
 @sealed()

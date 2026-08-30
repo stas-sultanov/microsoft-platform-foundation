@@ -35,7 +35,7 @@ param identity resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-
 param location string
 
 @description('The name.')
-param name string
+param name resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.name
 
 @description('The configurable properties.')
 @sealed()

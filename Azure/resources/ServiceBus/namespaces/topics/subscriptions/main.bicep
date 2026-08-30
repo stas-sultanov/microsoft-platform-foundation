@@ -15,7 +15,7 @@ targetScope = 'resourceGroup'
 
 @description('The name.')
 @minLength(1)
-param name string
+param name resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions@2026-01-01'>.name
 
 @description('The name of the parent Microsoft.ServiceBus/namespaces resource.')
 param parentNamespaceName string

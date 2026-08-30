@@ -17,7 +17,7 @@ targetScope = 'resourceGroup'
 @sealed()
 type ResourceInput = {
 	@description('The name.')
-	name: string
+	name: resourceInput<'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01'>.name
 	@description('The tags.')
 	tags: resourceInput<'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01'>.tags
 }
