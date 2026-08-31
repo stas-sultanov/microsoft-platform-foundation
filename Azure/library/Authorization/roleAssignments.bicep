@@ -25,18 +25,18 @@ type PropertiesInput = {
 
 @export()
 @sealed()
-type ResourceInput = {
-	@description('The configurable properties.')
-	properties: PropertiesInput
-}
-
-@export()
-@sealed()
 type Resource = {
 	@description('The name.')
 	name: string
 	@description('The properties.')
 	properties: resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties
+}
+
+@export()
+@sealed()
+type ResourceInput = {
+	@description('The configurable properties.')
+	properties: PropertiesInput
 }
 
 /* FUNCTIONS */

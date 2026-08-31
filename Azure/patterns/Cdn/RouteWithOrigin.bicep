@@ -9,14 +9,6 @@ metadata description = 'Provisions a Microsoft.Cdn/profiles/afdEndpoints/routes 
 
 /* TYPES */
 
-@description('Defines how FrontDoor caches requests that include query strings. You can ignore any query strings when caching, ignore specific query strings, cache every request with a unique URL, or cache specific query strings.')
-@export()
-type QueryStringCachingBehavior =
-	| 'IgnoreQueryString'
-	| 'IgnoreSpecifiedQueryStrings'
-	| 'IncludeSpecifiedQueryStrings'
-	| 'UseQueryString'
-
 @description('The caching configuration for this route.')
 @export()
 type CacheSettings = {
@@ -58,6 +50,14 @@ type OriginSettings = {
 	@description('The unique name of the Origin within the CDN profile.')
 	name: string
 }
+
+@description('Defines how FrontDoor caches requests that include query strings. You can ignore any query strings when caching, ignore specific query strings, cache every request with a unique URL, or cache specific query strings.')
+@export()
+type QueryStringCachingBehavior =
+	| 'IgnoreQueryString'
+	| 'IgnoreSpecifiedQueryStrings'
+	| 'IncludeSpecifiedQueryStrings'
+	| 'UseQueryString'
 
 @export()
 type RouteSettings = {
