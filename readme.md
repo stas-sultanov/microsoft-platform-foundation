@@ -83,17 +83,17 @@ All modules in this repository MUST strictly follow the authoring standard descr
 
 Bicep files MUST follow this section order. Sections MAY be omitted when they are not needed, but the relative order of present sections MUST be preserved.
 
-1. Metadata declarations
-2. Scope
-3. Imports
-4. Types
-5. Functions
-6. Parameters
-7. Variables
-8. Existing resources
-9. Resources
-10. Extensions
-11. Outputs
+- Metadata
+- Scope
+- Imports
+- Types
+- Functions
+- Parameters
+- Variables
+- Existing resources
+- Resources
+- Extensions
+- Outputs
 
 Metadata declarations MUST appear at the top of the file, MUST NOT use a section header, and MUST include the author block and module description.
 
@@ -128,9 +128,12 @@ Within each section, all declarations MUST be sorted alphabetically.
 ### Parameters
 
 - Every parameter MUST have a `@description` decorator.
-- Standard parameter names MUST be used where applicable: `extensions`, `identity`, `location`, `name`, `properties`, `sku`, and `tags`.
-- `properties` MUST represent the strongly typed configurable resource properties and MAY use `resourceInput<...>.properties` when the native Azure resource property shape is the intended contract.
-- `extensions` MUST represent extension resources grouped by provider or concern, such as `Authorization`, `Insights`, `Maintenance`, or other.
+- Standard resource input parameters MUST use the Azure resource field names exactly where applicable: `identity`, `location`, `name`, `properties`, `sku`, and `tags`.
+- Standard resource input parameters SHOULD use the corresponding `resourceInput<'<resourceType>@<apiVersion>'>.<field>` type when available, such as `resourceInput<...>.name`, `resourceInput<...>.properties`, `resourceInput<...>.tags`, `resourceInput<...>.sku`, or `resourceInput<...>.identity`.
+- `properties` MUST represent the Azure resource `properties` object. It MAY use `resourceInput<...>.properties` directly when the native Azure resource property shape is the intended contract, or a curated object type when the foundation intentionally exposes only selected properties.
+- `extensions` MUST be used to group extension resources by provider or concern, such as `Authorization`, `Insights`, `Maintenance`, or other.
+- `resources` MUST be used to group child resources by child resource type.
+- Non-resource parameters MAY use domain-specific names only when they do not directly represent a standard Azure resource field.
 - Optional parameters and default values MUST be safe and predictable.
 
 ### Resources
@@ -145,7 +148,8 @@ Child resource type segments MAY continue as deeply as the Azure resource type r
 ### Outputs
 
 - Every output MUST have a `@description` decorator.
-- Output names SHOULD be short and stable, usually `id`, `name`, `identity`, or narrowly scoped property names.
+- Resource output names SHOULD follow standard Azure resource field names where applicable, such as `id`, `name`, `type`, `location`, `identity`, `sku`, `tags`, and `properties`.
+- Values from the Azure resource `properties` object SHOULD be grouped under a `properties` output object instead of being expanded into many custom top-level output names.
 - Outputs SHOULD return precise values instead of broad resource objects.
 
 ## Validation

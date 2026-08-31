@@ -44,7 +44,7 @@ param resources {
 		@description('The properties.')
 		properties: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.properties
 	}[]?
-} = {}
+}?
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.tags

@@ -10,7 +10,7 @@ metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlRo
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
 
 @description('Name of the resource.')
 param name resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-03-15'>.name

@@ -15,5 +15,5 @@ type Resource = {
 	@description('The name.')
 	name: string
 	@description('The properties.')
-	properties: resourceInput<'Microsoft.Insights/dataCollectionRuleAssociations@2023-03-11'>.properties
+	properties: resourceInput<'Microsoft.Insights/dataCollectionRuleAssociations@2024-03-11'>.properties
 }

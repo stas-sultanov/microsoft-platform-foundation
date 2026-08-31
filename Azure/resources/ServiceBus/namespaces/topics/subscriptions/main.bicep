@@ -18,10 +18,10 @@ targetScope = 'resourceGroup'
 param name resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions@2026-01-01'>.name
 
 @description('The name of the parent Microsoft.ServiceBus/namespaces resource.')
-param parentNamespaceName string
+param parentNamespaceName resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.name
 
 @description('The name of the parent Microsoft.ServiceBus/namespaces/topics resource.')
-param parentTopicName string
+param parentTopicName resourceInput<'Microsoft.ServiceBus/namespaces/topics@2026-01-01'>.name
 
 @description('The properties.')
 param properties resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions@2024-01-01'>.properties

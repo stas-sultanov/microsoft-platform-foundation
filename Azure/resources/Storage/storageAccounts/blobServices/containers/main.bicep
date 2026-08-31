@@ -31,7 +31,7 @@ param extensions {
 param name resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.name
 
 @description('The name of the parent Microsoft.Storage/storageAccounts resource.')
-param parentAccountName string
+param parentAccountName resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
 
 @description('The configurable properties.')
 @sealed()
