@@ -78,7 +78,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 @description('The id.')
 output id string = Network_loadBalancers_.id
 
-@description('Properties of load balancer.')
+@description('The properties.')
 output properties {
 	@description('Collection of backend address pools used by a load balancer.')
 	backendAddressPools: resourceOutput<'Microsoft.Network/loadBalancers@2025-07-01'>.properties.backendAddressPools

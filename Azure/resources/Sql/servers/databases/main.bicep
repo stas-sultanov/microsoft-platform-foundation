@@ -42,7 +42,7 @@ param location string
 param name resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.name
 
 @description('The name of the parent Microsoft.Sql/servers resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.Sql/servers@2025-01-01'>.name
 
 @description('The configurable properties.')
 param properties resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.properties

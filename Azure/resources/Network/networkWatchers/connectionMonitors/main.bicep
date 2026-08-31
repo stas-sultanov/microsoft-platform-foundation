@@ -20,7 +20,7 @@ param location string
 param name resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2025-07-01'>.name
 
 @description('The name of the parent Microsoft.Network/networkWatchers resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.Network/networkWatchers@2025-07-01'>.name
 
 @description('The configurable properties.')
 param properties resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2025-07-01'>.properties

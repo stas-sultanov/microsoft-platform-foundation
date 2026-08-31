@@ -16,7 +16,7 @@ param location string
 param name resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.name
 
 @description('The name of the parent Microsoft.Compute/galleries resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
 
 @description('The configurable properties.')
 param properties resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.properties

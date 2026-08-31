@@ -21,7 +21,7 @@ param location string
 param name resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.name
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
 
 @description('The configurable properties.')
 @sealed()

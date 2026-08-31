@@ -19,7 +19,7 @@ targetScope = 'resourceGroup'
 param name resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2025-07-01'>.name
 
 @description('The name of the parent Microsoft.OperationalInsights/workspaces resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.name
 
 @description('The properties.')
 param properties resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2025-07-01'>.properties

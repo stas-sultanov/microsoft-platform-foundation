@@ -22,7 +22,7 @@ import * as NetworkNetworkSecurityPerimeters from '../../../../library/Network/n
 param name resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01'>.name
 
 @description('The name of the parent Microsoft.Network/networkSecurityPerimeters resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.name
 
 @description('The child resources.')
 @sealed()

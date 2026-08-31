@@ -16,7 +16,7 @@ param location string
 param name resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.name
 
 @description('The name of the parent Microsoft.ContainerRegistry/registries resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.name
 
 @description('The configurable properties.')
 param properties resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.properties
