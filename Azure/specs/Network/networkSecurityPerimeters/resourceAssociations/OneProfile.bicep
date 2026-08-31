@@ -14,10 +14,10 @@ targetScope = 'resourceGroup'
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.Network/networkSecurityPerimeters resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.name
 
 @description('The name of the Microsoft.Network/networkSecurityPerimeters/profiles resource under the parent perimeter specified by parentName.')
-param parentProfileName string
+param parentProfileName resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01'>.name
 
 @description('The collection of resource associations.')
 param resourceAssociations {

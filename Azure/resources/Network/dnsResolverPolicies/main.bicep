@@ -24,13 +24,6 @@ type DnsSecurityRuleResource = {
 	tags: resourceInput<'Microsoft.Network/dnsResolverPolicies/dnsSecurityRules@2025-05-01'>.tags
 }
 
-type Resources = {
-	@description('The array of virtual network links.')
-	dnsSecurityRules: DnsSecurityRuleResource[]
-	@description('The array of virtual network links.')
-	virtualNetworkLinks: VirtualNetworkLinkResource[]
-}
-
 type VirtualNetworkLinkResource = {
 	@description('The resource name.')
 	name: string
@@ -60,7 +53,12 @@ param location string
 param name resourceInput<'Microsoft.Network/dnsResolverPolicies@2025-05-01'>.name
 
 @description('The child resources.')
-param resources Resources
+param resources {
+	@description('The array of virtual network links.')
+	dnsSecurityRules: DnsSecurityRuleResource[]
+	@description('The array of virtual network links.')
+	virtualNetworkLinks: VirtualNetworkLinkResource[]
+}
 
 @description('The tags.')
 param tags resourceInput<'Microsoft.Network/dnsResolverPolicies@2025-05-01'>.tags

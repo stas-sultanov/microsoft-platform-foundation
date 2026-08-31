@@ -176,7 +176,7 @@ resource alertsManagement_smartDetectorAlertRules__TraceSeverityDetector 'micros
 }
 
 #disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
-resource Insights_components_ProactiveDetectionConfig__MigrationToAlertRulesCompleted 'Microsoft.Insights/components/ProactiveDetectionConfigs@2018-05-01-preview' = {
+resource Insights_components_ProactiveDetectionConfigs__MigrationToAlertRulesCompleted 'Microsoft.Insights/components/ProactiveDetectionConfigs@2018-05-01-preview' = {
 	dependsOn: [
 		alertsManagement_smartDetectorAlertRules__Anomalies
 		alertsManagement_smartDetectorAlertRules__DependencyPerformanceDegradation

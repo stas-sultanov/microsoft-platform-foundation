@@ -9,11 +9,11 @@ metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlRo
 
 /* PARAMETERS */
 
-@description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
-
 @description('Name of the resource.')
 param name resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-03-15'>.name
+
+@description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
 
 /* EXISTING RESOURCES */
 
@@ -23,7 +23,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 
 /* RESOURCES */
 
-resource CosmosAccount_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-03-15' = {
+resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-03-15' = {
 	name: guid(
 		subscription().id,
 		DocumentDB_databaseAccounts_.id,

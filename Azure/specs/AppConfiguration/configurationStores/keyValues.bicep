@@ -18,7 +18,7 @@ import * as AppConfigurationConfigurationStores from '../../../library/AppConfig
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.AppConfiguration/configurationStores resource.')
-param parentName string
+param parentName resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.name
 
 @description('The child resources.')
 param resources AppConfigurationConfigurationStores.KeyValueChildResource[]
