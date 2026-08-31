@@ -27,7 +27,9 @@ param parentName resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025
 @description('The child resources.')
 @sealed()
 param resources {
-	accessRules: NetworkNetworkSecurityPerimeters.AccessRuleChildResource[]?
+	accessRules: {
+		*: NetworkNetworkSecurityPerimeters.AccessRuleChildResource
+	}
 }?
 
 /* EXISTING RESOURCES */
@@ -45,9 +47,9 @@ resource Network_networkSecurityPerimeters_profiles_ 'Microsoft.Network/networkS
 }
 
 resource Network_networkSecurityPerimeters_profiles_accessRules_ 'Microsoft.Network/networkSecurityPerimeters/profiles/accessRules@2025-07-01' = [
-	for item in (resources.?accessRules ?? []): {
-		name: item.name
+	for item in items(resources.?accessRules ?? {}): {
+		name: item.value.name
 		parent: Network_networkSecurityPerimeters_profiles_
-		properties: item.properties
+		properties: item.value.properties
 	}
 ]
