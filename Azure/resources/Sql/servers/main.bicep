@@ -93,11 +93,13 @@ param resources {
 		}
 	}
 	firewallRules: {
-		@description('The name.')
-		name: string
-		@description('The start IP address of the firewall rule.')
-		properties: resourceInput<'Microsoft.Sql/servers/firewallRules@2025-01-01'>.properties
-	}[]
+		*: {
+			@description('The name.')
+			name: string
+			@description('The start IP address of the firewall rule.')
+			properties: resourceInput<'Microsoft.Sql/servers/firewallRules@2025-01-01'>.properties
+		}
+	}
 }
 
 @description('The tags.')
@@ -152,10 +154,10 @@ resource Sql_servers_databases__Master 'Microsoft.Sql/servers/databases@2025-01-
 }
 
 resource Sql_servers_firewallRules_ 'Microsoft.Sql/servers/firewallRules@2025-01-01' = [
-	for item in resources.firewallRules: {
-		name: item.name
+	for item in items(resources.firewallRules ?? {}): {
+		name: item.value.name
 		parent: Sql_servers_
-		properties: item.properties
+		properties: item.value.properties
 	}
 ]
 

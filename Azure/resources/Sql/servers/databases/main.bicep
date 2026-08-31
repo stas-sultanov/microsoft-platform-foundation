@@ -53,8 +53,8 @@ param resources {
 	auditingSettings: {
 		Default: {
 			properties: resourceInput<'Microsoft.Sql/servers/databases/auditingSettings@2025-01-01'>.properties
-		}?
-	}?
+		}
+	}
 }?
 
 @description('The SKU.')
@@ -81,7 +81,7 @@ resource Sql_servers_databases_ 'Microsoft.Sql/servers/databases@2025-01-01' = {
 	tags: tags
 }
 
-resource Sql_servers_databases_auditingSettings__Default 'Microsoft.Sql/servers/databases/auditingSettings@2025-01-01' = if (resources.?auditingSettings.?Default != null) {
+resource Sql_servers_databases_auditingSettings__Default 'Microsoft.Sql/servers/databases/auditingSettings@2025-01-01' = if (resources.?auditingSettings.Default != null) {
 	name: 'default'
 	parent: Sql_servers_databases_
 	properties: resources!.auditingSettings!.Default!.properties

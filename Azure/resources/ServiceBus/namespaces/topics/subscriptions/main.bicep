@@ -29,11 +29,13 @@ param properties resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscript
 @description('The child resources.')
 param resources {
 	rules: {
-		@description('The name.')
-		name: string
-		@description('The properties.')
-		properties: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2024-01-01'>.properties
-	}[]
+		*: {
+			@description('The name.')
+			name: string
+			@description('The properties.')
+			properties: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2024-01-01'>.properties
+		}
+	}
 }?
 
 /* EXISTING RESOURCES */
@@ -56,10 +58,10 @@ resource ServiceBus_namespaces_topics_subscriptions_ 'Microsoft.ServiceBus/names
 }
 
 resource ServiceBus_namespaces_topics_subscriptions_rules_ 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2026-01-01' = [
-	for item in resources.?rules ?? []: {
-		name: item.name
+	for item in items(resources.?rules ?? {}): {
+		name: item.value.name
 		parent: ServiceBus_namespaces_topics_subscriptions_
-		properties: item.properties
+		properties: item.value.properties
 	}
 ]
 

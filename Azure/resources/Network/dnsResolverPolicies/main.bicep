@@ -54,10 +54,14 @@ param name resourceInput<'Microsoft.Network/dnsResolverPolicies@2025-05-01'>.nam
 
 @description('The child resources.')
 param resources {
-	@description('The array of virtual network links.')
-	dnsSecurityRules: DnsSecurityRuleResource[]
-	@description('The array of virtual network links.')
-	virtualNetworkLinks: VirtualNetworkLinkResource[]
+	@description('The DNS security rules.')
+	dnsSecurityRules: {
+		*: DnsSecurityRuleResource
+	}
+	@description('The virtual network links.')
+	virtualNetworkLinks: {
+		*: VirtualNetworkLinkResource
+	}
 }
 
 @description('The tags.')
@@ -72,22 +76,22 @@ resource Network_dnsResolverPolicies_ 'Microsoft.Network/dnsResolverPolicies@202
 }
 
 resource Network_dnsResolverPolicies_dnsSecurityRules_ 'Microsoft.Network/dnsResolverPolicies/dnsSecurityRules@2025-05-01' = [
-	for item in resources.dnsSecurityRules: {
+	for item in items(resources.dnsSecurityRules): {
 		location: location
-		name: item.name
+		name: item.value.name
 		parent: Network_dnsResolverPolicies_
-		properties: item.properties
-		tags: item.tags
+		properties: item.value.properties
+		tags: item.value.tags
 	}
 ]
 
 resource Network_dnsResolverPolicies_virtualNetworkLinks_ 'Microsoft.Network/dnsResolverPolicies/virtualNetworkLinks@2025-05-01' = [
-	for item in resources.virtualNetworkLinks: {
+	for item in items(resources.virtualNetworkLinks): {
 		location: location
-		name: item.name
+		name: item.value.name
 		parent: Network_dnsResolverPolicies_
-		properties: item.properties
-		tags: item.tags
+		properties: item.value.properties
+		tags: item.value.tags
 	}
 ]
 

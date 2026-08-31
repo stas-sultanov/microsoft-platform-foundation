@@ -52,14 +52,16 @@ param resources {
 		}
 	}
 	resourceAssociations: {
-		@description('The name.')
-		name: string
-		@description('The configurable properties.')
-		properties: {
-			accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.accessMode
-			privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.privateLinkResource
+		*: {
+			@description('The name.')
+			name: string
+			@description('The configurable properties.')
+			properties: {
+				accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.accessMode
+				privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.privateLinkResource
+			}
 		}
-	}[]
+	}
 }
 
 @description('The tags.')
@@ -89,11 +91,11 @@ resource Network_networkSecurityPerimeters_profiles_accessRules__Default 'Micros
 ]
 
 resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01' = [
-	for item in resources.resourceAssociations: {
-		name: item.name
+	for item in items(resources.resourceAssociations ?? {}): {
+		name: item.value.name
 		parent: Network_networkSecurityPerimeters_
 		properties: {
-			...item.properties
+			...item.value.properties
 			profile: {
 				id: Network_networkSecurityPerimeters_profiles__Default.id
 			}

@@ -39,11 +39,13 @@ param properties resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities
 param resources {
 	@description('The federated identity credentials.')
 	federatedIdentityCredentials: {
-		@description('The resource name.')
-		name: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.name
-		@description('The properties.')
-		properties: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.properties
-	}[]?
+		*: {
+			@description('The resource name.')
+			name: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.name
+			@description('The properties.')
+			properties: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.properties
+		}
+	}
 }?
 
 @description('The tags.')
@@ -59,10 +61,10 @@ resource ManagedIdentity_userAssignedIdentities_ 'Microsoft.ManagedIdentity/user
 }
 
 resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30' = [
-	for item in resources.?federatedIdentityCredentials ?? []: {
-		name: item.name
+	for item in items(resources.?federatedIdentityCredentials ?? {}): {
+		name: item.value.name
 		parent: ManagedIdentity_userAssignedIdentities_
-		properties: item.properties
+		properties: item.value.properties
 	}
 ]
 

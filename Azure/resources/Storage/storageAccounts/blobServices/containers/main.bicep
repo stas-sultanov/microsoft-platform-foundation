@@ -50,8 +50,8 @@ param resources {
 	immutabilityPolicies: {
 		Default: {
 			properties: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies@2026-04-01'>.properties
-		}?
-	}?
+		}
+	}
 }?
 
 /* EXISTING RESOURCES */
@@ -73,7 +73,7 @@ resource Storage_storageAccounts_blobServices_containers_ 'Microsoft.Storage/sto
 	properties: properties
 }
 
-resource Storage_storageAccounts_blobServices_containers_immutabilityPolicies__Default 'Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies@2026-04-01' = if (resources.?immutabilityPolicies.?Default != null) {
+resource Storage_storageAccounts_blobServices_containers_immutabilityPolicies__Default 'Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies@2026-04-01' = if (resources.?immutabilityPolicies.Default != null) {
 	name: 'default'
 	parent: Storage_storageAccounts_blobServices_containers_
 	properties: resources!.immutabilityPolicies!.Default!.properties
