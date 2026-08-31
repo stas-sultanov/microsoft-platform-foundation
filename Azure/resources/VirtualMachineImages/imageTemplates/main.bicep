@@ -39,6 +39,17 @@ param name resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-
 @description('The configurable properties.')
 param properties resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties
 
+@description('The child resources.')
+param resources {
+	triggers: {
+		@description('The trigger on SourceImage change.')
+		SourceImage: {
+			@description('The configurable properties.')
+			properties: {}
+		}
+	}
+}?
+
 @description('The tags.')
 param tags resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.tags
 
@@ -50,6 +61,14 @@ resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/im
 	name: name
 	properties: properties
 	tags: tags
+}
+
+resource VirtualMachineImages_imageTemplates_triggers__SourceImage 'Microsoft.VirtualMachineImages/imageTemplates/triggers@2025-10-01' = if (resources.?triggers != null) {
+	name: 'SourceImage'
+	parent: VirtualMachineImages_imageTemplates_
+	properties: {
+		kind: 'SourceImage'
+	}
 }
 
 /* EXTENSIONS */
