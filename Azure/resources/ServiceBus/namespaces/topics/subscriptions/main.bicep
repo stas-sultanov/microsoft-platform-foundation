@@ -42,18 +42,16 @@ param resources {
 
 resource ServiceBus_namespaces_ 'Microsoft.ServiceBus/namespaces@2026-01-01' existing = {
 	name: parentNamespaceName
-}
-
-resource ServiceBus_namespaces_topics_ 'Microsoft.ServiceBus/namespaces/topics@2026-01-01' existing = {
-	name: parentTopicName
-	parent: ServiceBus_namespaces_
+	resource topics_ 'topics' existing = {
+		name: parentTopicName
+	}
 }
 
 /* RESOURCES */
 
 resource ServiceBus_namespaces_topics_subscriptions_ 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2026-01-01' = {
 	name: name
-	parent: ServiceBus_namespaces_topics_
+	parent: ServiceBus_namespaces_::topics_
 	properties: properties
 }
 
