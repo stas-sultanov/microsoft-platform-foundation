@@ -25,31 +25,31 @@ param extensions {
 	}?
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.identity = {
-	type: 'None'
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
+	@description('The properties.')
+	properties: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.tags
 }
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
-
-@description('The properties.')
-param properties resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.properties
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.tags
 
 /* RESOURCES */
 
 resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' = {
-	identity: identity
-	location: location
-	name: name
-	properties: properties
-	tags: tags
+	identity: settings.?identity ?? {
+	type: 'None'
+}
+	location: settings.location
+	name: settings.name
+	properties: settings.properties
+	tags: settings.tags
 }
 
 /* EXTENSIONS */

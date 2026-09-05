@@ -17,23 +17,25 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('Collection of role assignments.')
-param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
-
-@description('Name of the Microsoft.Storage/storageAccounts resource.')
-param storageAccountName string
-
-@description('Name of the Microsoft.Storage/storageAccounts/blobServices/containers resource.')
-param storageContainerName string
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('Collection of role assignments.')
+	roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+	@description('Name of the Microsoft.Storage/storageAccounts resource.')
+	storageAccountName: string
+	@description('Name of the Microsoft.Storage/storageAccounts/blobServices/containers resource.')
+	storageContainerName: string
+}
 
 /* EXISTING RESOURCES */
 
 resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
-	name: storageAccountName
+	name: settings.storageAccountName
 	resource blobServices_ 'blobServices' existing = {
 		name: 'default'
 		resource containers_ 'containers' existing = {
-			name: storageContainerName
+			name: settings.storageContainerName
 		}
 	}
 }
@@ -43,7 +45,7 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Storage_storageAccounts_::blobServices_::containers_.id,
-		roleAssignments
+		settings.roleAssignments
 	): {
 		name: item.name
 		properties: item.properties

@@ -17,16 +17,19 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('Name of the Microsoft.ContainerRegistry/registries resource.')
-param name resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.name
-
-@description('Collection of role assignments.')
-param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('Name of the Microsoft.ContainerRegistry/registries resource.')
+	name: resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.name
+	@description('Collection of role assignments.')
+	roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+}
 
 /* EXISTING RESOURCES */
 
 resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2025-11-01' existing = {
-	name: name
+	name: settings.name
 }
 
 /* RESOURCES */
@@ -34,7 +37,7 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		ContainerRegistry_registries_.id,
-		roleAssignments
+		settings.roleAssignments
 	): {
 		name: item.name
 		properties: item.properties

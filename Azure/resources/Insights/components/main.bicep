@@ -25,41 +25,42 @@ param extensions {
 	}?
 }?
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Insights/components@2020-02-02'>.name
-
-@description('The configurable properties.')
+@description('The resource settings.')
 @sealed()
-param properties {
-	@description('Specifies whether the network access type for accessing Application Insights ingestion is enabled.')
-	publicNetworkAccessForIngestion: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForIngestion
-	@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
-	publicNetworkAccessForQuery: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForQuery
-	@description('The id of the Microsoft.OperationalInsights/workspaces resource which the data will be ingested to.')
-	workspaceResourceId: string
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Insights/components@2020-02-02'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		@description('Specifies whether the network access type for accessing Application Insights ingestion is enabled.')
+		publicNetworkAccessForIngestion: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForIngestion
+		@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
+		publicNetworkAccessForQuery: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForQuery
+		@description('The id of the Microsoft.OperationalInsights/workspaces resource which the data will be ingested to.')
+		workspaceResourceId: string
+	}
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Insights/components@2020-02-02'>.tags
 }
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Insights/components@2020-02-02'>.tags
 
 /* RESOURCES */
 
 resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' = {
 	kind: 'web'
-	location: location
-	name: name
+	location: settings.location
+	name: settings.name
 	properties: {
 		Application_Type: 'web'
 		DisableIpMasking: true
 		DisableLocalAuth: true
-		publicNetworkAccessForIngestion: properties.publicNetworkAccessForIngestion
-		publicNetworkAccessForQuery: properties.?publicNetworkAccessForQuery
-		WorkspaceResourceId: properties.workspaceResourceId
+		publicNetworkAccessForIngestion: settings.properties.publicNetworkAccessForIngestion
+		publicNetworkAccessForQuery: settings.properties.?publicNetworkAccessForQuery
+		WorkspaceResourceId: settings.properties.workspaceResourceId
 	}
-	tags: tags
+	tags: settings.tags
 }
 
 /* EXTENSIONS */

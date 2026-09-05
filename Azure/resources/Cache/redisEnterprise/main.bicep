@@ -26,51 +26,49 @@ param extensions {
 	}
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.identity = {
-	type: 'None'
-}
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.name
-
-@description('The configurable properties.')
+@description('The resource settings.')
 @sealed()
-param properties {
-	@description('Dataset replication configuration for the Redis Enterprise cluster.')
-	highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.highAvailability
-	@description('Cluster-level maintenance configuration.')
-	maintenanceConfiguration: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.maintenanceConfiguration
-	@description('The network access mode.')
-	publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.publicNetworkAccess
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		@description('Dataset replication configuration for the Redis Enterprise cluster.')
+		highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.highAvailability
+		@description('Cluster-level maintenance configuration.')
+		maintenanceConfiguration: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.maintenanceConfiguration
+		@description('The network access mode.')
+		publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.publicNetworkAccess
+	}
+	@description('The SKU.')
+	sku: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.sku
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.tags
+	@description('The zones.')
+	zones: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.zones?
 }
-
-@description('The SKU.')
-param sku resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.sku
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.tags
-
-@description('The zones.')
-param zones resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.zones = []
 
 /* RESOURCES */
 
 #disable-diagnostics use-recent-api-versions // maintenance window configuration is available in preview only
 resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-02-01-preview' = {
-	identity: identity
-	location: location
-	name: name
+	identity: settings.?identity ?? {
+		type: 'None'
+	}
+	location: settings.location
+	name: settings.name
 	properties: {
-		...properties
+		...settings.properties
 		minimumTlsVersion: '1.2'
 	}
-	sku: sku
-	tags: tags
-	zones: zones
+	sku: settings.sku
+	tags: settings.tags
+	zones: settings.?zones ?? []
 }
 
 /* EXTENSIONS */
@@ -86,7 +84,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

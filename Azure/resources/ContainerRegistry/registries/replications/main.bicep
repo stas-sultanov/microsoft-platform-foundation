@@ -9,20 +9,21 @@ metadata description = 'Provisions a Microsoft.ContainerRegistry/registries/repl
 
 /* PARAMETERS */
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.name
-
 @description('The name of the parent Microsoft.ContainerRegistry/registries resource.')
 param parentName resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.name
 
-@description('The configurable properties.')
-param properties resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.properties
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.name
+	@description('The configurable properties.')
+	properties: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.tags
+}
 
 /* EXISTING RESOURCES */
 
@@ -33,11 +34,11 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 /* RESOURCES */
 
 resource ContainerRegistry_registries_replications_ 'Microsoft.ContainerRegistry/registries/replications@2025-11-01' = {
-	location: location
-	name: name
+	location: settings.location
+	name: settings.name
 	parent: ContainerRegistry_registries_
-	properties: properties
-	tags: tags
+	properties: settings.properties
+	tags: settings.tags
 }
 
 /* OUTPUTS */

@@ -17,16 +17,19 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('Name of the Microsoft.AppConfiguration/configurationStores resource.')
-param name resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.name
-
-@description('Collection of role assignments.')
-param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('Name of the Microsoft.AppConfiguration/configurationStores resource.')
+	name: resourceInput<'Microsoft.AppConfiguration/configurationStores@2024-06-01'>.name
+	@description('Collection of role assignments.')
+	roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+}
 
 /* EXISTING RESOURCES */
 
 resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/configurationStores@2024-06-01' existing = {
-	name: name
+	name: settings.name
 }
 
 /* RESOURCES */
@@ -34,7 +37,7 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		AppConfiguration_configurationStores_.id,
-		roleAssignments
+		settings.roleAssignments
 	): {
 		name: item.name
 		properties: item.properties

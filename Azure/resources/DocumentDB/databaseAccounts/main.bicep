@@ -30,76 +30,76 @@ param extensions {
 	}
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.identity = {
-	type: 'None'
-}
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
-
-@description('The configurable properties.')
+@description('The resource settings.')
 @sealed()
-param properties {
-	@description('The policy for taking backups on an account.')
-	backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.backupPolicy
-	@description('Properties related to capacity enforcement on an account.')
-	capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacity?
-	@description('The capacity mode for the Cosmos DB account.')
-	capacityMode: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacityMode
-	@description('The consistency policy for the Cosmos DB account.')
-	consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.consistencyPolicy
-	@description('List of IpRules.')
-	ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.ipRules
-	@description('Locations enabled for the Cosmos DB account.')
-	locations: {
-		@description('The primary region.')
-		Primary: {
-			@description('Flag to indicate whether or not this region is an AvailabilityZone region')
-			isZoneRedundant: bool
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		@description('The policy for taking backups on an account.')
+		backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.backupPolicy
+		@description('Properties related to capacity enforcement on an account.')
+		capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacity?
+		@description('The capacity mode for the Cosmos DB account.')
+		capacityMode: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacityMode
+		@description('The consistency policy for the Cosmos DB account.')
+		consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.consistencyPolicy
+		@description('List of IpRules.')
+		ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.ipRules
+		@description('Locations enabled for the Cosmos DB account.')
+		locations: {
+			@description('The primary region.')
+			Primary: {
+				@description('Flag to indicate whether or not this region is an AvailabilityZone region')
+				isZoneRedundant: bool
+			}
+			*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.locations[*]
 		}
-		*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.locations[*]
+		@description('The network access mode.')
+		publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.publicNetworkAccess
 	}
-	@description('The network access mode.')
-	publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.publicNetworkAccess
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.tags
 }
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.tags
 
 /* RESOURCES */
 
 #disable-next-line use-recent-api-versions // capacityMode is available only in the preview API.
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' = {
-	identity: identity
+	identity: settings.?identity ?? {
+	type: 'None'
+}
 	kind: 'GlobalDocumentDB'
-	location: location
-	name: name
+	location: settings.location
+	name: settings.name
 	properties: {
-		backupPolicy: properties.backupPolicy
-		capacity: properties.capacityMode == 'Provisioned'
-			? properties.?capacity
+		backupPolicy: settings.properties.backupPolicy
+		capacity: settings.properties.capacityMode == 'Provisioned'
+			? settings.properties.?capacity
 			: null
-		capacityMode: properties.capacityMode
-		consistencyPolicy: properties.consistencyPolicy
+		capacityMode: settings.properties.capacityMode
+		consistencyPolicy: settings.properties.consistencyPolicy
 		createMode: 'Default'
 		databaseAccountOfferType: 'Standard'
 		disableLocalAuth: true
-		ipRules: properties.ipRules
+		ipRules: settings.properties.ipRules
 		locations: concat(
 			[
 				{
 					failoverPriority: 0
-					isZoneRedundant: properties.locations.Primary.isZoneRedundant
-					locationName: location
+					isZoneRedundant: settings.properties.locations.Primary.isZoneRedundant
+					locationName: settings.location
 				}
 			],
 			map(
 				filter(
-					items(properties.locations),
+					items(settings.properties.locations),
 					item =>
 						item.key != 'Primary'
 				),
@@ -108,9 +108,9 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 			)
 		)
 		minimalTlsVersion: 'Tls12'
-		publicNetworkAccess: properties.publicNetworkAccess
+		publicNetworkAccess: settings.properties.publicNetworkAccess
 	}
-	tags: tags
+	tags: settings.tags
 }
 
 /* EXTENSIONS */
@@ -126,7 +126,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name
@@ -158,4 +158,4 @@ output properties {
 }
 
 @description('The restore id.')
-output restoreId string = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.DocumentDB/locations/${DocumentDB_databaseAccounts_.location}/restorableDatabaseAccounts/${DocumentDB_databaseAccounts_.properties.instanceId}'
+output restoreId string = '/subscriptions/${subscription().subscriptionId}/extensions/Microsoft.DocumentDB/locations/${DocumentDB_databaseAccounts_.location}/restorableDatabaseAccounts/${DocumentDB_databaseAccounts_.properties.instanceId}'

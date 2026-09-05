@@ -17,16 +17,19 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('Name of the Microsoft.DocumentDB/databaseAccounts resource.')
-param name resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
-
-@description('Collection of role assignments.')
-param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('Name of the Microsoft.DocumentDB/databaseAccounts resource.')
+	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
+	@description('Collection of role assignments.')
+	roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+}
 
 /* EXISTING RESOURCES */
 
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
-	name: name
+	name: settings.name
 }
 
 /* RESOURCES */
@@ -34,7 +37,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		DocumentDB_databaseAccounts_.id,
-		roleAssignments
+		settings.roleAssignments
 	): {
 		name: item.name
 		properties: item.properties

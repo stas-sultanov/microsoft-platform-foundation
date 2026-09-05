@@ -26,25 +26,26 @@ param extensions {
 	}
 }
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Network/networkSecurityGroups@2025-07-01'>.name
-
-@description('The configurable properties.')
-param properties resourceInput<'Microsoft.Network/networkSecurityGroups@2025-07-01'>.properties
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Network/networkSecurityGroups@2025-07-01'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Network/networkSecurityGroups@2025-07-01'>.name
+	@description('The configurable properties.')
+	properties: resourceInput<'Microsoft.Network/networkSecurityGroups@2025-07-01'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/networkSecurityGroups@2025-07-01'>.tags
+}
 
 /* RESOURCES */
 
 resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups@2025-07-01' = {
-	location: location
-	name: name
-	properties: properties
-	tags: tags
+	location: settings.location
+	name: settings.name
+	properties: settings.properties
+	tags: settings.tags
 }
 
 /* EXTENSIONS */
@@ -60,7 +61,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

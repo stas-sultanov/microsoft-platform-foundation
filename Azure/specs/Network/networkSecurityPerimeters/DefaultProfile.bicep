@@ -32,12 +32,6 @@ param extensions {
 	}
 }
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.name
-
 @description('The child resources.')
 @sealed()
 param resources {
@@ -64,16 +58,24 @@ param resources {
 	}
 }
 
-@description('The tags.')
-param tags resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.name
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.tags
+}
 
 /* RESOURCES */
 
 resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPerimeters@2025-07-01' = {
-	location: location
-	name: name
+	location: settings.location
+	name: settings.name
 	properties: {}
-	tags: tags
+	tags: settings.tags
 }
 
 resource Network_networkSecurityPerimeters_profiles__Default 'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01' = {
@@ -116,7 +118,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

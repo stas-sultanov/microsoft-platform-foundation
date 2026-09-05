@@ -26,33 +26,32 @@ param extensions {
 	}
 }
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Network/publicIPPrefixes@2025-07-01'>.name
-
-@description('The configurable properties.')
-param properties resourceInput<'Microsoft.Network/publicIPPrefixes@2025-07-01'>.properties
-
-@description('The SKU.')
-param sku resourceInput<'Microsoft.Network/publicIPPrefixes@2025-07-01'>.sku
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Network/publicIPPrefixes@2025-07-01'>.tags
-
-@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-param zones string[]
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Network/publicIPPrefixes@2025-07-01'>.name
+	@description('The configurable properties.')
+	properties: resourceInput<'Microsoft.Network/publicIPPrefixes@2025-07-01'>.properties
+	@description('The SKU.')
+	sku: resourceInput<'Microsoft.Network/publicIPPrefixes@2025-07-01'>.sku
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/publicIPPrefixes@2025-07-01'>.tags
+	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
+	zones: string[]
+}
 
 /* RESOURCES */
 
 resource Network_publicIPPrefixes_ 'Microsoft.Network/publicIPPrefixes@2025-07-01' = {
-	location: location
-	name: name
-	properties: properties
-	sku: sku
-	tags: tags
-	zones: zones
+	location: settings.location
+	name: settings.name
+	properties: settings.properties
+	sku: settings.sku
+	tags: settings.tags
+	zones: settings.zones
 }
 
 /* EXTENSIONS */
@@ -68,7 +67,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

@@ -12,13 +12,16 @@ metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlRo
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
 param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
 
-@description('Collection of the principals.')
-param principals {
-	Id: string
-}[]
-
-@description('The unique identifier for the associated Role Definition.')
-param roleDefinitionId string
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('Collection of the principals.')
+	principals: {
+		Id: string
+	}[]
+	@description('The unique identifier for the associated Role Definition.')
+	roleDefinitionId: string
+}
 
 /* EXISTING RESOURCES */
 
@@ -30,17 +33,17 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 
 @batchSize(1)
 resource DocumentDB_databaseAccounts_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-03-15' = [
-	for item in principals: {
+	for item in settings.principals: {
 		name: guid(
 			subscription().id,
 			DocumentDB_databaseAccounts_.id,
-			roleDefinitionId,
+			settings.roleDefinitionId,
 			item.Id
 		)
 		parent: DocumentDB_databaseAccounts_
 		properties: {
 			principalId: item.Id
-			roleDefinitionId: roleDefinitionId
+			roleDefinitionId: settings.roleDefinitionId
 			scope: DocumentDB_databaseAccounts_.id
 		}
 	}

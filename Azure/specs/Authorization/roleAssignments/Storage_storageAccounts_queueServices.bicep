@@ -17,23 +17,25 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('Collection of role assignments.')
-param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
-
-@description('Name of the Microsoft.Storage/storageAccounts resource.')
-param storageAccountName string
-
-@description('Name of the Microsoft.Storage/storageAccounts/queueServices/queues resource.')
-param storageQueueName string
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('Collection of role assignments.')
+	roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+	@description('Name of the Microsoft.Storage/storageAccounts resource.')
+	storageAccountName: string
+	@description('Name of the Microsoft.Storage/storageAccounts/queueServices/queues resource.')
+	storageQueueName: string
+}
 
 /* EXISTING RESOURCES */
 
 resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
-	name: storageAccountName
+	name: settings.storageAccountName
 	resource queueServices_ 'queueServices' existing = {
 		name: 'default'
 		resource queues_ 'queues' existing = {
-			name: storageQueueName
+			name: settings.storageQueueName
 		}
 	}
 }
@@ -43,7 +45,7 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Storage_storageAccounts_::queueServices_::queues_.id,
-		roleAssignments
+		settings.roleAssignments
 	): {
 		name: item.name
 		properties: item.properties

@@ -17,16 +17,19 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('Name of the Microsoft.Compute/galleries resource.')
-param name resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
-
-@description('Collection of role assignments.')
-param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('Name of the Microsoft.Compute/galleries resource.')
+	name: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
+	@description('Collection of role assignments.')
+	roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+}
 
 /* EXISTING RESOURCES */
 
 resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' existing = {
-	name: name
+	name: settings.name
 }
 
 /* RESOURCES */
@@ -34,7 +37,7 @@ resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' existing = 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Compute_galleries_.id,
-		roleAssignments
+		settings.roleAssignments
 	): {
 		name: item.name
 		properties: item.properties

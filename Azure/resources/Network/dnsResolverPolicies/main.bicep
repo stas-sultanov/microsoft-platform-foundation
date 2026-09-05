@@ -46,12 +46,6 @@ param extensions {
 	}
 }
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Network/dnsResolverPolicies@2025-05-01'>.name
-
 @description('The child resources.')
 param resources {
 	@description('The DNS security rules.')
@@ -64,20 +58,28 @@ param resources {
 	}
 }
 
-@description('The tags.')
-param tags resourceInput<'Microsoft.Network/dnsResolverPolicies@2025-05-01'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Network/dnsResolverPolicies@2025-05-01'>.name
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/dnsResolverPolicies@2025-05-01'>.tags
+}
 
 /* RESOURCES */
 
 resource Network_dnsResolverPolicies_ 'Microsoft.Network/dnsResolverPolicies@2025-05-01' = {
-	location: location
-	name: name
-	tags: tags
+	location: settings.location
+	name: settings.name
+	tags: settings.tags
 }
 
 resource Network_dnsResolverPolicies_dnsSecurityRules_ 'Microsoft.Network/dnsResolverPolicies/dnsSecurityRules@2025-05-01' = [
 	for item in items(resources.dnsSecurityRules): {
-		location: location
+		location: settings.location
 		name: item.value.name
 		parent: Network_dnsResolverPolicies_
 		properties: item.value.properties
@@ -87,7 +89,7 @@ resource Network_dnsResolverPolicies_dnsSecurityRules_ 'Microsoft.Network/dnsRes
 
 resource Network_dnsResolverPolicies_virtualNetworkLinks_ 'Microsoft.Network/dnsResolverPolicies/virtualNetworkLinks@2025-05-01' = [
 	for item in items(resources.virtualNetworkLinks): {
-		location: location
+		location: settings.location
 		name: item.value.name
 		parent: Network_dnsResolverPolicies_
 		properties: item.value.properties
@@ -108,7 +110,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

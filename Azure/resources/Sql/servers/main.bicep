@@ -23,43 +23,6 @@ param extensions {
 	}
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.Sql/servers@2025-01-01'>.identity = {
-	type: 'None'
-}
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Sql/servers@2025-01-01'>.name
-
-@description('The configurable properties.')
-@sealed()
-param properties {
-	@description('The server Entra ID administrator.')
-	administrators: {
-		@description('Name of the principal within the Entra tenant.')
-		name: string
-		@description('ObjectId of the principal within the Entra tenant.')
-		objectId: string
-		@description('Type of the principal within the Entra tenant.')
-		principalType: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.administrators.principalType
-		@description('The id of the Entra tenant.')
-		tenantId: string?
-	}
-	@description('Specifies whether or not public endpoint access is allowed for this server.')
-	isIPv6Enabled: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.isIPv6Enabled
-	@description('The network access mode.')
-	publicNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.publicNetworkAccess
-	@description('The resource id of a user assigned identity to be used by default.')
-	primaryUserAssignedIdentityId: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.primaryUserAssignedIdentityId
-	@description('Specifies whether or not outbound network access is restricted for this server.')
-	restrictOutboundNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.restrictOutboundNetworkAccess
-	@description('The number of days this server will stay soft-deleted.')
-	retentionDays: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.retentionDays
-}
-
 @description('The child resources.')
 @sealed()
 param resources {
@@ -102,32 +65,69 @@ param resources {
 	}
 }
 
-@description('The tags.')
-param tags resourceInput<'Microsoft.Sql/servers@2025-01-01'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		@description('The server Entra ID administrator.')
+		administrators: {
+			@description('Name of the principal within the Entra tenant.')
+			name: string
+			@description('ObjectId of the principal within the Entra tenant.')
+			objectId: string
+			@description('Type of the principal within the Entra tenant.')
+			principalType: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.administrators.principalType
+			@description('The id of the Entra tenant.')
+			tenantId: string?
+		}
+		@description('Specifies whether or not public endpoint access is allowed for this server.')
+		isIPv6Enabled: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.isIPv6Enabled
+		@description('The network access mode.')
+		publicNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.publicNetworkAccess
+		@description('The resource id of a user assigned identity to be used by default.')
+		primaryUserAssignedIdentityId: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.primaryUserAssignedIdentityId
+		@description('Specifies whether or not outbound network access is restricted for this server.')
+		restrictOutboundNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.restrictOutboundNetworkAccess
+		@description('The number of days this server will stay soft-deleted.')
+		retentionDays: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.retentionDays
+	}
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.tags
+}
 
 /* RESOURCES */
 
 resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' = {
-	identity: identity
-	location: location
-	name: name
+	identity: settings.?identity ?? {
+	type: 'None'
+}
+	location: settings.location
+	name: settings.name
 	properties: {
 		administrators: {
 			administratorType: 'ActiveDirectory'
 			azureADOnlyAuthentication: true
-			login: properties.administrators.name
-			principalType: properties.administrators.principalType
-			sid: properties.administrators.objectId
-			tenantId: properties.administrators.?tenantId ?? az.tenant().tenantId
+			login: settings.properties.administrators.name
+			principalType: settings.properties.administrators.principalType
+			sid: settings.properties.administrators.objectId
+			tenantId: settings.properties.administrators.?tenantId ?? az.tenant().tenantId
 		}
-		isIPv6Enabled: properties.isIPv6Enabled
+		isIPv6Enabled: settings.properties.isIPv6Enabled
 		minimalTlsVersion: '1.3'
-		primaryUserAssignedIdentityId: properties.primaryUserAssignedIdentityId
-		publicNetworkAccess: properties.publicNetworkAccess
-		restrictOutboundNetworkAccess: properties.restrictOutboundNetworkAccess
-		retentionDays: properties.retentionDays
+		primaryUserAssignedIdentityId: settings.properties.primaryUserAssignedIdentityId
+		publicNetworkAccess: settings.properties.publicNetworkAccess
+		restrictOutboundNetworkAccess: settings.properties.restrictOutboundNetworkAccess
+		retentionDays: settings.properties.retentionDays
 	}
-	tags: tags
+	tags: settings.tags
 }
 
 resource Sql_servers_auditingSettings__Default 'Microsoft.Sql/servers/auditingSettings@2025-01-01' = {
@@ -147,7 +147,7 @@ resource Sql_servers_connectionPolicies__Default 'Microsoft.Sql/servers/connecti
 }
 
 resource Sql_servers_databases__Master 'Microsoft.Sql/servers/databases@2025-01-01' = {
-	location: location
+	location: settings.location
 	name: 'master'
 	parent: Sql_servers_
 	properties: {}

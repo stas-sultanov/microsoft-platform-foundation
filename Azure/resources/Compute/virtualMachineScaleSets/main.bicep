@@ -35,39 +35,37 @@ param extensions {
 	}
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity = {
-	type: 'None'
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
+	@description('The configurable properties.')
+	properties: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties
+	@description('The SKU.')
+	sku: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.sku
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.tags
+	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
+	zones: string[]
 }
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
-
-@description('The configurable properties.')
-param properties resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties
-
-@description('The SKU.')
-param sku resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.sku
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.tags
-
-@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-param zones string[]
 
 /* RESOURCES */
 
 resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' = {
-	identity: identity
-	location: location
-	name: name
-	properties: properties
-	sku: sku
-	tags: tags
-	zones: zones
+	identity: settings.?identity ?? {
+	type: 'None'
+}
+	location: settings.location
+	name: settings.name
+	properties: settings.properties
+	sku: settings.sku
+	tags: settings.tags
+	zones: settings.zones
 }
 
 /* EXTENSIONS */
@@ -93,7 +91,7 @@ resource Insights_dataCollectionRuleAssociations_ 'Microsoft.Insights/dataCollec
 
 resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurationAssignments@2023-04-01' = [
 	for item in extensions.Maintenance.configurationAssignments: {
-		location: location
+		location: settings.location
 		name: item.name
 		properties: item.properties
 		scope: Compute_virtualMachineScaleSets_

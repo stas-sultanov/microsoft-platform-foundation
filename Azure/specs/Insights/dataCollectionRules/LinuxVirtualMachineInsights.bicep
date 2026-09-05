@@ -22,33 +22,33 @@ param extensions {
 	}
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.identity = {
-	type: 'None'
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.name
+	@description('The configurable properties.')
+	properties: {
+		@description('The id of the destination Log Analytics workspace')
+		workspaceId: string
+	}
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags
 }
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.name
-
-@description('The configurable properties.')
-param properties {
-	@description('The id of the destination Log Analytics workspace')
-	workspaceId: string
-}
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags
 
 /* RESOURCES */
 
 resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2024-03-11' = {
-	identity: identity
+	identity: settings.?identity ?? {
+	type: 'None'
+}
 	kind: 'Linux'
-	location: location
-	name: name
+	location: settings.location
+	name: settings.name
 	properties: {
 		dataFlows: [
 			{
@@ -80,17 +80,17 @@ resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2
 			logAnalytics: [
 				{
 					name: 'VMInsightsPerf-Logs-Dest'
-					workspaceResourceId: properties.workspaceId
+					workspaceResourceId: settings.properties.workspaceId
 				}
 			]
 		}
 	}
-	tags: tags
+	tags: settings.tags
 }
 
 /* EXTENSIONS */
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

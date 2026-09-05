@@ -93,46 +93,42 @@ type Parameters = {
 
 /* PARAMETERS */
 
-@description('Application settings to be used as Environment Variables.')
-param appSettings object = {}
-
-@description('Managed Service Identity.')
-param identity resourceInput<'Microsoft.Web/sites@2025-03-01'>.identity
-
-@description('Type of site to deploy.')
-@allowed([
-	'api'
-	'app'
-])
-param kind string
-
-@description('Location to deploy the resources.')
-param location string
-
-@description('Name of the resource.')
-param name resourceInput<'Microsoft.Web/sites@2025-03-01'>.name
-
-@description('Configuration parameters.')
-param parameters Parameters
-
-@description('The id of the Web/serverfarms resource.')
-param serverFarmId string
-
-@description('Tags to put on the resource.')
-param tags object = {}
-
-@description('The id of the OperationalInsights/workspaces resource.')
-param workspaceId string
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('Application settings to be used as Environment Variables.')
+	appSettings: object?
+	@description('Managed Service Identity.')
+	identity: resourceInput<'Microsoft.Web/sites@2025-03-01'>.identity
+	@description('Type of site to deploy.')
+	@allowed([
+		'api'
+		'app'
+	])
+	kind: string
+	@description('Location to deploy the resources.')
+	location: string
+	@description('Name of the resource.')
+	name: resourceInput<'Microsoft.Web/sites@2025-03-01'>.name
+	@description('Configuration parameters.')
+	parameters: Parameters
+	@description('The id of the Web/serverfarms resource.')
+	serverFarmId: string
+	@description('Tags to put on the resource.')
+	tags: object?
+	@description('The id of the OperationalInsights/workspaces resource.')
+	workspaceId: string
+}
 
 /* VARIABLES */
 
 var operationalInsights_workspaces__id_split = split(
-	workspaceId,
+	settings.workspaceId,
 	'/'
 )
 
 var web_serverfarms__id_split = split(
-	serverFarmId,
+	settings.serverFarmId,
 	'/'
 )
 
@@ -156,7 +152,7 @@ resource Web_serverFarms_ 'Microsoft.Web/serverfarms@2025-03-01' existing = {
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
 	name: OperationalInsights_workspaces_.name
 	properties: {
@@ -199,18 +195,18 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 }
 
 resource Web_sites_ 'Microsoft.Web/sites@2025-03-01' = {
-	identity: identity
-	kind: kind
-	location: location
-	name: name
+	identity: settings.identity
+	kind: settings.kind
+	location: settings.location
+	name: settings.name
 	properties: {
-		clientAffinityEnabled: parameters.clientAffinityEnabled
-		httpsOnly: parameters.httpsOnly
+		clientAffinityEnabled: settings.parameters.clientAffinityEnabled
+		httpsOnly: settings.parameters.httpsOnly
 		serverFarmId: Web_serverFarms_.id
 		#disable-next-line BCP073 // in API definition this property is read only
 		state: 'Stopped'
 	}
-	tags: tags
+	tags: (settings.?tags ?? {})
 }
 
 resource Web_sites_basicPublishingCredentialsPolicies__FTP 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2025-03-01' = {
@@ -232,7 +228,7 @@ resource Web_sites_basicPublishingCredentialsPolicies__SCM 'Microsoft.Web/sites/
 resource Web_sites_config__AppSettings 'Microsoft.Web/sites/config@2025-03-01' = {
 	name: 'appsettings'
 	parent: Web_sites_
-	properties: appSettings
+	properties: (settings.?appSettings ?? {})
 }
 
 resource Web_sites_config__Metadata 'Microsoft.Web/sites/config@2025-03-01' = {
@@ -247,32 +243,32 @@ resource Web_sites_config__Web 'Microsoft.Web/sites/config@2025-03-01' = {
 	name: 'web'
 	parent: Web_sites_
 	properties: {
-		alwaysOn: parameters.alwaysOn
+		alwaysOn: settings.parameters.alwaysOn
 		apiDefinition: {
 			url: (!contains(
-					parameters,
+					settings.parameters,
 					'apiDefinition'
-				) || empty(parameters.?apiDefinition))
+				) || empty(settings.parameters.?apiDefinition))
 				? null
 				: 'https://${Web_sites_.properties.defaultHostName}${parameters.?apiDefinition}'
 		}
 		cors: {
-			allowedOrigins: parameters.corsAllowedOrigins
+			allowedOrigins: settings.parameters.corsAllowedOrigins
 		}
 		defaultDocuments: []
 		ftpsState: 'Disabled'
-		functionAppScaleLimit: parameters.?functionAppScaleLimit ?? 0
-		healthCheckPath: parameters.?healthCheckPath
-		http20Enabled: parameters.http20Enabled
-		ipSecurityRestrictions: parameters.ipSecurityRestrictions
-		minimumElasticInstanceCount: parameters.?minimumElasticInstanceCount ?? 0
-		preWarmedInstanceCount: parameters.?preWarmedInstanceCount ?? 0
-		remoteDebuggingEnabled: parameters.remoteDebuggingEnabled
+		functionAppScaleLimit: settings.parameters.?functionAppScaleLimit ?? 0
+		healthCheckPath: settings.parameters.?healthCheckPath
+		http20Enabled: settings.parameters.http20Enabled
+		ipSecurityRestrictions: settings.parameters.ipSecurityRestrictions
+		minimumElasticInstanceCount: settings.parameters.?minimumElasticInstanceCount ?? 0
+		preWarmedInstanceCount: settings.parameters.?preWarmedInstanceCount ?? 0
+		remoteDebuggingEnabled: settings.parameters.remoteDebuggingEnabled
 		remoteDebuggingVersion: 'VS2022'
-		netFrameworkVersion: parameters.netFrameworkVersion
-		numberOfWorkers: parameters.?numberOfWorkers
-		use32BitWorkerProcess: parameters.use32BitWorkerProcess
-		webSocketsEnabled: parameters.webSocketsEnabled
+		netFrameworkVersion: settings.parameters.netFrameworkVersion
+		numberOfWorkers: settings.parameters.?numberOfWorkers
+		use32BitWorkerProcess: settings.parameters.use32BitWorkerProcess
+		webSocketsEnabled: settings.parameters.webSocketsEnabled
 	}
 }
 

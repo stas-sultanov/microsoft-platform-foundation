@@ -9,17 +9,19 @@ metadata description = 'Provisions a Microsoft.Compute/galleries/applications re
 
 /* PARAMETERS */
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.name
-
 @description('The name of the parent Microsoft.Compute/galleries resource.')
 param parentName resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
 
-@description('The configurable properties.')
-param properties resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.properties
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.name
+	@description('The configurable properties.')
+	properties: resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.properties
+}
 
 /* EXISTING RESOURCES */
 
@@ -30,10 +32,10 @@ resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' existing = 
 /* RESOURCES */
 
 resource Compute_galleries_applications_ 'Microsoft.Compute/galleries/applications@2025-12-03' = {
-	location: location
-	name: name
+	location: settings.location
+	name: settings.name
 	parent: Compute_galleries_
-	properties: properties
+	properties: settings.properties
 }
 
 /* OUTPUTS */

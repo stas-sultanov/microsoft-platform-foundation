@@ -30,58 +30,58 @@ param extensions {
 	}
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.identity = {
-	type: 'None'
-}
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.name
-
-@description('The configurable properties.')
+@description('The resource settings.')
 @sealed()
-param properties {
-	@description('The default data collection rule resource id.')
-	defaultDataCollectionRuleResourceId: string?
-	@description('The features of the workspace.')
-	features: {
-		@description('Whether to immediately purge data after 30 days. Requires: retentionInDays == 30.')
-		immediatePurgeDataOn30Days: bool?
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		@description('The default data collection rule resource id.')
+		defaultDataCollectionRuleResourceId: string?
+		@description('The features of the workspace.')
+		features: {
+			@description('Whether to immediately purge data after 30 days. Requires: retentionInDays == 30.')
+			immediatePurgeDataOn30Days: bool?
+		}
+		@description('The network access type for ingestion.')
+		publicNetworkAccessForIngestion: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.publicNetworkAccessForIngestion
+		@description('The network access type for query.')
+		publicNetworkAccessForQuery: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.publicNetworkAccessForQuery
+		@description('The workspace data retention in days.')
+		@minValue(30)
+		retentionInDays: int
+		@description('The SKU of the workspace.')
+		sku: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.sku
+		@description('The daily volume cap for ingestion.')
+		workspaceCapping: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.workspaceCapping?
 	}
-	@description('The network access type for ingestion.')
-	publicNetworkAccessForIngestion: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.publicNetworkAccessForIngestion
-	@description('The network access type for query.')
-	publicNetworkAccessForQuery: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.publicNetworkAccessForQuery
-	@description('The workspace data retention in days.')
-	@minValue(30)
-	retentionInDays: int
-	@description('The SKU of the workspace.')
-	sku: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.sku
-	@description('The daily volume cap for ingestion.')
-	workspaceCapping: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.workspaceCapping?
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.tags
 }
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.tags
 
 /* RESOURCES */
 
 resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspaces@2025-07-01' = {
-	identity: identity
-	location: location
-	name: name
+	identity: settings.?identity ?? {
+	type: 'None'
+}
+	location: settings.location
+	name: settings.name
 	properties: {
-		...properties
+		...settings.properties
 		features: {
 			disableLocalAuth: true
 			enableLogAccessUsingOnlyResourcePermissions: true
-			immediatePurgeDataOn30Days: properties.features.?immediatePurgeDataOn30Days
+			immediatePurgeDataOn30Days: settings.properties.features.?immediatePurgeDataOn30Days
 		}
 	}
-	tags: tags
+	tags: settings.tags
 }
 
 /* EXTENSIONS */
@@ -97,7 +97,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

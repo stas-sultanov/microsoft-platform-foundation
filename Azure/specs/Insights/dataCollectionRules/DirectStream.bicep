@@ -30,69 +30,70 @@ param extensions {
 	}
 }
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.name
-
-@description('The configurable properties.')
+@description('The resource settings.')
 @sealed()
-param properties {
-	@description('The resource ID of the data collection endpoint that this rule can be used with.')
-	dataCollectionEndpointId: string?
-	@description('Data flow configuration.')
-	dataFlow: {
-		@description('The stream name used in destinations.')
-		destinations: string[]
-		@description('The KQL query used to transform stream data.')
-		transformKql: string
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		@description('The resource ID of the data collection endpoint that this rule can be used with.')
+		dataCollectionEndpointId: string?
+		@description('Data flow configuration.')
+		dataFlow: {
+			@description('The stream name used in destinations.')
+			destinations: string[]
+			@description('The KQL query used to transform stream data.')
+			transformKql: string
+		}
+		@description('The data collection rule description.')
+		description: string
+		@description('Destination configuration.')
+		destinations: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.destinations
+		@description('Custom stream declaration.')
+		stream: {
+			@description('Columns in the stream declaration.')
+			columns: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.streamDeclarations.*.columns
+			@description('The stream declaration name.')
+			@maxLength(63)
+			@minLength(3)
+			name: string
+		}
 	}
-	@description('The data collection rule description.')
-	description: string
-	@description('Destination configuration.')
-	destinations: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.destinations
-	@description('Custom stream declaration.')
-	stream: {
-		@description('Columns in the stream declaration.')
-		columns: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.streamDeclarations.*.columns
-		@description('The stream declaration name.')
-		@maxLength(63)
-		@minLength(3)
-		name: string
-	}
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags?
 }
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags = {}
 
 /* RESOURCES */
 
 resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2024-03-11' = {
 	kind: 'Direct' // mandatory setting, but not specified in the api spec
-	location: location
-	name: name
+	location: settings.location
+	name: settings.name
 	properties: {
-		dataCollectionEndpointId: properties.?dataCollectionEndpointId
+		dataCollectionEndpointId: settings.properties.?dataCollectionEndpointId
 		dataFlows: [
 			{
-				destinations: properties.dataFlow.destinations
-				outputStream: properties.stream.name
+				destinations: settings.properties.dataFlow.destinations
+				outputStream: settings.properties.stream.name
 				streams: [
-					properties.stream.name
+					settings.properties.stream.name
 				]
-				transformKql: properties.dataFlow.transformKql
+				transformKql: settings.properties.dataFlow.transformKql
 			}
 		]
-		description: properties.description
-		destinations: properties.destinations
+		description: settings.properties.description
+		destinations: settings.properties.destinations
 		streamDeclarations: {
 			'${properties.stream.name}': {
-				columns: properties.stream.columns
+				columns: settings.properties.stream.columns
 			}
 		}
 	}
-	tags: tags
+	tags: (settings.?tags ?? {})
 }
 
 /* EXTENSIONS */
@@ -108,7 +109,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

@@ -115,37 +115,35 @@ type SubResource = {
 @description('The extensions settings.')
 param extensions Extensions
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity = {
-	type: 'None'
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
+	@description('The configurable properties.')
+	properties: Properties
+	@description('The sku.')
+	sku: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.sku
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.tags
+	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
+	zones: string[]
 }
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
-
-@description('The configurable properties.')
-param properties Properties
-
-@description('The sku.')
-param sku resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.sku
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.tags
-
-@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-param zones string[]
 
 /* RESOURCES */
 
 resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' = {
-	identity: identity
-	location: location
-	name: name
+	identity: settings.?identity ?? {
+	type: 'None'
+}
+	location: settings.location
+	name: settings.name
 	properties: {
-		automaticRepairsPolicy: properties.automaticRepairsPolicy
+		automaticRepairsPolicy: settings.properties.automaticRepairsPolicy
 		orchestrationMode: 'Uniform'
 		overprovision: true
 		resiliencyPolicy: {
@@ -185,9 +183,9 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 				]
 			}
 			/**/
-			extensionProfile: properties.virtualMachineProfile.extensionProfile
+			extensionProfile: settings.properties.virtualMachineProfile.extensionProfile
 			networkProfile: {
-				healthProbe: properties.virtualMachineProfile.networkProfile.healthProbe
+				healthProbe: settings.properties.virtualMachineProfile.networkProfile.healthProbe
 				networkInterfaceConfigurations: [
 					{
 						name: 'Default'
@@ -198,52 +196,52 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 									name: 'Default'
 									properties: {
 										loadBalancerBackendAddressPools: [
-											properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.loadBalancerBackendAddressPools.Private
-											properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.loadBalancerBackendAddressPools.Public
+											settings.properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.loadBalancerBackendAddressPools.Private
+											settings.properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.loadBalancerBackendAddressPools.Public
 										]
-										subnet: properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.subnet
+										subnet: settings.properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.subnet
 									}
 								}
 							]
-							networkSecurityGroup: properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.networkSecurityGroup
+							networkSecurityGroup: settings.properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.networkSecurityGroup
 							primary: true
 						}
 					}
 				]
 			}
 			osProfile: {
-				adminUsername: properties.osProfile.adminUsername
-				computerNamePrefix: properties.osProfile.computerNamePrefix
-				customData: properties.osProfile.customData
+				adminUsername: settings.properties.osProfile.adminUsername
+				computerNamePrefix: settings.properties.osProfile.computerNamePrefix
+				customData: settings.properties.osProfile.customData
 				linuxConfiguration: {
 					disablePasswordAuthentication: true
 					enableVMAgentPlatformUpdates: true
 					ssh: {
 						publicKeys: [
 							{
-								keyData: properties.osProfile.linuxConfiguration.ssh.publicKeys.Admin.keyData
-								path: '/home/${properties.osProfile.adminUsername}/.ssh/authorized_keys'
+								keyData: settings.properties.osProfile.linuxConfiguration.ssh.publicKeys.Admin.keyData
+								path: '/home/${settings.properties.osProfile.adminUsername}/.ssh/authorized_keys'
 							}
 						]
 					}
 				}
 			}
 			storageProfile: {
-				imageReference: properties.storageProfile.imageReference
+				imageReference: settings.properties.storageProfile.imageReference
 				osDisk: {
 					caching: 'ReadWrite'
 					createOption: 'FromImage'
 					managedDisk: {
-						storageAccountType: properties.storageProfile.osDisk.managedDisk.storageAccountType
+						storageAccountType: settings.properties.storageProfile.osDisk.managedDisk.storageAccountType
 					}
 				}
 			}
 		}
-		zoneBalance: sys.length(zones) > 1
+		zoneBalance: sys.length(settings.zones) > 1
 	}
-	sku: sku
-	tags: tags
-	zones: zones
+	sku: settings.sku
+	tags: settings.tags
+	zones: settings.zones
 }
 
 /* EXTENSIONS */
@@ -269,7 +267,7 @@ resource Insights_dataCollectionRuleAssociations_ 'Microsoft.Insights/dataCollec
 
 resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurationAssignments@2023-04-01' = [
 	for item in extensions.Maintenance.configurationAssignments: {
-		location: location
+		location: settings.location
 		name: item.name
 		properties: item.properties
 		scope: Compute_virtualMachineScaleSets_
