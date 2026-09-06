@@ -24,42 +24,45 @@ import * as MaintenanceConfigurationAssignments from '../../../library/Maintenan
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
+	@sealed()
 	Maintenance: {
 		configurationAssignments: MaintenanceConfigurationAssignments.Resource[]
 	}
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.identity = {
-	type: 'None'
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.name
+	@description('The properties.')
+	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.tags
 }
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.name
-
-@description('The properties.')
-param properties resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.properties
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.tags
 
 /* RESOURCES */
 
 resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2025-07-01' = {
-	identity: identity
-	location: location
-	name: name
-	properties: properties
-	tags: tags
+	identity: settings.?identity ?? {
+	type: 'None'
+}
+	location: settings.location
+	name: settings.name
+	properties: settings.properties
+	tags: settings.tags
 }
 
 /* EXTENSIONS */
@@ -67,7 +70,7 @@ resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGatewa
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Network_virtualNetworkGateways_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
@@ -75,7 +78,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name
@@ -86,7 +89,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurationAssignments@2023-04-01' = [
 	for item in extensions.Maintenance.configurationAssignments: {
-		location: location
+		location: settings.location
 		name: item.name
 		properties: item.properties
 		scope: Network_virtualNetworkGateways_

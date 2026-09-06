@@ -22,46 +22,47 @@ import * as InsightsDiagnosticSettings from '../../../../library/Insights/diagno
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.identity = {
-	type: 'None'
-}
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.name
-
 @description('The name of the parent Microsoft.Sql/servers resource.')
 param parentName resourceInput<'Microsoft.Sql/servers@2025-01-01'>.name
-
-@description('The configurable properties.')
-param properties resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.properties
 
 @description('The child resources.')
 @sealed()
 param resources {
+	@sealed()
 	auditingSettings: {
+		@sealed()
 		Default: {
 			properties: resourceInput<'Microsoft.Sql/servers/databases/auditingSettings@2025-01-01'>.properties
 		}
 	}
 }?
 
-@description('The SKU.')
-param sku resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.sku
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.name
+	@description('The configurable properties.')
+	properties: resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.properties
+	@description('The SKU.')
+	sku: resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.sku
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.tags
+}
 
 /* EXISTING RESOURCES */
 
@@ -72,13 +73,15 @@ resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' existing = {
 /* RESOURCES */
 
 resource Sql_servers_databases_ 'Microsoft.Sql/servers/databases@2025-01-01' = {
-	identity: identity
-	location: location
-	name: name
+	identity: settings.?identity ?? {
+	type: 'None'
+}
+	location: settings.location
+	name: settings.name
 	parent: Sql_servers_
-	properties: properties
-	sku: sku
-	tags: tags
+	properties: settings.properties
+	sku: settings.sku
+	tags: settings.tags
 }
 
 resource Sql_servers_databases_auditingSettings__Default 'Microsoft.Sql/servers/databases/auditingSettings@2025-01-01' = if (resources.?auditingSettings.Default != null) {
@@ -92,7 +95,7 @@ resource Sql_servers_databases_auditingSettings__Default 'Microsoft.Sql/servers/
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Sql_servers_databases_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
@@ -100,7 +103,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

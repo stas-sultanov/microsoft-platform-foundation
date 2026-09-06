@@ -22,85 +22,84 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity = {
-	type: 'None'
-}
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.name
-
-@description('The configurable properties.')
+@description('The resource settings.')
 @sealed()
-param properties {
-	@description('Specifies whether to enable purge protection on the configuration store. Requires: sku.name == \'Premium\' or sku.name == \'Standard\'.')
-	enablePurgeProtection: bool?
-	@description('The network access mode.')
-	publicNetworkAccess: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.properties.publicNetworkAccess
-	@description('The amount of time in days that the configuration store will be retained when it is soft deleted. Requires: sku.name == \'Premium\' or sku.name == \'Standard\'.')
-	@maxValue(7)
-	@minValue(1)
-	softDeleteRetentionInDays: int?
-	@description('The id of the Microsoft.Insights/components resource.')
-	telemetryResourceId: string
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		@description('Specifies whether to enable purge protection on the configuration store. Requires: sku.name == \'Premium\' or sku.name == \'Standard\'.')
+		enablePurgeProtection: bool?
+		@description('The network access mode.')
+		publicNetworkAccess: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.properties.publicNetworkAccess
+		@description('The amount of time in days that the configuration store will be retained when it is soft deleted. Requires: sku.name == \'Premium\' or sku.name == \'Standard\'.')
+		@maxValue(7)
+		@minValue(1)
+		softDeleteRetentionInDays: int?
+		@description('The id of the Microsoft.Insights/components resource.')
+		telemetryResourceId: string
+	}
+	@description('The SKU.')
+	@sealed()
+	sku: {
+		@description('The SKU name of the configuration store.')
+		name:
+			| 'Developer'
+			| 'Free'
+			| 'Premium'
+			| 'Standard'
+	}
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.tags
 }
-
-@description('The SKU.')
-@sealed()
-param sku {
-	@description('The SKU name of the configuration store.')
-	name:
-		| 'Developer'
-		| 'Free'
-		| 'Premium'
-		| 'Standard'
-}
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.tags
 
 /* VARIABLES */
 
-var isSoftDeleteAndPurgeProtectionSupported = sku.name == 'Premium' || sku.name == 'Standard'
+var isSoftDeleteAndPurgeProtectionSupported = settings.sku.name == 'Premium' || settings.sku.name == 'Standard'
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview' = {
-	identity: identity
-	location: location
-	name: name
+	identity: settings.?identity ?? {
+		type: 'None'
+	}
+	location: settings.location
+	name: settings.name
 	properties: {
 		dataPlaneProxy: {
 			authenticationMode: 'Pass-through'
 		}
 		disableLocalAuth: true
 		enablePurgeProtection: isSoftDeleteAndPurgeProtectionSupported
-			? properties.?enablePurgeProtection
+			? settings.properties.?enablePurgeProtection
 			: null
-		publicNetworkAccess: properties.publicNetworkAccess
+		publicNetworkAccess: settings.properties.publicNetworkAccess
 		softDeleteRetentionInDays: isSoftDeleteAndPurgeProtectionSupported
-			? properties.?softDeleteRetentionInDays
+			? settings.properties.?softDeleteRetentionInDays
 			: null
 		telemetry: {
-			resourceId: properties.telemetryResourceId
+			resourceId: settings.properties.telemetryResourceId
 		}
 	}
-	sku: {
-		name: sku.name
-	}
-	tags: tags
+	sku: settings.sku
+	tags: settings.tags
 }
 
 /* EXTENSIONS */
@@ -108,7 +107,7 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		AppConfiguration_configurationStores_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
@@ -116,7 +115,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

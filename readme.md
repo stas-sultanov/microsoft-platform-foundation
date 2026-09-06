@@ -53,8 +53,8 @@ This model favors a small, current, maintainable configuration surface over accu
 | -------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `Azure/library`      | Shared types, functions, and constants                                       | MUST NOT contain resources.                                                                               |
 | `Azure/patterns`     | Reusable compositions that deploy and wire multiple resource types           | MUST own the relationship between the resources they compose.                                             |
-| `Azure/resources`    | Opinionated canonical deployment modules for one primary Azure resource type | MUST implement the foundation baseline and MAY deploy extension resources scoped to the primary resource. |
-| `Azure/specs`        | Scenario-specific specializations of one primary Azure resource type         | MUST remain resource-specific and MUST be more constrained or opinionated than `Azure/resources` modules. |
+| `Azure/resources`    | Opinionated canonical deployment modules for one primary Azure resource type | MUST create the primary resource and MAY create its child resources and extension resources, such as diagnostics and authorization. |
+| `Azure/specs`        | Scenario-specific specializations of one primary Azure resource type         | MUST create the primary resource specialization and MAY create its child resources and extension resources, such as diagnostics and authorization. MUST remain resource-specific and more constrained or opinionated than `Azure/resources` modules. |
 | `Entra/applications` | Entra application artifacts managed through Microsoft Graph                  | MUST be used for Microsoft Graph-driven Entra application artifacts.                                      |
 
 ### Path Conventions
@@ -128,12 +128,15 @@ Within each section, all declarations MUST be sorted alphabetically.
 ### Parameters
 
 - Every parameter MUST have a `@description` decorator.
-- Standard resource input parameters MUST use the Azure resource field names exactly where applicable: `identity`, `location`, `name`, `properties`, `sku`, and `tags`.
-- Standard resource input parameters SHOULD use the corresponding `resourceInput<'<resourceType>@<apiVersion>'>.<field>` type when available, such as `resourceInput<...>.name`, `resourceInput<...>.properties`, `resourceInput<...>.tags`, `resourceInput<...>.sku`, or `resourceInput<...>.identity`.
-- `properties` MUST represent the Azure resource `properties` object. It MAY use `resourceInput<...>.properties` directly when the native Azure resource property shape is the intended contract, or a curated object type when the foundation intentionally exposes only selected properties.
-- `extensions` MUST be used to group extension resources by provider or concern, such as `Authorization`, `Insights`, `Maintenance`, or other.
-- `resources` MUST be used to group child resources by child resource type.
-- Non-resource parameters MAY use domain-specific names only when they do not directly represent a standard Azure resource field.
+- Top-level resource modules, meaning modules that create a level 1 Azure resource type, MUST use the standard parameter surface: `extensions`, `resources`, and `settings`. The `resources` parameter is optional and MUST be omitted when the module does not create child resources.
+- Child resource modules MUST use the same standard parameter surface and MUST also expose the immediate parent resource name as a top-level `parentName` parameter. If more than one parent name is required, each parent name MUST be a top-level parameter with a clear name, such as `parentNamespaceName` and `parentTopicName`.
+- `extensions` MUST group extension resources by provider or concern, such as `Authorization`, `Insights`, `Maintenance`, or other. This includes diagnostics, authorization, assignments, and other resources scoped to the primary resource but not part of its child resource type hierarchy.
+- `resources` MUST group child resources by child resource type.
+- `settings` MUST group the configuration of the primary resource created by the module. Standard resource fields such as `identity`, `location`, `name`, `properties`, `sku`, `tags`, and `zones` MUST be nested under `settings` when applicable.
+- Standard Bicep resource-derived types, such as `resourceInput` and `resourceOutput`, SHOULD be used wherever possible.
+- `settings.properties` MUST represent the Azure resource `properties` object. It MAY use `resourceInput<...>.properties` directly when the native Azure resource property shape is the intended contract, or a curated object type when the foundation intentionally exposes only selected properties.
+- Top-level parameters MUST be sorted alphabetically by parameter name. Parent-name parameters MUST remain top-level and participate in this ordering alongside `extensions`, `resources`, and `settings`.
+- Non-resource parameters SHOULD be avoided in `Azure/resources` and `Azure/specs` modules. When required, they MAY use domain-specific names only when they do not directly represent a standard Azure resource field, child resource collection, extension resource collection, or parent name.
 - Optional parameters and default values MUST be safe and predictable.
 
 ### Resources
@@ -163,5 +166,5 @@ Rule suppressions MUST be scoped to the smallest possible line and MUST include 
 ## References
 
 - [Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
-- [Azure Resource Manager API Versions](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers)
+- [Azure Resource Manager API Versions](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-resources)
 - [Bicep Best Practices](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/best-practices)

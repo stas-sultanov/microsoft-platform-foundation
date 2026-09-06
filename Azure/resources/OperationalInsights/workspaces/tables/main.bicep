@@ -13,16 +13,19 @@ targetScope = 'resourceGroup'
 
 /* PARAMETERS */
 
-@description('The table name. Must end with "_CL" to denote a custom log table.')
-@maxLength(63)
-@minLength(4)
-param name resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2025-07-01'>.name
-
 @description('The name of the parent Microsoft.OperationalInsights/workspaces resource.')
 param parentName resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.name
 
-@description('The properties.')
-param properties resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2025-07-01'>.properties
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The table name. Must end with "_CL" to denote a custom log table.')
+	@maxLength(63)
+	@minLength(4)
+	name: resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2025-07-01'>.name
+	@description('The properties.')
+	properties: resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2025-07-01'>.properties
+}
 
 /* EXISTING RESOURCES */
 
@@ -33,9 +36,9 @@ resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspac
 /* RESOURCES */
 
 resource OperationalInsights_workspaces_tables_ 'Microsoft.OperationalInsights/workspaces/tables@2025-07-01' = {
-	name: name
+	name: settings.name
 	parent: OperationalInsights_workspaces_
-	properties: properties
+	properties: settings.properties
 }
 
 /* OUTPUTS */

@@ -22,7 +22,7 @@ var scope = az.subscription()
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Authorization_roleEligibilityScheduleRequests_ 'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview' = [
 	for item in requestsProperties: {
 		name: sys.guid(

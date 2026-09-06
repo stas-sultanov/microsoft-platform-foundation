@@ -15,6 +15,7 @@ type LoadBalancingRule = {
 	@description('The name.')
 	name: string
 	@description('The configurable properties.')
+	@sealed()
 	properties: {
 		@description('Receive bidirectional TCP Reset on TCP flow idle timeout or unexpected connection termination. This element is only used when the protocol is set to TCP.')
 		enableTcpReset: bool
@@ -31,6 +32,7 @@ type LoadBalancingRule = {
 @sealed()
 type PrivateFrontendIPConfigurationSettings = {
 	@description('Properties of the frontend IP configuration.')
+	@sealed()
 	properties: {
 		@description('The private IP address of the IP configuration.')
 		privateIPAddress: string
@@ -52,6 +54,7 @@ type ProbeSettings = {
 @sealed()
 type PublicFrontendIPConfigurationSettings = {
 	@description('Properties of frontend IP configuration.')
+	@sealed()
 	properties: {
 		@description('The private IP address of the IP configuration.')
 		publicIPAddress: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2024-07-01'>.properties.publicIPAddress

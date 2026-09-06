@@ -20,45 +20,46 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
-}?
-
-@description('The identity.')
-param identity resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.identity = {
-	type: 'None'
 }
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.name
-
-@description('The configurable properties.')
+@description('The resource settings.')
 @sealed()
-param properties {
-	@description('Indicates whether this action group is enabled.')
-	enabled: bool
-	@description('The short name of the action group.')
-	groupShortName: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.properties.groupShortName
-	@description('The webhook receivers.')
-	webhookReceivers: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.properties.webhookReceivers
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		@description('Indicates whether this action group is enabled.')
+		enabled: bool
+		@description('The short name of the action group.')
+		groupShortName: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.properties.groupShortName
+		@description('The webhook receivers.')
+		webhookReceivers: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.properties.webhookReceivers
+	}
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.tags
 }
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.tags
 
 /* RESOURCES */
 
 #disable-next-line use-recent-api-versions // Managed identity support is available only in the preview API.
 resource Insights_actionGroups_ 'Microsoft.Insights/actionGroups@2024-10-01-preview' = {
-	identity: identity
-	location: location
-	name: name
-	properties: properties
-	tags: tags
+	identity: settings.?identity ?? {
+		type: 'None'
+	}
+	location: settings.location
+	name: settings.name
+	properties: settings.properties
+	tags: settings.tags
 }
 
 /* EXTENSIONS */
@@ -66,7 +67,7 @@ resource Insights_actionGroups_ 'Microsoft.Insights/actionGroups@2024-10-01-prev
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Insights_actionGroups_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

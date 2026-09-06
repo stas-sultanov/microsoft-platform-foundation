@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions resources within the DNS Zone.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import {

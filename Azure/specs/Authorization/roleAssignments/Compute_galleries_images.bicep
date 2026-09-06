@@ -17,11 +17,11 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('Name of the Microsoft.Compute/galleries resource.')
-param galleryName string
-
 @description('Name of the Microsoft.Compute/galleries/images resource.')
 param galleryImageName string
+
+@description('Name of the Microsoft.Compute/galleries resource.')
+param galleryName string
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]

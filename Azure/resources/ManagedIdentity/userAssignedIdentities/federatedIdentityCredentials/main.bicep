@@ -13,14 +13,17 @@ targetScope = 'resourceGroup'
 
 /* PARAMETERS */
 
-@description('The name.')
-param name resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.name
-
 @description('The name of the parent Microsoft.ManagedIdentity/userAssignedIdentities resource.')
 param parentName resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.name
 
-@description('The properties.')
-param properties resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.properties
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The name.')
+	name: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.name
+	@description('The properties.')
+	properties: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.properties
+}
 
 /* EXISTING RESOURCES */
 
@@ -31,9 +34,9 @@ resource ManagedIdentity_userAssignedIdentities_ 'Microsoft.ManagedIdentity/user
 /* RESOURCES */
 
 resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30' = {
-	name: name
+	name: settings.name
 	parent: ManagedIdentity_userAssignedIdentities_
-	properties: properties
+	properties: settings.properties
 }
 
 /* OUTPUTS */
