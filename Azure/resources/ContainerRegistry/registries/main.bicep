@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.ContainerRegistry/registries resource with extensions.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
@@ -18,9 +22,11 @@ import * as InsightsDiagnosticSetting from '../../../library/Insights/diagnostic
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSetting.Resource[]
 	}
@@ -53,6 +59,7 @@ param settings {
 		@description('The network rule set. Requires: sku.name == \'Premium\'.')
 		networkRuleSet: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.networkRuleSet?
 		@description('The policies.')
+		@sealed()
 		policies: {
 			@description('The export policy. Requires: sku.name == \'Premium\' && properties.publicNetworkAccess == \'Disabled\'.')
 			exportPolicy: resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.properties.policies.exportPolicy

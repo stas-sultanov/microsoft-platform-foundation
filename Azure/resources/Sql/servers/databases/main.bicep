@@ -22,9 +22,11 @@ import * as InsightsDiagnosticSettings from '../../../../library/Insights/diagno
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -36,7 +38,9 @@ param parentName resourceInput<'Microsoft.Sql/servers@2025-01-01'>.name
 @description('The child resources.')
 @sealed()
 param resources {
+	@sealed()
 	auditingSettings: {
+		@sealed()
 		Default: {
 			properties: resourceInput<'Microsoft.Sql/servers/databases/auditingSettings@2025-01-01'>.properties
 		}

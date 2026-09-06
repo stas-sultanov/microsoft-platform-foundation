@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Sql/servers resource with extensions.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
@@ -18,6 +22,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The extension settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
@@ -26,9 +31,12 @@ param extensions {
 @description('The child resources.')
 @sealed()
 param resources {
+	@sealed()
 	auditingSettings: {
+		@sealed()
 		Default: {
 			@description('The configurable properties.')
+			@sealed()
 			properties: {
 				@description('Specifies whether audit events are sent to Azure Monitor.')
 				isAzureMonitorTargetEnabled: bool
@@ -39,16 +47,22 @@ param resources {
 			}
 		}
 	}
+	@sealed()
 	connectionPolicies: {
+		@sealed()
 		Default: {
 			@description('The configurable properties.')
 			properties: resourceInput<'Microsoft.Sql/servers/connectionPolicies@2025-01-01'>.properties
 		}
 	}
+	@sealed()
 	databases: {
+		@sealed()
 		Master: {
 			@description('The extension settings.')
+			@sealed()
 			extensions: {
+				@sealed()
 				Insights: {
 					diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 				}
@@ -78,6 +92,7 @@ param settings {
 	@sealed()
 	properties: {
 		@description('The server Entra ID administrator.')
+		@sealed()
 		administrators: {
 			@description('Name of the principal within the Entra tenant.')
 			name: string

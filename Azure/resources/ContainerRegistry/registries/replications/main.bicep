@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.ContainerRegistry/registries/replications resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.ContainerRegistry/registries resource.')

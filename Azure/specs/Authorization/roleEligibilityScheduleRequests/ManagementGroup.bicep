@@ -13,12 +13,8 @@ targetScope = 'managementGroup'
 
 /* PARAMETERS */
 
-@description('The resource settings.')
-@sealed()
-param settings {
-	@description('Collection of role eligibility schedule request properties.')
-	requestsProperties: resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview'>.properties[]
-}
+@description('Collection of role eligibility schedule request properties.')
+param requestsProperties resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview'>.properties[]
 
 /* VARIABLES */
 

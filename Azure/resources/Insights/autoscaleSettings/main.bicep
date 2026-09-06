@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Insights/autoscaleSettings resource with extensions.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
@@ -18,9 +22,11 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}

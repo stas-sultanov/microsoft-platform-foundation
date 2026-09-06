@@ -20,6 +20,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?

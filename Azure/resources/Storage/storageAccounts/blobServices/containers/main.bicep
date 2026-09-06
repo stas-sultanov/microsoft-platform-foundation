@@ -20,6 +20,7 @@ import * as AuthorizationRoleAssignments from '../../../../../library/Authorizat
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
@@ -31,7 +32,9 @@ param parentAccountName resourceInput<'Microsoft.Storage/storageAccounts@2026-04
 @description('The child resources.')
 @sealed()
 param resources {
+	@sealed()
 	immutabilityPolicies: {
+		@sealed()
 		Default: {
 			properties: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies@2026-04-01'>.properties
 		}

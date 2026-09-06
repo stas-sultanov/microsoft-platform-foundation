@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Network/virtualNetworks resource with extensions.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
@@ -18,9 +22,11 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -34,6 +40,7 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.name
 	@description('The configurable properties.')
+	@sealed()
 	properties: {
 		@description('Address space contains an array of IP address ranges that can be used by subnets in the virtual network.')
 		addressSpace: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.addressSpace?

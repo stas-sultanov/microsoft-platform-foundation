@@ -45,9 +45,11 @@ type StorageAccountPropertiesInput = {
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -56,9 +58,13 @@ param extensions {
 @description('The child resources.')
 @sealed()
 param resources {
+	@sealed()
 	blobServices: {
+		@sealed()
 		Default: {
+			@sealed()
 			extensions: {
+				@sealed()
 				Insights: {
 					diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 				}
@@ -81,6 +87,7 @@ param settings {
 	@description('The configurable properties.')
 	properties: StorageAccountPropertiesInput
 	@description('The SKU.')
+	@sealed()
 	sku: {
 		name:
 			| 'Standard_LRS'

@@ -11,6 +11,10 @@ metadata description = 'Provisions Microsoft.Network/networkSecurityPerimeters/r
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as NetworkNetworkSecurityPerimeters from '../../../../library/Network/networkSecurityPerimeters.bicep'
+
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.Network/networkSecurityPerimeters resource.')
@@ -23,17 +27,7 @@ param parentProfileName resourceInput<'Microsoft.Network/networkSecurityPerimete
 @sealed()
 param resources {
 	@description('The collection of resource associations.')
-	resourceAssociations: {
-		@description('The resource name.')
-		name: string
-		@description('The configurable properties.')
-		properties: {
-			@description('Access mode on the association.')
-			accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.accessMode
-			@description('The PaaS resource to be associated.')
-			privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.privateLinkResource
-		}
-	}[]
+	resourceAssociations: NetworkNetworkSecurityPerimeters.ResourceAssociationChildResource[]
 }
 
 /* EXISTING RESOURCES */

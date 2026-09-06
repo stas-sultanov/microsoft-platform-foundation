@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a DNS Resolver and Inbound Endpoints.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
@@ -16,6 +20,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?

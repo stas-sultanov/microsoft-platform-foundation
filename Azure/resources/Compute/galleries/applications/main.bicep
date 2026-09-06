@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Compute/galleries/applications resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.Compute/galleries resource.')

@@ -20,6 +20,7 @@ param parentNamespaceName resourceInput<'Microsoft.ServiceBus/namespaces@2026-01
 param parentTopicName resourceInput<'Microsoft.ServiceBus/namespaces/topics@2026-01-01'>.name
 
 @description('The child resources.')
+@sealed()
 param resources {
 	rules: {
 		*: {

@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a private DNS zone.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
@@ -18,6 +22,7 @@ import * as NetworkDnsZones from '../../../library/Network/dnsZones.bicep'
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?

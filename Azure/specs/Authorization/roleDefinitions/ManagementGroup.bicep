@@ -13,12 +13,8 @@ targetScope = 'managementGroup'
 
 /* PARAMETERS */
 
-@description('The resource settings.')
-@sealed()
-param settings {
-	@description('Collection of role definition properties.')
-	definitionsProperties: resourceInput<'Microsoft.Authorization/roleDefinitions@2022-04-01'>.properties[]
-}
+@description('Collection of role definition properties.')
+param definitionsProperties resourceInput<'Microsoft.Authorization/roleDefinitions@2022-04-01'>.properties[]
 
 /* VARIABLES */
 

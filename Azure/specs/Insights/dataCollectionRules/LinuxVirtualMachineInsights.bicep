@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Insights/dataCollectionRules resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import {
@@ -16,7 +20,9 @@ import {
 /* PARAMETERS */
 
 @description('The extensions settings.')
+@sealed()
 param extensions {
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSetting[]
 	}
@@ -32,6 +38,7 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.name
 	@description('The configurable properties.')
+	@sealed()
 	properties: {
 		@description('The id of the destination Log Analytics workspace')
 		workspaceId: string

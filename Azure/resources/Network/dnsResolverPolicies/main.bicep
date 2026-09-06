@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Network/dnsResolverPolicies resource with extensions.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
@@ -15,6 +19,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 /* TYPES */
 
+@sealed()
 type DnsSecurityRuleResource = {
 	@description('The resource name.')
 	name: string
@@ -24,6 +29,7 @@ type DnsSecurityRuleResource = {
 	tags: resourceInput<'Microsoft.Network/dnsResolverPolicies/dnsSecurityRules@2025-05-01'>.tags
 }
 
+@sealed()
 type VirtualNetworkLinkResource = {
 	@description('The resource name.')
 	name: string
@@ -38,15 +44,18 @@ type VirtualNetworkLinkResource = {
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
 @description('The child resources.')
+@sealed()
 param resources {
 	@description('The DNS security rules.')
 	dnsSecurityRules: {

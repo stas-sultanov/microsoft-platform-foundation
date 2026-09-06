@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Compute/galleries/images resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../../library/Authorization/roleAssignments.bicep'
@@ -16,6 +20,7 @@ import * as AuthorizationRoleAssignments from '../../../../library/Authorization
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
@@ -43,6 +48,7 @@ param settings {
 		@description('The end of life date of the gallery image definition.')
 		endOfLifeDate: string?
 		@description('A list of gallery image features.')
+		@sealed()
 		features: {
 			@description('Indicates whether the gallery image definition supports hibernation.')
 			IsHibernateSupported: bool

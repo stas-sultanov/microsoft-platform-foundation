@@ -7,10 +7,15 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Cdn/profiles/afdEndpoints/routes resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* TYPES */
 
 @description('The caching configuration for this route.')
 @export()
+@sealed()
 type CacheSettings = {
 	@description('Indicates whether caching is enabled on FrontDoor.')
 	cachingEnabled: bool
@@ -26,6 +31,7 @@ type CacheSettings = {
 }
 
 @export()
+@sealed()
 type OriginGroupSettings = {
 	@minValue(1)
 	@maxValue(255)
@@ -40,6 +46,7 @@ type OriginGroupSettings = {
 }
 
 @export()
+@sealed()
 type OriginSettings = {
 	@description('The host header value sent to the origin with each request. If you leave this blank, the request hostname determines this value. Azure Front Door origins, such as Web Apps, Blob Storage, and Cloud Services require this host header value to match the origin hostname by default. This overrides the host header defined at Endpoint.')
 	hostHeader: string
@@ -60,6 +67,7 @@ type QueryStringCachingBehavior =
 	| 'UseQueryString'
 
 @export()
+@sealed()
 type RouteSettings = {
 	@description('The unique name of the Route within the CDN profile.')
 	name: string

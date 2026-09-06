@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.DataFactory/factories/linkedservices resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DataFactory/factories resource.')

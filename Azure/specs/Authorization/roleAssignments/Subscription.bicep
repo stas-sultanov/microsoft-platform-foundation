@@ -17,12 +17,8 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('The resource settings.')
-@sealed()
-param settings {
-	@description('Collection of role assignments.')
-	roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-}
+@description('Collection of role assignments.')
+param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* VARIABLES */
 
@@ -33,7 +29,7 @@ var scope = az.subscription()
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		scope.id,
-		settings.roleAssignments
+		roleAssignments
 	): {
 		name: item.name
 		properties: item.properties

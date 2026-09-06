@@ -17,23 +17,21 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('The resource settings.')
-@sealed()
-param settings {
-	@description('Collection of role assignments.')
-	roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-	@description('Name of the Microsoft.Network/virtualNetworks resource.')
-	virtualNetworkName: string
-	@description('Name of the Microsoft.Network/virtualNetworks/subnets resource.')
-	virtualNetworkSubnetName: string
-}
+@description('Collection of role assignments.')
+param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
+
+@description('Name of the Microsoft.Network/virtualNetworks resource.')
+param virtualNetworkName string
+
+@description('Name of the Microsoft.Network/virtualNetworks/subnets resource.')
+param virtualNetworkSubnetName string
 
 /* EXISTING RESOURCES */
 
 resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-07-01' existing = {
-	name: settings.virtualNetworkName
+	name: virtualNetworkName
 	resource subnets_ 'subnets' existing = {
-		name: settings.virtualNetworkSubnetName
+		name: virtualNetworkSubnetName
 	}
 }
 
@@ -42,7 +40,7 @@ resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-07-01'
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Network_virtualNetworks_::subnets_.id,
-		settings.roleAssignments
+		roleAssignments
 	): {
 		name: item.name
 		properties: item.properties

@@ -24,9 +24,11 @@ import * as NetworkNetworkSecurityPerimeters from '../../../library/Network/netw
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -35,11 +37,14 @@ param extensions {
 @description('The child resources.')
 @sealed()
 param resources {
+	@sealed()
 	profiles: {
+		@sealed()
 		Default: {
 			@description('The name.')
 			name: string
 			@description('The child resources.')
+			@sealed()
 			resources: {
 				accessRules: NetworkNetworkSecurityPerimeters.AccessRuleChildResource[]
 			}
@@ -50,6 +55,7 @@ param resources {
 			@description('The name.')
 			name: string
 			@description('The configurable properties.')
+			@sealed()
 			properties: {
 				accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.accessMode
 				privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.privateLinkResource

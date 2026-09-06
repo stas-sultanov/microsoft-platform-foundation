@@ -20,19 +20,23 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 }
 
 @description('The child resources.')
+@sealed()
 param resources {
+	@sealed()
 	triggers: {
 		@description('The trigger on SourceImage change.')
+		@sealed()
 		SourceImage: {
 			@description('The configurable properties.')
 			properties: {}
-		}
+		}?
 	}
 }?
 
@@ -55,15 +59,15 @@ param settings {
 
 resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01' = {
 	identity: settings.?identity ?? {
-	type: 'None'
-}
+		type: 'None'
+	}
 	location: settings.location
 	name: settings.name
 	properties: settings.properties
 	tags: settings.tags
 }
 
-resource VirtualMachineImages_imageTemplates_triggers__SourceImage 'Microsoft.VirtualMachineImages/imageTemplates/triggers@2025-10-01' = if (resources.?triggers != null) {
+resource VirtualMachineImages_imageTemplates_triggers__SourceImage 'Microsoft.VirtualMachineImages/imageTemplates/triggers@2025-10-01' = if (resources.?triggers.?SourceImage != null) {
 	name: 'SourceImage'
 	parent: VirtualMachineImages_imageTemplates_
 	properties: {

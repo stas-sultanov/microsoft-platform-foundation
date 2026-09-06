@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Maintenance/maintenanceConfigurations resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* PARAMETERS */
 
 @description('The resource settings.')
@@ -20,6 +24,7 @@ param settings {
 	@sealed()
 	properties: {
 		@description('The maintenance window of the configuration.')
+		@sealed()
 		maintenanceWindow: {
 			@description('The recurrence interval.')
 			recurEvery: string

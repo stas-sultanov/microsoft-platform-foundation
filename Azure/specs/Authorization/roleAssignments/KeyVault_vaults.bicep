@@ -17,19 +17,16 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* PARAMETERS */
 
-@description('The resource settings.')
-@sealed()
-param settings {
-	@description('Name of the Microsoft.KeyVault/vaults resource.')
-	name: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.name
-	@description('Collection of role assignments.')
-	roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-}
+@description('Name of the Microsoft.KeyVault/vaults resource.')
+param name resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.name
+
+@description('Collection of role assignments.')
+param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
 resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-02-01' existing = {
-	name: settings.name
+	name: name
 }
 
 /* RESOURCES */
@@ -37,7 +34,7 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-02-01' existing = {
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		KeyVault_vaults_.id,
-		settings.roleAssignments
+		roleAssignments
 	): {
 		name: item.name
 		properties: item.properties

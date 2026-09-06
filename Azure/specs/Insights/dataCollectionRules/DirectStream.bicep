@@ -22,9 +22,11 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -43,6 +45,7 @@ param settings {
 		@description('The resource ID of the data collection endpoint that this rule can be used with.')
 		dataCollectionEndpointId: string?
 		@description('Data flow configuration.')
+		@sealed()
 		dataFlow: {
 			@description('The stream name used in destinations.')
 			destinations: string[]
@@ -54,6 +57,7 @@ param settings {
 		@description('Destination configuration.')
 		destinations: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.destinations
 		@description('Custom stream declaration.')
+		@sealed()
 		stream: {
 			@description('Columns in the stream declaration.')
 			columns: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.streamDeclarations.*.columns

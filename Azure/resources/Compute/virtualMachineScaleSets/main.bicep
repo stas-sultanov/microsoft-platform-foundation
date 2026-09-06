@@ -24,12 +24,15 @@ import * as MaintenanceConfigurationAssignments from '../../../library/Maintenan
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		dataCollectionRuleAssociations: InsightsDataCollectionRuleAssociations.Resource[]
 	}
+	@sealed()
 	Maintenance: {
 		configurationAssignments: MaintenanceConfigurationAssignments.Resource[]
 	}

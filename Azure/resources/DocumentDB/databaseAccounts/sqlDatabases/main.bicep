@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlDatabases resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
@@ -25,8 +29,10 @@ param settings {
 	@sealed()
 	properties: {
 		@description('The database options. Note: Either throughput or autoscaleSettings is required, but not both.')
+		@sealed()
 		options: {
 			@description('The autoscale settings.')
+			@sealed()
 			autoscaleSettings: {
 				@maxValue(10000000)
 				@minValue(4000)

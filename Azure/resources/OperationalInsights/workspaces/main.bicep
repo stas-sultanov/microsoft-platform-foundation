@@ -22,9 +22,11 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -45,6 +47,7 @@ param settings {
 		@description('The default data collection rule resource id.')
 		defaultDataCollectionRuleResourceId: string?
 		@description('The features of the workspace.')
+		@sealed()
 		features: {
 			@description('Whether to immediately purge data after 30 days. Requires: retentionInDays == 30.')
 			immediatePurgeDataOn30Days: bool?
