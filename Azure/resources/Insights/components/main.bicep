@@ -21,9 +21,9 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
-}?
+}
 
 @description('The resource settings.')
 @sealed()
@@ -68,7 +68,7 @@ resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' = {
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Insights_components_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

@@ -19,7 +19,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
@@ -53,7 +53,7 @@ resource Insights_autoscaleSettings_ 'Microsoft.Insights/autoscaleSettings@2022-
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Insights_autoscaleSettings_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

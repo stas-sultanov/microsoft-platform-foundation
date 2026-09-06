@@ -23,7 +23,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
@@ -69,8 +69,8 @@ param settings {
 
 resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspaces@2025-07-01' = {
 	identity: settings.?identity ?? {
-	type: 'None'
-}
+		type: 'None'
+	}
 	location: settings.location
 	name: settings.name
 	properties: {
@@ -89,7 +89,7 @@ resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspac
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		OperationalInsights_workspaces_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

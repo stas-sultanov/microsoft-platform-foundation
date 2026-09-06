@@ -20,7 +20,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 param extensions {
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-	}
+	}?
 }
 
 @description('The child resources.')
@@ -107,8 +107,8 @@ param settings {
 
 resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' = {
 	identity: settings.?identity ?? {
-	type: 'None'
-}
+		type: 'None'
+	}
 	location: settings.location
 	name: settings.name
 	properties: {
@@ -166,7 +166,7 @@ resource Sql_servers_firewallRules_ 'Microsoft.Sql/servers/firewallRules@2025-01
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Sql_servers_.id,
-		extensions.Authorization.roleAssignments
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

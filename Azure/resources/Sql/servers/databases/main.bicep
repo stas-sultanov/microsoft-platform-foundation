@@ -23,7 +23,7 @@ import * as InsightsDiagnosticSettings from '../../../../library/Insights/diagno
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
@@ -91,7 +91,7 @@ resource Sql_servers_databases_auditingSettings__Default 'Microsoft.Sql/servers/
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Sql_servers_databases_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

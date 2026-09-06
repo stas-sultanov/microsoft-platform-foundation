@@ -28,7 +28,9 @@ param resources {
 		name: string
 		@description('The configurable properties.')
 		properties: {
+			@description('Access mode on the association.')
 			accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.accessMode
+			@description('The PaaS resource to be associated.')
 			privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.privateLinkResource
 		}
 	}[]

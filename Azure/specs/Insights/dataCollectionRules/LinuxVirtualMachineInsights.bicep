@@ -44,8 +44,8 @@ param settings {
 
 resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2024-03-11' = {
 	identity: settings.?identity ?? {
-	type: 'None'
-}
+		type: 'None'
+	}
 	kind: 'Linux'
 	location: settings.location
 	name: settings.name

@@ -19,7 +19,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
@@ -59,7 +59,7 @@ resource Network_publicIPPrefixes_ 'Microsoft.Network/publicIPPrefixes@2025-07-0
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Network_publicIPPrefixes_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
@@ -77,6 +77,9 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 ]
 
 /* OUTPUTS */
+
+@description('The id.')
+output id string = Network_publicIPPrefixes_.id
 
 @description('The name.')
 output name string = Network_publicIPPrefixes_.name

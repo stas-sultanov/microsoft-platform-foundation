@@ -21,9 +21,9 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
-}?
+}
 
 @description('The child resources.')
 @sealed()
@@ -74,7 +74,7 @@ resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'M
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		ManagedIdentity_userAssignedIdentities_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

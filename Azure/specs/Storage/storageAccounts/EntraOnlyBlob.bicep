@@ -46,7 +46,7 @@ type StorageAccountPropertiesInput = {
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
@@ -100,8 +100,8 @@ param settings {
 
 resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' = {
 	identity: settings.?identity ?? {
-	type: 'None'
-}
+		type: 'None'
+	}
 	kind: 'StorageV2'
 	location: settings.location
 	name: settings.name
@@ -129,7 +129,7 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Storage_storageAccounts_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

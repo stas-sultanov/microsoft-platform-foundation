@@ -9,15 +9,18 @@ metadata description = 'Provisions a Microsoft.DataFactory/factories/linkedservi
 
 /* PARAMETERS */
 
+@description('The name of the parent Microsoft.DataFactory/factories resource.')
+param parentName resourceInput<'Microsoft.DataFactory/factories@2018-06-01'>.name
+
 @description('The resource settings.')
 @sealed()
 param settings {
+	@description('Name of the credential to use for authentication and authorization.')
+	credentialName: string
 	@description('The length of time (in seconds) to wait for a connection to the server before terminating the attempt and generating an error.')
 	@minValue(5)
 	@maxValue(60)
-	connectionTimeout: int?
-	@description('The id of the Data Factory resource.')
-	dataFactoryId: string
+	connectTimeout: int?
 	@description('The name of the linked service. It must be unique among the linked services in the factory.')
 	name: resourceInput<'Microsoft.DataFactory/factories/linkedservices@2018-06-01'>.name
 	@description('The id of the SQL Database resource.')
@@ -29,10 +32,7 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource DataFactory_factories_ 'Microsoft.DataFactory/factories@2018-06-01' existing = {
-	name: split(
-		settings.dataFactoryId,
-		'/'
-	)[8]
+	name: parentName
 }
 
 resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' existing = {
@@ -58,7 +58,16 @@ resource DataFactory_factories_linkedServices_ 'Microsoft.DataFactory/factories/
 	properties: {
 		type: 'AzureSqlDatabase'
 		typeProperties: {
-			connectionString: 'Integrated Security=False;Encrypt=True;Connection Timeout=${connectionTimeout};Data Source=${Sql_servers_.properties.fullyQualifiedDomainName};Initial Catalog=${Sql_servers_databases_.name}'
+			authenticationType: 'UserAssignedManagedIdentity'
+			connectTimeout: settings.?connectTimeout ?? 30
+			database: Sql_servers_databases_.name
+			encrypt: 'mandatory'
+			server: Sql_servers_.properties.fullyQualifiedDomainName
+			trustServerCertificate: false
+			credential: {
+				referenceName: settings.credentialName
+				type: 'CredentialReference'
+			}
 		}
 	}
 }

@@ -17,7 +17,7 @@ import * as AuthorizationRoleAssignments from '../../../../library/Authorization
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 }
 
@@ -115,7 +115,7 @@ resource Compute_galleries_images_ 'Microsoft.Compute/galleries/images@2025-12-0
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Compute_galleries_images_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

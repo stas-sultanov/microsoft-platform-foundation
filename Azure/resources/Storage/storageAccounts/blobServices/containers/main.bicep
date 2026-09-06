@@ -21,9 +21,9 @@ import * as AuthorizationRoleAssignments from '../../../../../library/Authorizat
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
-}?
+}
 
 @description('The name of the parent Microsoft.Storage/storageAccounts resource.')
 param parentAccountName resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
@@ -61,25 +61,23 @@ param settings {
 
 resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
 	name: parentAccountName
-}
 
-resource Storage_storageAccounts_blobServices_ 'Microsoft.Storage/storageAccounts/blobServices@2026-04-01' existing = {
-	name: 'default'
-	parent: Storage_storageAccounts_
+	resource blobServices_ 'blobServices' existing = {
+		name: 'default'
+	}
 }
 
 /* RESOURCES */
 
 resource Storage_storageAccounts_blobServices_containers_ 'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01' = {
 	name: settings.name
-	parent: Storage_storageAccounts_blobServices_
+	parent: Storage_storageAccounts_::blobServices_
 	properties: settings.properties
-}
 
-resource Storage_storageAccounts_blobServices_containers_immutabilityPolicies__Default 'Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies@2026-04-01' = if (resources.?immutabilityPolicies.Default != null) {
-	name: 'default'
-	parent: Storage_storageAccounts_blobServices_containers_
-	properties: resources!.immutabilityPolicies!.Default!.properties
+	resource immutabilityPolicies_ 'immutabilityPolicies' = if (resources.?immutabilityPolicies.Default != null) {
+		name: 'default'
+		properties: resources!.immutabilityPolicies!.Default!.properties
+	}
 }
 
 /* EXTENSIONS */
@@ -87,7 +85,7 @@ resource Storage_storageAccounts_blobServices_containers_immutabilityPolicies__D
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Storage_storageAccounts_blobServices_containers_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

@@ -51,7 +51,6 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 
 /* RESOURCES */
 
-// We need to use the preview API version to set the identity property.
 resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15' = {
 	identity: settings.?identity ?? {
 		type: 'None'

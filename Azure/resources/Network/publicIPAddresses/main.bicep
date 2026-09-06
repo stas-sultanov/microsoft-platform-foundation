@@ -19,7 +19,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
@@ -49,8 +49,8 @@ resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2025-07
 	location: settings.location
 	name: settings.name
 	properties: (settings.?properties ?? {
-	publicIPAllocationMethod: 'Static'
-})
+		publicIPAllocationMethod: 'Static'
+	})
 	sku: settings.sku
 	tags: settings.tags
 	zones: settings.zones
@@ -61,7 +61,7 @@ resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2025-07
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Network_publicIPAddresses_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

@@ -19,7 +19,7 @@ import * as NetworkDnsZones from '../../../library/Network/dnsZones.bicep'
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 }
 
@@ -93,7 +93,7 @@ resource Network_privateDnsZones_virtualNetworkLinks_ 'Microsoft.Network/private
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Network_privateDnsZones_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
@@ -105,3 +105,6 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 
 @description('The id.')
 output id string = Network_privateDnsZones_.id
+
+@description('The name.')
+output name string = Network_privateDnsZones_.name

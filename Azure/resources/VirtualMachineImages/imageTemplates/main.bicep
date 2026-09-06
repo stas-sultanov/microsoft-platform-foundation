@@ -21,7 +21,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 @sealed()
 param extensions {
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 }
 
@@ -76,7 +76,7 @@ resource VirtualMachineImages_imageTemplates_triggers__SourceImage 'Microsoft.Vi
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		VirtualMachineImages_imageTemplates_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
