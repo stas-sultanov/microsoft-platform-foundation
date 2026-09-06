@@ -152,12 +152,9 @@ output name string = DocumentDB_databaseAccounts_.name
 output properties {
 	@description('The connection endpoint for the Cosmos DB database account.')
 	documentEndpoint: string
-	@description('The connection endpoint for the Cosmos DB SQL API.')
-	sqlEndpoint: string
+	@description('A unique identifier assigned to the database account.')
+	instanceId: string
 } = {
 	documentEndpoint: DocumentDB_databaseAccounts_.properties.documentEndpoint
-	sqlEndpoint: DocumentDB_databaseAccounts_.properties.documentEndpoint
+	instanceId: DocumentDB_databaseAccounts_.properties.instanceId
 }
-
-@description('The restore id.')
-output restoreId string = '/subscriptions/${subscription().subscriptionId}/extensions/Microsoft.DocumentDB/locations/${DocumentDB_databaseAccounts_.location}/restorableDatabaseAccounts/${DocumentDB_databaseAccounts_.properties.instanceId}'
