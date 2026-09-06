@@ -1,0 +1,53 @@
+# The workflow to check Bicep templates with compile-time validation
+
+name: Check
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - ".github/workflows/check.yml"
+      - "bicepconfig.json"
+      - "Azure/**/*.bicep"
+      - "Entra/**/*.bicep"
+
+jobs:
+
+  build:
+
+    name: Build Bicep
+
+    permissions:
+      # Required to checkout the repo
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Bicep
+      run: az bicep install
+
+    - name: Build Bicep Templates
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        $files = Get-ChildItem -Path . -Recurse -Filter '*.bicep' -File |
+          Where-Object { $_.FullName -notmatch '[\\/]\.git[\\/]' } |
+          Sort-Object FullName
+
+        if (-not $files) {
+          throw 'No Bicep templates found.'
+        }
+
+        foreach ($file in $files) {
+          Write-Host "Building $($file.FullName)"
+          az bicep build --file $file.FullName --stdout > $null
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+        }
