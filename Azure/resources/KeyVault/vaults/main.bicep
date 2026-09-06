@@ -22,64 +22,67 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.name
-
-@description('The configurable properties.')
+@description('The resource settings.')
 @sealed()
-param properties {
-	@description('Specifies whether protection against purge is enabled for this vault.')
-	enablePurgeProtection: bool
-	@description('Specifies whether the \'soft delete\' functionality is enabled for this key vault.')
-	enableSoftDelete: bool
-	@description('Rules governing the accessibility of the key vault from specific network locations.')
-	networkAcls: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.properties.networkAcls?
-	@description('The network access mode.')
-	publicNetworkAccess:
-		| 'Enabled'
-		| 'Disabled'
-		| 'SecuredByPerimeter'
-	@description('The \'soft delete\' data retention days.')
-	@maxValue(90)
-	@minValue(7)
-	softDeleteRetentionInDays: int?
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		@description('Specifies whether protection against purge is enabled for this vault.')
+		enablePurgeProtection: bool
+		@description('Specifies whether the \'soft delete\' functionality is enabled for this key vault.')
+		enableSoftDelete: bool
+		@description('Rules governing the accessibility of the key vault from specific network locations.')
+		networkAcls: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.properties.networkAcls?
+		@description('The network access mode.')
+		publicNetworkAccess:
+			| 'Enabled'
+			| 'Disabled'
+			| 'SecuredByPerimeter'
+		@description('The \'soft delete\' data retention days.')
+		@maxValue(90)
+		@minValue(7)
+		softDeleteRetentionInDays: int?
+	}
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.tags
 }
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.tags
 
 /* RESOURCES */
 
 resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-02-01' = {
-	location: location
-	name: name
+	location: settings.location
+	name: settings.name
 	properties: {
-		enablePurgeProtection: properties.enableSoftDelete && properties.enablePurgeProtection
+		enablePurgeProtection: settings.properties.enableSoftDelete && settings.properties.enablePurgeProtection
 			? true
 			: null
 		enableRbacAuthorization: true
-		enableSoftDelete: properties.enableSoftDelete
-		networkAcls: properties.?networkAcls ?? {}
-		publicNetworkAccess: properties.publicNetworkAccess
+		enableSoftDelete: settings.properties.enableSoftDelete
+		networkAcls: settings.properties.?networkAcls ?? {}
+		publicNetworkAccess: settings.properties.publicNetworkAccess
 		sku: {
 			family: 'A'
 			name: 'standard'
 		}
-		softDeleteRetentionInDays: properties.?softDeleteRetentionInDays ?? 7
+		softDeleteRetentionInDays: settings.properties.?softDeleteRetentionInDays ?? 7
 		tenantId: az.tenant().tenantId
 	}
-	tags: tags
+	tags: settings.tags
 }
 
 /* EXTENSIONS */
@@ -87,7 +90,7 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-02-01' = {
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		KeyVault_vaults_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
@@ -95,7 +98,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

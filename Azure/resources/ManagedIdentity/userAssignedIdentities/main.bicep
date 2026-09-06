@@ -20,19 +20,11 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
-}?
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.name
-
-@description('The configurable properties.')
-param properties resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.properties = {}
+}
 
 @description('The child resources.')
 @sealed()
@@ -48,16 +40,26 @@ param resources {
 	}
 }?
 
-@description('The tags.')
-param tags resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.name
+	@description('The configurable properties.')
+	properties: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.properties?
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.tags
+}
 
 /* RESOURCES */
 
 resource ManagedIdentity_userAssignedIdentities_ 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' = {
-	location: location
-	name: name
-	properties: properties
-	tags: tags
+	location: settings.location
+	name: settings.name
+	properties: (settings.?properties ?? {})
+	tags: settings.tags
 }
 
 resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30' = [
@@ -73,7 +75,7 @@ resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'M
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		ManagedIdentity_userAssignedIdentities_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

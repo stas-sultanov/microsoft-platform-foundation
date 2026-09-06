@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a Microsoft.Compute/virtualMachineScaleSets resource.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
@@ -18,40 +22,54 @@ import * as MaintenanceConfigurationAssignments from '../../../library/Maintenan
 /* TYPES */
 
 @export()
+@sealed()
 type Extensions = {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		dataCollectionRuleAssociations: InsightsDataCollectionRuleAssociations.Resource[]
 	}
+	@sealed()
 	Maintenance: {
 		configurationAssignments: MaintenanceConfigurationAssignments.Resource[]
 	}
 }
 
+@sealed()
 type Properties = {
 	@description('Policy for automatic repairs.')
 	automaticRepairsPolicy: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.automaticRepairsPolicy
 	@description('The virtual machine profile.')
+	@sealed()
 	virtualMachineProfile: {
 		@description('Specifies a collection of settings for extensions installed on virtual machines in the scale set.')
 		extensionProfile: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.extensionProfile
 		@description('Specifies properties of the network interfaces of the virtual machines in the scale set.')
+		@sealed()
 		networkProfile: {
 			@description('A reference to a load balancer probe used to determine the health of an instance in the virtual machine scale set.')
 			healthProbe: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.networkProfile.healthProbe
 			@description('The list of network configurations.')
+			@sealed()
 			networkInterfaceConfigurations: {
+				@sealed()
 				Default: {
 					@description('Describes a virtual machine scale set network profile\'s IP configuration.')
+					@sealed()
 					properties: {
 						@description('Specifies the IP configurations of the network interface.')
+						@sealed()
 						ipConfigurations: {
+							@sealed()
 							Default: {
 								@description('Describes a virtual machine scale set network profile\'s IP configuration properties.')
+								@sealed()
 								properties: {
 									@description('Specifies an array of references to backend address pools of load balancers.')
+									@sealed()
 									loadBalancerBackendAddressPools: {
 										Private: SubResource
 										Public: SubResource
@@ -69,6 +87,7 @@ type Properties = {
 		}
 	}
 	@description('Specifies the operating system settings for the virtual machines in the scale set.')
+	@sealed()
 	osProfile: {
 		@description('Specifies the name of the administrator account.')
 		adminUsername: string
@@ -77,11 +96,15 @@ type Properties = {
 		@description('Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length of the binary array is 65535 bytes.')
 		customData: string
 		@description('Specifies the Linux operating system settings on the virtual machine.')
+		@sealed()
 		linuxConfiguration: {
 			@description('Specifies the ssh key configuration for a Linux OS.')
+			@sealed()
 			ssh: {
 				@description('The list of SSH public keys used to authenticate with linux based VMs.')
+				@sealed()
 				publicKeys: {
+					@sealed()
 					Admin: {
 						@description('SSH public key certificate used to authenticate with the VM through ssh.')
 						keyData: string
@@ -91,12 +114,15 @@ type Properties = {
 		}
 	}
 	@description('Specifies the storage settings for the virtual machine disks.')
+	@sealed()
 	storageProfile: {
 		@description('Specifies information about the image to use.')
 		imageReference: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.storageProfile.imageReference
 		@description('Specifies information about the operating system disk used by the virtual machines in the scale set.')
+		@sealed()
 		osDisk: {
 			@description('The managed disk parameters.')
+			@sealed()
 			managedDisk: {
 				@description('Specifies the storage account type for the managed disk. NOTE: UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk.')
 				storageAccountType: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.storageProfile.osDisk.managedDisk.storageAccountType
@@ -105,6 +131,7 @@ type Properties = {
 	}
 }
 
+@sealed()
 type SubResource = {
 	@description('The resource id.')
 	id: string
@@ -115,37 +142,35 @@ type SubResource = {
 @description('The extensions settings.')
 param extensions Extensions
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity = {
-	type: 'None'
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
+	@description('The configurable properties.')
+	properties: Properties
+	@description('The sku.')
+	sku: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.sku
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.tags
+	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
+	zones: string[]
 }
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
-
-@description('The configurable properties.')
-param properties Properties
-
-@description('The sku.')
-param sku resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.sku
-
-@description('The tags.')
-param tags resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.tags
-
-@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-param zones string[]
 
 /* RESOURCES */
 
 resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' = {
-	identity: identity
-	location: location
-	name: name
+	identity: settings.?identity ?? {
+	type: 'None'
+}
+	location: settings.location
+	name: settings.name
 	properties: {
-		automaticRepairsPolicy: properties.automaticRepairsPolicy
+		automaticRepairsPolicy: settings.properties.automaticRepairsPolicy
 		orchestrationMode: 'Uniform'
 		overprovision: true
 		resiliencyPolicy: {
@@ -185,9 +210,9 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 				]
 			}
 			/**/
-			extensionProfile: properties.virtualMachineProfile.extensionProfile
+			extensionProfile: settings.properties.virtualMachineProfile.extensionProfile
 			networkProfile: {
-				healthProbe: properties.virtualMachineProfile.networkProfile.healthProbe
+				healthProbe: settings.properties.virtualMachineProfile.networkProfile.healthProbe
 				networkInterfaceConfigurations: [
 					{
 						name: 'Default'
@@ -198,52 +223,52 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 									name: 'Default'
 									properties: {
 										loadBalancerBackendAddressPools: [
-											properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.loadBalancerBackendAddressPools.Private
-											properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.loadBalancerBackendAddressPools.Public
+											settings.properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.loadBalancerBackendAddressPools.Private
+											settings.properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.loadBalancerBackendAddressPools.Public
 										]
-										subnet: properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.subnet
+										subnet: settings.properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.ipConfigurations.Default.properties.subnet
 									}
 								}
 							]
-							networkSecurityGroup: properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.networkSecurityGroup
+							networkSecurityGroup: settings.properties.virtualMachineProfile.networkProfile.networkInterfaceConfigurations.Default.properties.networkSecurityGroup
 							primary: true
 						}
 					}
 				]
 			}
 			osProfile: {
-				adminUsername: properties.osProfile.adminUsername
-				computerNamePrefix: properties.osProfile.computerNamePrefix
-				customData: properties.osProfile.customData
+				adminUsername: settings.properties.osProfile.adminUsername
+				computerNamePrefix: settings.properties.osProfile.computerNamePrefix
+				customData: settings.properties.osProfile.customData
 				linuxConfiguration: {
 					disablePasswordAuthentication: true
 					enableVMAgentPlatformUpdates: true
 					ssh: {
 						publicKeys: [
 							{
-								keyData: properties.osProfile.linuxConfiguration.ssh.publicKeys.Admin.keyData
-								path: '/home/${properties.osProfile.adminUsername}/.ssh/authorized_keys'
+								keyData: settings.properties.osProfile.linuxConfiguration.ssh.publicKeys.Admin.keyData
+								path: '/home/${settings.properties.osProfile.adminUsername}/.ssh/authorized_keys'
 							}
 						]
 					}
 				}
 			}
 			storageProfile: {
-				imageReference: properties.storageProfile.imageReference
+				imageReference: settings.properties.storageProfile.imageReference
 				osDisk: {
 					caching: 'ReadWrite'
 					createOption: 'FromImage'
 					managedDisk: {
-						storageAccountType: properties.storageProfile.osDisk.managedDisk.storageAccountType
+						storageAccountType: settings.properties.storageProfile.osDisk.managedDisk.storageAccountType
 					}
 				}
 			}
 		}
-		zoneBalance: sys.length(zones) > 1
+		zoneBalance: sys.length(settings.zones) > 1
 	}
-	sku: sku
-	tags: tags
-	zones: zones
+	sku: settings.sku
+	tags: settings.tags
+	zones: settings.zones
 }
 
 /* EXTENSIONS */
@@ -251,7 +276,7 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Compute_virtualMachineScaleSets_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
@@ -269,7 +294,7 @@ resource Insights_dataCollectionRuleAssociations_ 'Microsoft.Insights/dataCollec
 
 resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurationAssignments@2023-04-01' = [
 	for item in extensions.Maintenance.configurationAssignments: {
-		location: location
+		location: settings.location
 		name: item.name
 		properties: item.properties
 		scope: Compute_virtualMachineScaleSets_

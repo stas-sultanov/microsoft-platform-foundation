@@ -20,63 +20,67 @@ import * as AuthorizationRoleAssignments from '../../../../../library/Authorizat
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
-}?
-
-@description('The name.')
-@maxLength(63)
-@minLength(3)
-param name resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.name
+}
 
 @description('The name of the parent Microsoft.Storage/storageAccounts resource.')
 param parentAccountName resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
 
-@description('The configurable properties.')
-@sealed()
-param properties {
-	defaultEncryptionScope: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.defaultEncryptionScope?
-	denyEncryptionScopeOverride: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.denyEncryptionScopeOverride?
-	enableNfsV3AllSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.enableNfsV3AllSquash?
-	enableNfsV3RootSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.enableNfsV3RootSquash?
-	immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.immutableStorageWithVersioning?
-	metadata: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.metadata?
-}
-
 @description('The child resources.')
 @sealed()
 param resources {
+	@sealed()
 	immutabilityPolicies: {
+		@sealed()
 		Default: {
 			properties: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies@2026-04-01'>.properties
 		}
 	}
 }?
 
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The name.')
+	@maxLength(63)
+	@minLength(3)
+	name: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.name
+	@description('The configurable properties.')
+	@sealed()
+	properties: {
+		defaultEncryptionScope: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.defaultEncryptionScope?
+		denyEncryptionScopeOverride: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.denyEncryptionScopeOverride?
+		enableNfsV3AllSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.enableNfsV3AllSquash?
+		enableNfsV3RootSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.enableNfsV3RootSquash?
+		immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.immutableStorageWithVersioning?
+		metadata: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.metadata?
+	}
+}
+
 /* EXISTING RESOURCES */
 
 resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
 	name: parentAccountName
-}
 
-resource Storage_storageAccounts_blobServices_ 'Microsoft.Storage/storageAccounts/blobServices@2026-04-01' existing = {
-	name: 'default'
-	parent: Storage_storageAccounts_
+	resource blobServices_ 'blobServices' existing = {
+		name: 'default'
+	}
 }
 
 /* RESOURCES */
 
 resource Storage_storageAccounts_blobServices_containers_ 'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01' = {
-	name: name
-	parent: Storage_storageAccounts_blobServices_
-	properties: properties
-}
+	name: settings.name
+	parent: Storage_storageAccounts_::blobServices_
+	properties: settings.properties
 
-resource Storage_storageAccounts_blobServices_containers_immutabilityPolicies__Default 'Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies@2026-04-01' = if (resources.?immutabilityPolicies.Default != null) {
-	name: 'default'
-	parent: Storage_storageAccounts_blobServices_containers_
-	properties: resources!.immutabilityPolicies!.Default!.properties
+	resource immutabilityPolicies_ 'immutabilityPolicies' = if (resources.?immutabilityPolicies.Default != null) {
+		name: 'default'
+		properties: resources!.immutabilityPolicies!.Default!.properties
+	}
 }
 
 /* EXTENSIONS */
@@ -84,7 +88,7 @@ resource Storage_storageAccounts_blobServices_containers_immutabilityPolicies__D
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Storage_storageAccounts_blobServices_containers_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties

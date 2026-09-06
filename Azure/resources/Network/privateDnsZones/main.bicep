@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provisions a private DNS zone.'
 
+/* SCOPE */
+
+targetScope = 'resourceGroup'
+
 /* IMPORTS */
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
@@ -18,16 +22,11 @@ import * as NetworkDnsZones from '../../../library/Network/dnsZones.bicep'
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 }
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Network/privateDnsZones@2024-06-01'>.name
 
 @description('The child resources.')
 @sealed()
@@ -49,15 +48,23 @@ param resources {
 	}
 }
 
-@description('The tags.')
-param tags resourceInput<'Microsoft.Network/privateDnsZones@2024-06-01'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Network/privateDnsZones@2024-06-01'>.name
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/privateDnsZones@2024-06-01'>.tags
+}
 
 /* RESOURCES */
 
 resource Network_privateDnsZones_ 'Microsoft.Network/privateDnsZones@2024-06-01' = {
-	location: location
-	name: name
-	tags: tags
+	location: settings.location
+	name: settings.name
+	tags: settings.tags
 }
 
 resource Network_privateDnsZones_A_ 'Microsoft.Network/privateDnsZones/A@2024-06-01' = [
@@ -78,7 +85,7 @@ resource Network_privateDnsZones_A_ 'Microsoft.Network/privateDnsZones/A@2024-06
 
 resource Network_privateDnsZones_virtualNetworkLinks_ 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = [
 	for item in items(resources.virtualNetworkLinks): {
-		location: location
+		location: settings.location
 		name: item.value.name
 		parent: Network_privateDnsZones_
 		properties: item.value.properties
@@ -91,7 +98,7 @@ resource Network_privateDnsZones_virtualNetworkLinks_ 'Microsoft.Network/private
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Network_privateDnsZones_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
@@ -103,3 +110,6 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 
 @description('The id.')
 output id string = Network_privateDnsZones_.id
+
+@description('The name.')
+output name string = Network_privateDnsZones_.name

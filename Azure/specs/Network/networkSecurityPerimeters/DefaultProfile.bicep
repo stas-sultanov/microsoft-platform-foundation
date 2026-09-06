@@ -24,28 +24,27 @@ import * as NetworkNetworkSecurityPerimeters from '../../../library/Network/netw
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
 	Insights: {
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
 }
 
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.name
-
 @description('The child resources.')
 @sealed()
 param resources {
+	@sealed()
 	profiles: {
+		@sealed()
 		Default: {
 			@description('The name.')
 			name: string
 			@description('The child resources.')
+			@sealed()
 			resources: {
 				accessRules: NetworkNetworkSecurityPerimeters.AccessRuleChildResource[]
 			}
@@ -56,6 +55,7 @@ param resources {
 			@description('The name.')
 			name: string
 			@description('The configurable properties.')
+			@sealed()
 			properties: {
 				accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.accessMode
 				privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties.privateLinkResource
@@ -64,16 +64,24 @@ param resources {
 	}
 }
 
-@description('The tags.')
-param tags resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.name
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.tags
+}
 
 /* RESOURCES */
 
 resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPerimeters@2025-07-01' = {
-	location: location
-	name: name
+	location: settings.location
+	name: settings.name
 	properties: {}
-	tags: tags
+	tags: settings.tags
 }
 
 resource Network_networkSecurityPerimeters_profiles__Default 'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01' = {
@@ -108,7 +116,7 @@ resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Netw
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		Network_networkSecurityPerimeters_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
@@ -116,7 +124,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version of resource is required
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

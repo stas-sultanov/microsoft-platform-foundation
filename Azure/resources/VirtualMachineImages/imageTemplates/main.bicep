@@ -20,50 +20,54 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 @description('The extensions settings.')
 @sealed()
 param extensions {
+	@sealed()
 	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]?
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
 }
 
-@description('The identity.')
-param identity resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.identity = {
-	type: 'None'
-}
-
-@description('The geo-location.')
-param location string
-
-@description('The name.')
-param name resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.name
-
-@description('The configurable properties.')
-param properties resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties
-
 @description('The child resources.')
+@sealed()
 param resources {
+	@sealed()
 	triggers: {
 		@description('The trigger on SourceImage change.')
+		@sealed()
 		SourceImage: {
 			@description('The configurable properties.')
 			properties: {}
-		}
+		}?
 	}
 }?
 
-@description('The tags.')
-param tags resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.tags
+@description('The resource settings.')
+@sealed()
+param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.identity?
+	@description('The geo-location.')
+	location: string
+	@description('The name.')
+	name: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.name
+	@description('The configurable properties.')
+	properties: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.tags
+}
 
 /* RESOURCES */
 
 resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01' = {
-	identity: identity
-	location: location
-	name: name
-	properties: properties
-	tags: tags
+	identity: settings.?identity ?? {
+		type: 'None'
+	}
+	location: settings.location
+	name: settings.name
+	properties: settings.properties
+	tags: settings.tags
 }
 
-resource VirtualMachineImages_imageTemplates_triggers__SourceImage 'Microsoft.VirtualMachineImages/imageTemplates/triggers@2025-10-01' = if (resources.?triggers != null) {
+resource VirtualMachineImages_imageTemplates_triggers__SourceImage 'Microsoft.VirtualMachineImages/imageTemplates/triggers@2025-10-01' = if (resources.?triggers.?SourceImage != null) {
 	name: 'SourceImage'
 	parent: VirtualMachineImages_imageTemplates_
 	properties: {
@@ -76,7 +80,7 @@ resource VirtualMachineImages_imageTemplates_triggers__SourceImage 'Microsoft.Vi
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
 		VirtualMachineImages_imageTemplates_.id,
-		extensions.?Authorization.?roleAssignments ?? []
+		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
