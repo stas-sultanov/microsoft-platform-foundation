@@ -21,7 +21,7 @@ type RoleAssignmentResourceInput = {
 		principalId: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-03-15'>.properties.principalId
 		@description('The name of the Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions resource.')
 		roleDefinitionName: string
-		@description('The data plane resource path for which access is being granted through this Role Assignment.')
+		@description('The scope string for which access is being granted through this Role Assignment. If omitted, the database account resource id is used.')
 		scope: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-03-15'>.properties.scope?
 	}
 }
