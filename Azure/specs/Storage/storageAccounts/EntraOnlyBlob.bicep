@@ -125,7 +125,7 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 	}
 	sku: settings.sku
 	tags: settings.tags
-	zones: settings.?zones ?? []
+	zones: settings.?zones
 	resource blobServices_ 'blobServices' = {
 		name: 'default'
 	}
