@@ -36,33 +36,33 @@ param extensions {
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.identity?
+	identity: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.name
+	name: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('Dataset replication configuration for the Redis Enterprise cluster.')
-		highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.highAvailability
+		highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.properties.highAvailability
 		@description('Cluster-level maintenance configuration.')
-		maintenanceConfiguration: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.maintenanceConfiguration
+		maintenanceConfiguration: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.properties.maintenanceConfiguration
 		@description('The network access mode.')
-		publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.properties.publicNetworkAccess
+		publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.properties.publicNetworkAccess
 	}
 	@description('The SKU.')
-	sku: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.sku
+	sku: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.sku
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.tags
+	tags: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.tags
 	@description('The zones.')
-	zones: resourceInput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.zones?
+	zones: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.zones?
 }
 
 /* RESOURCES */
 
-#disable-diagnostics use-recent-api-versions // maintenance window configuration is available in preview only
-resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-02-01-preview' = {
+#disable-next-line use-recent-api-versions // maintenance window configuration is available in preview only
+resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-06-01-preview' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}
@@ -105,7 +105,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = Cache_redisEnterprise_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Cache/redisEnterprise@2026-02-01-preview'>.identity? = Cache_redisEnterprise_.?identity
+output identity resourceOutput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.identity? = Cache_redisEnterprise_.?identity
 
 @description('The name.')
 output name string = Cache_redisEnterprise_.name

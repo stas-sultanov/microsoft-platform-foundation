@@ -27,7 +27,7 @@ param resources {
 			@description('The name.')
 			name: string
 			@description('The properties.')
-			properties: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2024-01-01'>.properties
+			properties: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2026-01-01'>.properties
 		}
 	}
 }?
@@ -39,7 +39,7 @@ param settings {
 	@minLength(1)
 	name: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions@2026-01-01'>.name
 	@description('The properties.')
-	properties: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions@2024-01-01'>.properties
+	properties: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions@2026-01-01'>.properties
 }
 
 /* EXISTING RESOURCES */
@@ -68,6 +68,9 @@ resource ServiceBus_namespaces_topics_subscriptions_rules_ 'Microsoft.ServiceBus
 ]
 
 /* OUTPUTS */
+
+@description('The id.')
+output id string = ServiceBus_namespaces_topics_subscriptions_.id
 
 @description('The name.')
 output name string = ServiceBus_namespaces_topics_subscriptions_.name

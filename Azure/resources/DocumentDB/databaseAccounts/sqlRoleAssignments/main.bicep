@@ -46,7 +46,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 resource DocumentDB_databaseAccounts_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-03-15' = [
 	for item in roleAssignments: {
 		name: guid(
-			DocumentDB_databaseAccounts_.id,
+			item.properties.?scope ?? DocumentDB_databaseAccounts_.id,
 			item.properties.principalId,
 			item.properties.roleDefinitionName
 		)
