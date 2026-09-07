@@ -85,6 +85,7 @@ Bicep files MUST follow this section order. Sections MAY be omitted when they ar
 
 - Metadata
 - Scope
+- Bicep extensions
 - Imports
 - Types
 - Functions
@@ -96,6 +97,8 @@ Bicep files MUST follow this section order. Sections MAY be omitted when they ar
 - Outputs
 
 Metadata declarations MUST appear at the top of the file, MUST NOT use a section header, and MUST include the author block and module description.
+
+The Bicep extensions section MUST contain `extension` statements, such as `extension microsoftGraph`, and MUST use the `/* BICEP EXTENSIONS */` header to avoid ambiguity with the Extensions section, which contains Azure extension resources.
 
 Section headers after metadata declarations MUST use block comments, such as `/* PARAMETERS */`.
 
@@ -128,6 +131,7 @@ Within each section, all declarations MUST be sorted alphabetically.
 ### Parameters
 
 - Every parameter MUST have a `@description` decorator.
+- The standard parameter surface, meaning `extensions`, `resources`, and `settings`, applies only to resource modules and child resource modules, meaning modules that create a single primary Azure resource. It MUST NOT be applied to modules that only provision extension resources for an existing resource, or to modules that provision multiple independent resources. Such modules MAY use domain-specific parameter names that describe what they provision.
 - Top-level resource modules, meaning modules that create a level 1 Azure resource type, MUST use the standard parameter surface: `extensions`, `resources`, and `settings`. The `resources` parameter is optional and MUST be omitted when the module does not create child resources.
 - Child resource modules MUST use the same standard parameter surface and MUST also expose the immediate parent resource name as a top-level `parentName` parameter. If more than one parent name is required, each parent name MUST be a top-level parameter with a clear name, such as `parentNamespaceName` and `parentTopicName`.
 - `extensions` MUST group extension resources by provider or concern, such as `Authorization`, `Insights`, `Maintenance`, or other. This includes diagnostics, authorization, assignments, and other resources scoped to the primary resource but not part of its child resource type hierarchy.
