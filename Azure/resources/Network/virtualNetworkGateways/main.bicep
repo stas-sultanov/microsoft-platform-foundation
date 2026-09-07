@@ -57,8 +57,8 @@ param settings {
 
 resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2025-07-01' = {
 	identity: settings.?identity ?? {
-	type: 'None'
-}
+		type: 'None'
+	}
 	location: settings.location
 	name: settings.name
 	properties: settings.properties
