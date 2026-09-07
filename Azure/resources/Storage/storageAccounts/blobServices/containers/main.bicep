@@ -26,9 +26,6 @@ param extensions {
 	}?
 }
 
-@description('The name of the parent Microsoft.Storage/storageAccounts resource.')
-param parentAccountName resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
-
 @description('The child resources.')
 @sealed()
 param resources {
@@ -45,9 +42,15 @@ param resources {
 @sealed()
 param settings {
 	@description('The name.')
-	@maxLength(63)
-	@minLength(3)
-	name: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.name
+	@sealed()
+	name: {
+		@description('The name of the Microsoft.Storage/storageAccounts resource.')
+		storageAccount: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
+		@description('The name of the Microsoft.Storage/storageAccounts/blobServices/containers resource.')
+		@maxLength(63)
+		@minLength(3)
+		container: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.name
+	}
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -63,7 +66,7 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
-	name: parentAccountName
+	name: settings.name.storageAccount
 
 	resource blobServices_ 'blobServices' existing = {
 		name: 'default'
@@ -73,7 +76,7 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 /* RESOURCES */
 
 resource Storage_storageAccounts_blobServices_containers_ 'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01' = {
-	name: settings.name
+	name: settings.name.container
 	parent: Storage_storageAccounts_::blobServices_
 	properties: settings.properties
 

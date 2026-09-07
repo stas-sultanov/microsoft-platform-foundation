@@ -13,16 +13,19 @@ targetScope = 'resourceGroup'
 
 /* PARAMETERS */
 
-@description('The name of the parent Microsoft.Network/networkWatchers resource.')
-param parentName resourceInput<'Microsoft.Network/networkWatchers@2025-07-01'>.name
-
 @description('The resource settings.')
 @sealed()
 param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2025-07-01'>.name
+	@sealed()
+	name: {
+		@description('The name of the Microsoft.Network/networkWatchers resource.')
+		networkWatcher: resourceInput<'Microsoft.Network/networkWatchers@2025-07-01'>.name
+		@description('The name of the Microsoft.Network/networkWatchers/connectionMonitors resource.')
+		connectionMonitor: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2025-07-01'>.name
+	}
 	@description('The configurable properties.')
 	properties: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2025-07-01'>.properties
 	@description('The tags.')
@@ -32,14 +35,14 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource Network_networkWatchers_ 'Microsoft.Network/networkWatchers@2025-07-01' existing = {
-	name: parentName
+	name: settings.name.networkWatcher
 }
 
 /* RESOURCES */
 
 resource Network_networkWatchers_connectionMonitors_ 'Microsoft.Network/networkWatchers/connectionMonitors@2025-07-01' = {
 	location: settings.location
-	name: settings.name
+	name: settings.name.connectionMonitor
 	parent: Network_networkWatchers_
 	properties: settings.properties
 	tags: settings.tags

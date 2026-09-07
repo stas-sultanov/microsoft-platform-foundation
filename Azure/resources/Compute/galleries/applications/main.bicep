@@ -13,16 +13,19 @@ targetScope = 'resourceGroup'
 
 /* PARAMETERS */
 
-@description('The name of the parent Microsoft.Compute/galleries resource.')
-param parentName resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
-
 @description('The resource settings.')
 @sealed()
 param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.name
+	@sealed()
+	name: {
+		@description('The name of the Microsoft.Compute/galleries resource.')
+		gallery: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
+		@description('The name of the Microsoft.Compute/galleries/applications resource.')
+		application: resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.name
+	}
 	@description('The configurable properties.')
 	properties: resourceInput<'Microsoft.Compute/galleries/applications@2025-12-03'>.properties
 }
@@ -30,14 +33,14 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' existing = {
-	name: parentName
+	name: settings.name.gallery
 }
 
 /* RESOURCES */
 
 resource Compute_galleries_applications_ 'Microsoft.Compute/galleries/applications@2025-12-03' = {
 	location: settings.location
-	name: settings.name
+	name: settings.name.application
 	parent: Compute_galleries_
 	properties: settings.properties
 }

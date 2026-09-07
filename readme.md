@@ -129,14 +129,18 @@ Within each section, all declarations MUST be sorted alphabetically.
 
 - Every parameter MUST have a `@description` decorator.
 - Top-level resource modules, meaning modules that create a level 1 Azure resource type, MUST use the standard parameter surface: `extensions`, `resources`, and `settings`. The `resources` parameter is optional and MUST be omitted when the module does not create child resources.
-- Child resource modules MUST use the same standard parameter surface and MUST also expose the immediate parent resource name as a top-level `parentName` parameter. If more than one parent name is required, each parent name MUST be a top-level parameter with a clear name, such as `parentNamespaceName` and `parentTopicName`.
+- Child resource modules MUST use the same standard parameter surface and MUST identify their ancestors through `settings.name`.
+- Modules that do not create a primary resource, such as modules that only project a collection of child resources, MUST expose a top-level `parent` parameter instead. `parent` MUST be a `@sealed()` object holding a flat set of ancestor resource names, one field per hierarchy level, named after the ancestor resource type in singular form with a `Name` suffix.
 - `extensions` MUST group extension resources by provider or concern, such as `Authorization`, `Insights`, `Maintenance`, or other. This includes diagnostics, authorization, assignments, and other resources scoped to the primary resource but not part of its child resource type hierarchy.
 - `resources` MUST group child resources by child resource type.
 - `settings` MUST group the configuration of the primary resource created by the module. Standard resource fields such as `identity`, `location`, `name`, `properties`, `sku`, `tags`, and `zones` MUST be nested under `settings` when applicable.
+- `settings.name` MUST represent the full name of the primary resource within the deployment scope. For a level 1 resource type it MUST be a string. For a child resource type it MUST be a `@sealed()` object of flat name segments ordered from the topmost ancestor down to the resource itself, one field per hierarchy level, named after the corresponding resource type in singular form without a `Name` suffix, such as `{ namespace, topic, subscription }`. Type constraints and descriptions MUST be preserved per segment.
+- `settings.name` MUST NOT be nested recursively and MUST NOT carry references to resources outside the primary resource hierarchy. Fixed hierarchy segments, such as `blobServices/default`, MUST stay inside the module.
+- Child resources declared inside the module that creates their parent MUST keep a plain string name, because the ancestor segments are already known to the containing module.
 - Standard Bicep resource-derived types, such as `resourceInput` and `resourceOutput`, SHOULD be used wherever possible.
 - `settings.properties` MUST represent the Azure resource `properties` object. It MAY use `resourceInput<...>.properties` directly when the native Azure resource property shape is the intended contract, or a curated object type when the foundation intentionally exposes only selected properties.
-- Top-level parameters MUST be sorted alphabetically by parameter name. Parent-name parameters MUST remain top-level and participate in this ordering alongside `extensions`, `resources`, and `settings`.
-- Non-resource parameters SHOULD be avoided in `Azure/resources` and `Azure/specs` modules. When required, they MAY use domain-specific names only when they do not directly represent a standard Azure resource field, child resource collection, extension resource collection, or parent name.
+- Top-level parameters MUST be sorted alphabetically by parameter name. The `parent` parameter MUST remain top-level and participate in this ordering alongside `extensions`, `resources`, and `settings`.
+- Non-resource parameters SHOULD be avoided in `Azure/resources` and `Azure/specs` modules. When required, they MAY use domain-specific names only when they do not directly represent a standard Azure resource field, child resource collection, extension resource collection, or parent resource name.
 - Optional parameters and default values MUST be safe and predictable.
 
 ### Resources

@@ -13,12 +13,6 @@ targetScope = 'resourceGroup'
 
 /* PARAMETERS */
 
-@description('The name of the parent Microsoft.ServiceBus/namespaces resource.')
-param parentNamespaceName resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.name
-
-@description('The name of the parent Microsoft.ServiceBus/namespaces/topics resource.')
-param parentTopicName resourceInput<'Microsoft.ServiceBus/namespaces/topics@2026-01-01'>.name
-
 @description('The child resources.')
 @sealed()
 param resources {
@@ -36,8 +30,16 @@ param resources {
 @sealed()
 param settings {
 	@description('The name.')
-	@minLength(1)
-	name: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions@2026-01-01'>.name
+	@sealed()
+	name: {
+		@description('The name of the Microsoft.ServiceBus/namespaces resource.')
+		namespace: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.name
+		@description('The name of the Microsoft.ServiceBus/namespaces/topics resource.')
+		topic: resourceInput<'Microsoft.ServiceBus/namespaces/topics@2026-01-01'>.name
+		@description('The name of the Microsoft.ServiceBus/namespaces/topics/subscriptions resource.')
+		@minLength(1)
+		subscription: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions@2026-01-01'>.name
+	}
 	@description('The properties.')
 	properties: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions@2024-01-01'>.properties
 }
@@ -45,16 +47,16 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource ServiceBus_namespaces_ 'Microsoft.ServiceBus/namespaces@2026-01-01' existing = {
-	name: parentNamespaceName
+	name: settings.name.namespace
 	resource topics_ 'topics' existing = {
-		name: parentTopicName
+		name: settings.name.topic
 	}
 }
 
 /* RESOURCES */
 
 resource ServiceBus_namespaces_topics_subscriptions_ 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2026-01-01' = {
-	name: settings.name
+	name: settings.name.subscription
 	parent: ServiceBus_namespaces_::topics_
 	properties: settings.properties
 }

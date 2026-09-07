@@ -17,9 +17,6 @@ import * as NetworkNetworkSecurityPerimeters from '../../../../library/Network/n
 
 /* PARAMETERS */
 
-@description('The name of the parent Microsoft.Network/networkSecurityPerimeters resource.')
-param parentName resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.name
-
 @description('The child resources.')
 @sealed()
 param resources {
@@ -32,20 +29,26 @@ param resources {
 @sealed()
 param settings {
 	@description('The name.')
-	@maxLength(80)
-	name: resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01'>.name
+	@sealed()
+	name: {
+		@description('The name of the Microsoft.Network/networkSecurityPerimeters resource.')
+		networkSecurityPerimeter: resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-07-01'>.name
+		@description('The name of the Microsoft.Network/networkSecurityPerimeters/profiles resource.')
+		@maxLength(80)
+		profile: resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01'>.name
+	}
 }
 
 /* EXISTING RESOURCES */
 
 resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPerimeters@2025-07-01' existing = {
-	name: parentName
+	name: settings.name.networkSecurityPerimeter
 }
 
 /* RESOURCES */
 
 resource Network_networkSecurityPerimeters_profiles_ 'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01' = {
-	name: settings.name
+	name: settings.name.profile
 	parent: Network_networkSecurityPerimeters_
 	properties: {}
 }

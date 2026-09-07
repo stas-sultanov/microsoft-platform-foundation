@@ -26,13 +26,17 @@ param A ARecord[] = []
 @description('The NS records.')
 param NS NSRecord[] = []
 
-@description('The name of the parent Microsoft.Network/dnsZones resource.')
-param parentName resourceInput<'Microsoft.Network/dnsZones@2018-05-01'>.name
+@description('The parent resource identification.')
+@sealed()
+param parent {
+	@description('The name of the Microsoft.Network/dnsZones resource.')
+	dnsZoneName: resourceInput<'Microsoft.Network/dnsZones@2018-05-01'>.name
+}
 
 /* EXISTING RESOURCES */
 
 resource Network_dnsZones_ 'Microsoft.Network/dnsZones@2018-05-01' existing = {
-	name: parentName
+	name: parent.dnsZoneName
 }
 
 /* RESOURCES */

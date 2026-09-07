@@ -28,8 +28,8 @@ type RoleAssignmentResourceInput = {
 
 /* PARAMETERS */
 
-@description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
+@description('The name of the Microsoft.DocumentDB/databaseAccounts resource.')
+param name resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments RoleAssignmentResourceInput[]
@@ -37,7 +37,7 @@ param roleAssignments RoleAssignmentResourceInput[]
 /* EXISTING RESOURCES */
 
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
-	name: parentName
+	name: name
 }
 
 /* RESOURCES */
@@ -55,7 +55,7 @@ resource DocumentDB_databaseAccounts_sqlRoleAssignments_ 'Microsoft.DocumentDB/d
 			principalId: item.properties.principalId
 			roleDefinitionId: resourceId(
 				'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions',
-				parentName,
+				name,
 				item.properties.roleDefinitionName
 			)
 			scope: item.properties.?scope ?? DocumentDB_databaseAccounts_.id
