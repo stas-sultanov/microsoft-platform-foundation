@@ -85,29 +85,29 @@ type Properties = {
 				}
 			}
 		}
-	}
-	@description('Specifies the operating system settings for the virtual machines in the scale set.')
-	@sealed()
-	osProfile: {
-		@description('Specifies the name of the administrator account.')
-		adminUsername: string
-		@description('Specifies the computer name prefix for all of the virtual machines in the scale set. Computer name prefixes must be 1 to 15 characters long.')
-		computerNamePrefix: string
-		@description('Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length of the binary array is 65535 bytes.')
-		customData: string
-		@description('Specifies the Linux operating system settings on the virtual machine.')
+		@description('Specifies the operating system settings for the virtual machines in the scale set.')
 		@sealed()
-		linuxConfiguration: {
-			@description('Specifies the ssh key configuration for a Linux OS.')
+		osProfile: {
+			@description('Specifies the name of the administrator account.')
+			adminUsername: string
+			@description('Specifies the computer name prefix for all of the virtual machines in the scale set. Computer name prefixes must be 1 to 15 characters long.')
+			computerNamePrefix: string
+			@description('Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length of the binary array is 65535 bytes.')
+			customData: string
+			@description('Specifies the Linux operating system settings on the virtual machine.')
 			@sealed()
-			ssh: {
-				@description('The list of SSH public keys used to authenticate with linux based VMs.')
+			linuxConfiguration: {
+				@description('Specifies the ssh key configuration for a Linux OS.')
 				@sealed()
-				publicKeys: {
+				ssh: {
+					@description('The list of SSH public keys used to authenticate with linux based VMs.')
 					@sealed()
-					Admin: {
-						@description('SSH public key certificate used to authenticate with the VM through ssh.')
-						keyData: string
+					publicKeys: {
+						@sealed()
+						Admin: {
+							@description('SSH public key certificate used to authenticate with the VM through ssh.')
+							keyData: string
+						}
 					}
 				}
 			}
@@ -165,8 +165,8 @@ param settings {
 
 resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' = {
 	identity: settings.?identity ?? {
-	type: 'None'
-}
+		type: 'None'
+	}
 	location: settings.location
 	name: settings.name
 	properties: {
@@ -237,17 +237,17 @@ resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScale
 				]
 			}
 			osProfile: {
-				adminUsername: settings.properties.osProfile.adminUsername
-				computerNamePrefix: settings.properties.osProfile.computerNamePrefix
-				customData: settings.properties.osProfile.customData
+				adminUsername: settings.properties.virtualMachineProfile.osProfile.adminUsername
+				computerNamePrefix: settings.properties.virtualMachineProfile.osProfile.computerNamePrefix
+				customData: settings.properties.virtualMachineProfile.osProfile.customData
 				linuxConfiguration: {
 					disablePasswordAuthentication: true
 					enableVMAgentPlatformUpdates: true
 					ssh: {
 						publicKeys: [
 							{
-								keyData: settings.properties.osProfile.linuxConfiguration.ssh.publicKeys.Admin.keyData
-								path: '/home/${settings.properties.osProfile.adminUsername}/.ssh/authorized_keys'
+								keyData: settings.properties.virtualMachineProfile.osProfile.linuxConfiguration.ssh.publicKeys.Admin.keyData
+								path: '/home/${settings.properties.virtualMachineProfile.osProfile.adminUsername}/.ssh/authorized_keys'
 							}
 						]
 					}

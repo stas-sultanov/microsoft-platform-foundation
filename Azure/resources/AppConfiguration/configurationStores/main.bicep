@@ -52,8 +52,8 @@ param settings {
 		@maxValue(7)
 		@minValue(1)
 		softDeleteRetentionInDays: int?
-		@description('The id of the Microsoft.Insights/components resource.')
-		telemetryResourceId: string
+		@description('Property specifying the configuration of telemetry for this configuration store.')
+		telemetry: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.properties.telemetry
 	}
 	@description('The SKU.')
 	@sealed()
@@ -94,9 +94,7 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 		softDeleteRetentionInDays: isSoftDeleteAndPurgeProtectionSupported
 			? settings.properties.?softDeleteRetentionInDays
 			: null
-		telemetry: {
-			resourceId: settings.properties.telemetryResourceId
-		}
+		telemetry: settings.properties.telemetry
 	}
 	sku: settings.sku
 	tags: settings.tags

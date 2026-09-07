@@ -163,7 +163,7 @@ resource Insights_autoscaleSettings_ 'Microsoft.Insights/autoscaleSettings@2022-
 					item.rules,
 					rule => {
 						metricTrigger: {
-								...rule.metricTrigger
+							...rule.metricTrigger
 							metricNamespace: 'Microsoft.Compute/virtualMachineScaleSets'
 							metricResourceUri: Compute_virtualMachineScaleSets_.id
 						}

@@ -189,7 +189,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings__Master 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in resources.databases.Master.extensions.Insights.diagnosticSettings: {
 		name: item.name

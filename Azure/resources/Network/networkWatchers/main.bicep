@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Compute/galleries resource.'
+metadata description = 'Provisions a Microsoft.Network/networkWatchers resource with extensions.'
 
 /* SCOPE */
 
@@ -29,27 +29,20 @@ param extensions {
 @description('The resource settings.')
 @sealed()
 param settings {
-	@description('The identity.')
-	identity: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
-	@description('The properties.')
-	properties: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.properties
+	name: resourceInput<'Microsoft.Network/networkWatchers@2025-07-01'>.name
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.tags
+	tags: resourceInput<'Microsoft.Network/networkWatchers@2025-07-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' = {
-	identity: settings.?identity ?? {
-		type: 'None'
-	}
+resource Network_networkWatchers_ 'Microsoft.Network/networkWatchers@2025-07-01' = {
 	location: settings.location
 	name: settings.name
-	properties: settings.properties
+	properties: {}
 	tags: settings.tags
 }
 
@@ -57,22 +50,19 @@ resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' = {
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
-		Compute_galleries_.id,
+		Network_networkWatchers_.id,
 		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
-		scope: Compute_galleries_
+		scope: Network_networkWatchers_
 	}
 ]
 
 /* OUTPUTS */
 
 @description('The id.')
-output id string = Compute_galleries_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.Compute/galleries@2025-12-03'>.identity? = Compute_galleries_.?identity
+output id string = Network_networkWatchers_.id
 
 @description('The name.')
-output name string = Compute_galleries_.name
+output name string = Network_networkWatchers_.name
