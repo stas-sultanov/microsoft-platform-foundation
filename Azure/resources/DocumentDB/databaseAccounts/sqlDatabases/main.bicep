@@ -13,6 +13,9 @@ targetScope = 'resourceGroup'
 
 /* PARAMETERS */
 
+@description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
+
 @description('The resource settings.')
 @sealed()
 param settings {
@@ -21,13 +24,7 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	@sealed()
-	name: {
-		@description('The name of the Microsoft.DocumentDB/databaseAccounts resource.')
-		databaseAccount: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
-		@description('The name of the Microsoft.DocumentDB/databaseAccounts/sqlDatabases resource.')
-		sqlDatabase: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.name
-	}
+	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -55,7 +52,7 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
-	name: settings.name.databaseAccount
+	name: parentName
 }
 
 /* RESOURCES */
@@ -65,7 +62,7 @@ resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databas
 		type: 'None'
 	}
 	location: settings.location
-	name: settings.name.sqlDatabase
+	name: settings.name
 	parent: DocumentDB_databaseAccounts_
 	properties: {
 		options: {
@@ -73,7 +70,7 @@ resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databas
 			autoscaleSettings: settings.properties.options.?autoscaleSettings
 		}
 		resource: {
-			id: settings.name.sqlDatabase
+			id: settings.name
 		}
 	}
 	tags: settings.tags

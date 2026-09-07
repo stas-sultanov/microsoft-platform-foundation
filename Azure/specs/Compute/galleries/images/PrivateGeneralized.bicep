@@ -26,19 +26,16 @@ param extensions {
 	}?
 }
 
+@description('The name of the parent Microsoft.Compute/galleries resource.')
+param parentName resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
+
 @description('The resource settings.')
 @sealed()
 param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	@sealed()
-	name: {
-		@description('The name of the Microsoft.Compute/galleries resource.')
-		gallery: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
-		@description('The name of the Microsoft.Compute/galleries/images resource.')
-		image: resourceInput<'Microsoft.Compute/galleries/images@2025-12-03'>.name
-	}
+	name: resourceInput<'Microsoft.Compute/galleries/images@2025-12-03'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -94,14 +91,14 @@ var features = [
 /* EXISTING RESOURCES */
 
 resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' existing = {
-	name: settings.name.gallery
+	name: parentName
 }
 
 /* RESOURCES */
 
 resource Compute_galleries_images_ 'Microsoft.Compute/galleries/images@2025-12-03' = {
 	location: settings.location
-	name: settings.name.image
+	name: settings.name
 	parent: Compute_galleries_
 	properties: {
 		allowUpdateImage: false

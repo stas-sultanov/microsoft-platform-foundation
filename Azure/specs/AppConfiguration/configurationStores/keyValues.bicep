@@ -17,12 +17,8 @@ import * as AppConfigurationConfigurationStores from '../../../library/AppConfig
 
 /* PARAMETERS */
 
-@description('The parent resource identification.')
-@sealed()
-param parent {
-	@description('The name of the Microsoft.AppConfiguration/configurationStores resource.')
-	configurationStoreName: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.name
-}
+@description('The name of the parent Microsoft.AppConfiguration/configurationStores resource.')
+param parentName resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.name
 
 @description('The child resources.')
 param resources AppConfigurationConfigurationStores.KeyValueChildResource[]
@@ -30,7 +26,7 @@ param resources AppConfigurationConfigurationStores.KeyValueChildResource[]
 /* EXISTING RESOURCES */
 
 resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/configurationStores@2024-06-01' existing = {
-	name: parent.configurationStoreName
+	name: parentName
 }
 
 /* RESOURCES */

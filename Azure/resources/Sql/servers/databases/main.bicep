@@ -32,6 +32,9 @@ param extensions {
 	}
 }
 
+@description('The name of the parent Microsoft.Sql/servers resource.')
+param parentName resourceInput<'Microsoft.Sql/servers@2025-01-01'>.name
+
 @description('The child resources.')
 @sealed()
 param resources {
@@ -52,13 +55,7 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	@sealed()
-	name: {
-		@description('The name of the Microsoft.Sql/servers resource.')
-		server: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.name
-		@description('The name of the Microsoft.Sql/servers/databases resource.')
-		database: resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.name
-	}
+	name: resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.name
 	@description('The configurable properties.')
 	properties: resourceInput<'Microsoft.Sql/servers/databases@2025-01-01'>.properties
 	@description('The SKU.')
@@ -70,7 +67,7 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' existing = {
-	name: settings.name.server
+	name: parentName
 }
 
 /* RESOURCES */
@@ -80,7 +77,7 @@ resource Sql_servers_databases_ 'Microsoft.Sql/servers/databases@2025-01-01' = {
 		type: 'None'
 	}
 	location: settings.location
-	name: settings.name.database
+	name: settings.name
 	parent: Sql_servers_
 	properties: settings.properties
 	sku: settings.sku

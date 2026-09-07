@@ -13,15 +13,12 @@ targetScope = 'resourceGroup'
 
 /* PARAMETERS */
 
+@description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
+
 @description('The resource settings.')
 @sealed()
 param settings {
-	@description('The name.')
-	@sealed()
-	name: {
-		@description('The name of the Microsoft.DocumentDB/databaseAccounts resource.')
-		databaseAccount: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
-	}
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -37,7 +34,7 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
-	name: settings.name.databaseAccount
+	name: parentName
 }
 
 /* RESOURCES */

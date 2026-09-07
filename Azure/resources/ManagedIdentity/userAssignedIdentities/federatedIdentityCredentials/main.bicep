@@ -13,17 +13,14 @@ targetScope = 'resourceGroup'
 
 /* PARAMETERS */
 
+@description('The name of the parent Microsoft.ManagedIdentity/userAssignedIdentities resource.')
+param parentName resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.name
+
 @description('The resource settings.')
 @sealed()
 param settings {
 	@description('The name.')
-	@sealed()
-	name: {
-		@description('The name of the Microsoft.ManagedIdentity/userAssignedIdentities resource.')
-		userAssignedIdentity: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.name
-		@description('The name of the Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials resource.')
-		federatedIdentityCredential: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.name
-	}
+	name: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.name
 	@description('The properties.')
 	properties: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.properties
 }
@@ -31,13 +28,13 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource ManagedIdentity_userAssignedIdentities_ 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30' existing = {
-	name: settings.name.userAssignedIdentity
+	name: parentName
 }
 
 /* RESOURCES */
 
 resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30' = {
-	name: settings.name.federatedIdentityCredential
+	name: settings.name
 	parent: ManagedIdentity_userAssignedIdentities_
 	properties: settings.properties
 }
