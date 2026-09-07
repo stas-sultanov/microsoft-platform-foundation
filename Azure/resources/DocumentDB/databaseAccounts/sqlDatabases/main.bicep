@@ -78,5 +78,11 @@ resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databas
 
 /* OUTPUTS */
 
+@description('The id.')
+output id string = DocumentDB_databaseAccounts_sqlDatabases_.id
+
 @description('The identity.')
 output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.identity? = DocumentDB_databaseAccounts_sqlDatabases_.?identity
+
+@description('The name.')
+output name string = DocumentDB_databaseAccounts_sqlDatabases_.name
