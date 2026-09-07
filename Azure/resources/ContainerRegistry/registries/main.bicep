@@ -93,8 +93,8 @@ var isZoneRedundancySupported = isPremiumSku
 #disable-next-line use-recent-api-versions // endpointProtocol, metadataSearch, and regionalEndpoints are available only in the preview API.
 resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2026-03-01-preview' = {
 	identity: settings.?identity ?? {
-	type: 'None'
-}
+		type: 'None'
+	}
 	location: settings.location
 	name: settings.name
 	properties: {

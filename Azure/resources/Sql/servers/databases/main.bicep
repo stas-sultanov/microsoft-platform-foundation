@@ -74,8 +74,8 @@ resource Sql_servers_ 'Microsoft.Sql/servers@2025-01-01' existing = {
 
 resource Sql_servers_databases_ 'Microsoft.Sql/servers/databases@2025-01-01' = {
 	identity: settings.?identity ?? {
-	type: 'None'
-}
+		type: 'None'
+	}
 	location: settings.location
 	name: settings.name
 	parent: Sql_servers_

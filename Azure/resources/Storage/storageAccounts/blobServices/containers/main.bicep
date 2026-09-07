@@ -27,7 +27,7 @@ param extensions {
 }
 
 @description('The name of the parent Microsoft.Storage/storageAccounts resource.')
-param parentAccountName resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
+param parentStorageAccountName resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
 
 @description('The child resources.')
 @sealed()
@@ -63,7 +63,7 @@ param settings {
 /* EXISTING RESOURCES */
 
 resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
-	name: parentAccountName
+	name: parentStorageAccountName
 
 	resource blobServices_ 'blobServices' existing = {
 		name: 'default'

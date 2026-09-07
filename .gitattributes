@@ -1,0 +1,2 @@
+*.bicep text eol=lf
+*.bicepparam text eol=lf

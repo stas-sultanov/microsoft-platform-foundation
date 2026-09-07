@@ -18,7 +18,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 /* PARAMETERS */
 
 @description('Name of the Microsoft.ContainerService/managedClusters resource.')
-param name resourceInput<'Microsoft.ContainerService/managedClusters@2026-04-01'>.name
+param name resourceInput<'Microsoft.ContainerService/managedClusters@2026-05-01'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]

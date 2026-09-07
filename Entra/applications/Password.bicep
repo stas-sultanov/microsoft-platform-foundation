@@ -90,6 +90,7 @@ output result {
 	passwordCredentials: {
 		hint: string
 		keyId: string
+		@secure()
 		secretText: string
 	}[]
 	servicePrincipalObjectId: string
