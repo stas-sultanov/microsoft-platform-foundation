@@ -28,7 +28,7 @@ param virtualNetworkSubnetName string
 
 /* EXISTING RESOURCES */
 
-resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-07-01' existing = {
+resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-09-01' existing = {
 	name: virtualNetworkName
 	resource subnets_ 'subnets' existing = {
 		name: virtualNetworkSubnetName

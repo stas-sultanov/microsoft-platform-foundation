@@ -42,17 +42,17 @@ type Extensions = {
 @sealed()
 type Properties = {
 	@description('Policy for automatic repairs.')
-	automaticRepairsPolicy: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.automaticRepairsPolicy
+	automaticRepairsPolicy: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.properties.automaticRepairsPolicy
 	@description('The virtual machine profile.')
 	@sealed()
 	virtualMachineProfile: {
 		@description('Specifies a collection of settings for extensions installed on virtual machines in the scale set.')
-		extensionProfile: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.extensionProfile
+		extensionProfile: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.properties.virtualMachineProfile.extensionProfile
 		@description('Specifies properties of the network interfaces of the virtual machines in the scale set.')
 		@sealed()
 		networkProfile: {
 			@description('A reference to a load balancer probe used to determine the health of an instance in the virtual machine scale set.')
-			healthProbe: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.networkProfile.healthProbe
+			healthProbe: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.properties.virtualMachineProfile.networkProfile.healthProbe
 			@description('The list of network configurations.')
 			@sealed()
 			networkInterfaceConfigurations: {
@@ -148,17 +148,17 @@ param extensions Extensions
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity?
+	identity: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
+	name: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.name
 	@description('The configurable properties.')
 	properties: Properties
 	@description('The sku.')
-	sku: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.sku
+	sku: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.sku
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.tags
+	tags: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.tags
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
 	zones: string[]
 }
@@ -309,7 +309,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 output id string = Compute_virtualMachineScaleSets_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.identity? = Compute_virtualMachineScaleSets_.?identity
+output identity resourceOutput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.identity? = Compute_virtualMachineScaleSets_.?identity
 
 @description('The name.')
 output name string = Compute_virtualMachineScaleSets_.name

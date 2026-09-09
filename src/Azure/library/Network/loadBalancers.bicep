@@ -25,7 +25,7 @@ type LoadBalancingRule = {
 		@minValue(0)
 		port: int
 		@description('The reference to the transport protocol used by the load balancing rule.')
-		protocol: resourceInput<'Microsoft.Network/loadBalancers/loadBalancingRules@2024-07-01'>.properties.protocol
+		protocol: resourceInput<'Microsoft.Network/loadBalancers/loadBalancingRules@2025-09-01'>.properties.protocol
 	}
 }
 

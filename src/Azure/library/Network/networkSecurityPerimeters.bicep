@@ -16,7 +16,7 @@ type AccessRuleChildResource = {
 	@description('The resource name.')
 	name: string
 	@description('Properties of the NSP access rule.')
-	properties: resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles/accessRules@2025-07-01'>.properties
+	properties: resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles/accessRules@2025-09-01'>.properties
 }
 
 @description('The configuration of a Microsoft.Network/networkSecurityPerimeters/resourceAssociations resource.')
@@ -26,5 +26,5 @@ type ResourceAssociationChildResource = {
 	@description('The resource name.')
 	name: string
 	@description('Properties of the NSP resource association.')
-	properties: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01'>.properties
+	properties: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-09-01'>.properties
 }

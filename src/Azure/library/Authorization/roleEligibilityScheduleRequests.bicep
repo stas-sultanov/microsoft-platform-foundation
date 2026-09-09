@@ -25,10 +25,10 @@ type PropertiesInput = {
 @export()
 func CreateProperties(
 	scopeId string,
-	requestType resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2020-10-01'>.properties.requestType,
-	scheduleInfo resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2020-10-01'>.properties.scheduleInfo,
+	requestType resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview'>.properties.requestType,
+	scheduleInfo resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview'>.properties.scheduleInfo,
 	request PropertiesInput
-) resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2020-10-01'>.properties => {
+) resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview'>.properties => {
 	principalId: request.principalId
 	requestType: requestType
 	roleDefinitionId: az.roleDefinitions(request.roleName).id
@@ -39,10 +39,10 @@ func CreateProperties(
 @export()
 func CreatePropertiesArray(
 	scopeId string,
-	requestType resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2020-10-01'>.properties.requestType,
-	scheduleInfo resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2020-10-01'>.properties.scheduleInfo,
+	requestType resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview'>.properties.requestType,
+	scheduleInfo resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview'>.properties.scheduleInfo,
 	requests PropertiesInput[]
-) resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2020-10-01'>.properties[] =>
+) resourceInput<'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview'>.properties[] =>
 	sys.map(
 		requests,
 		request =>

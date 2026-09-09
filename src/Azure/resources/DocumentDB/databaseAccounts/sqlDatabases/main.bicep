@@ -14,17 +14,17 @@ targetScope = 'resourceGroup'
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
 
 @description('The resource settings.')
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.identity?
+	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.name
+	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -46,18 +46,20 @@ param settings {
 		}
 	}
 	@description('Tags to put on the resource.')
-	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.tags
+	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.tags
 }
 
 /* EXISTING RESOURCES */
 
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
-resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15' = {
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
+resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}
@@ -82,7 +84,7 @@ resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databas
 output id string = DocumentDB_databaseAccounts_sqlDatabases_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-03-15'>.identity? = DocumentDB_databaseAccounts_sqlDatabases_.?identity
+output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.identity? = DocumentDB_databaseAccounts_sqlDatabases_.?identity
 
 @description('The name.')
 output name string = DocumentDB_databaseAccounts_sqlDatabases_.name

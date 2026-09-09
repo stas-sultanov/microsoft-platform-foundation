@@ -18,14 +18,14 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 /* PARAMETERS */
 
 @description('Name of the Microsoft.Compute/virtualMachineScaleSets resource.')
-param name resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.name
+param name resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
-resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' existing = {
+resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-04-01' existing = {
 	name: name
 }
 

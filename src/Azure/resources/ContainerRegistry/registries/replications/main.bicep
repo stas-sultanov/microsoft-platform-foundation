@@ -14,7 +14,7 @@ targetScope = 'resourceGroup'
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.ContainerRegistry/registries resource.')
-param parentName resourceInput<'Microsoft.ContainerRegistry/registries@2025-11-01'>.name
+param parentName resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.name
 
 @description('The resource settings.')
 @sealed()
@@ -22,22 +22,24 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.name
+	name: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.name
 	@description('The configurable properties.')
-	properties: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.properties
+	properties: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.properties
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2025-11-01'>.tags
+	tags: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.tags
 }
 
 /* EXISTING RESOURCES */
 
-resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2025-11-01' existing = {
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
+resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2026-03-01-preview' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
-resource ContainerRegistry_registries_replications_ 'Microsoft.ContainerRegistry/registries/replications@2025-11-01' = {
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
+resource ContainerRegistry_registries_replications_ 'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview' = {
 	location: settings.location
 	name: settings.name
 	parent: ContainerRegistry_registries_

@@ -38,13 +38,13 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/publicIPAddresses@2025-07-01'>.name
+	name: resourceInput<'Microsoft.Network/publicIPAddresses@2025-09-01'>.name
 	@description('The configurable properties.')
-	properties: resourceInput<'Microsoft.Network/publicIPAddresses@2025-07-01'>.properties?
+	properties: resourceInput<'Microsoft.Network/publicIPAddresses@2025-09-01'>.properties?
 	@description('The SKU.')
-	sku: resourceInput<'Microsoft.Network/publicIPAddresses@2025-07-01'>.sku
+	sku: resourceInput<'Microsoft.Network/publicIPAddresses@2025-09-01'>.sku
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/publicIPAddresses@2025-07-01'>.tags
+	tags: resourceInput<'Microsoft.Network/publicIPAddresses@2025-09-01'>.tags
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
 	zones: string[]
 }

@@ -14,7 +14,7 @@ targetScope = 'resourceGroup'
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
 
 @description('The resource settings.')
 @sealed()
@@ -23,9 +23,9 @@ param settings {
 	@sealed()
 	properties: {
 		@description('A set of fully qualified Scopes at or below which Role Assignments may be created using this Role Definition. This will allow application of this Role Definition on the entire database account or any underlying Database / Collection. Must have at least one element. Scopes higher than Database account are not enforceable as assignable Scopes. Note that resources referenced in assignable Scopes need not exist.')
-		assignableScopes: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-03-15'>.properties.assignableScopes
+		assignableScopes: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview'>.properties.assignableScopes
 		@description('The set of operations allowed through this Role Definition.')
-		permissions: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-03-15'>.properties.permissions
+		permissions: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview'>.properties.permissions
 		@description('A user-friendly name for the Role Definition. Must be unique for the database account.')
 		roleName: string
 	}
@@ -33,13 +33,15 @@ param settings {
 
 /* EXISTING RESOURCES */
 
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-03-15' existing = {
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
-resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-03-15' = {
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
+resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview' = {
 	name: guid(
 		DocumentDB_databaseAccounts_.id,
 		settings.properties.roleName

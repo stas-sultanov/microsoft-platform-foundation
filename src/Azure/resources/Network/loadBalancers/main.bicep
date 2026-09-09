@@ -40,11 +40,11 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.Network/loadBalancers@2025-09-01'>.name
 	@description('The configurable properties.')
-	properties: resourceInput<'Microsoft.Network/loadBalancers@2025-07-01'>.properties
+	properties: resourceInput<'Microsoft.Network/loadBalancers@2025-09-01'>.properties
 	@description('The SKU.')
-	sku: resourceInput<'Microsoft.Network/loadBalancers@2025-07-01'>.sku
+	sku: resourceInput<'Microsoft.Network/loadBalancers@2025-09-01'>.sku
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/loadBalancers@2025-07-01'>.tags
+	tags: resourceInput<'Microsoft.Network/loadBalancers@2025-09-01'>.tags
 }
 
 /* RESOURCES */
@@ -87,7 +87,7 @@ output id string = Network_loadBalancers_.id
 @description('The properties.')
 output properties {
 	@description('Collection of backend address pools used by a load balancer.')
-	backendAddressPools: resourceOutput<'Microsoft.Network/loadBalancers@2025-07-01'>.properties.backendAddressPools
+	backendAddressPools: resourceOutput<'Microsoft.Network/loadBalancers@2025-09-01'>.properties.backendAddressPools
 } = {
 	backendAddressPools: Network_loadBalancers_.properties.backendAddressPools
 }

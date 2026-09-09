@@ -17,6 +17,7 @@ extension microsoftGraph
 
 /* TYPES */
 
+@description('The Entra application settings.')
 @export()
 @sealed()
 type Settings = {

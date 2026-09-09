@@ -49,8 +49,9 @@ This model favors a small, current, maintainable configuration surface over accu
 
 The `tools` folder contains repository-maintenance scripts:
 
-- `Build-Bicep.ps1` compiles all Bicep files under `src`.
-- `Sync-ApiVersions.ps1` verifies or replaces Bicep resource API versions using `src/api-versions.json`.
+- `Bicep-Build.ps1` compiles all Bicep files under `src`.
+- `Bicep-Format.ps1` formats all Bicep files under `src`.
+- `Sync-ApiVersions.ps1` infers and verifies or replaces Bicep resource API versions across `src`.
 
 ## Module Organization
 
@@ -161,7 +162,7 @@ Child resource type segments MAY continue as deeply as the Azure resource type r
 
 ### API Versions
 
-Every Azure resource type MUST use the API version pinned for its level 1 resource type in [`src/api-versions.json`](src/api-versions.json). This requirement applies consistently to every declaration, including resource modules, specifications, library and pattern modules, child resources, existing-resource references, and extension-resource references. A child resource or reference MUST use the same API version as its level 1 parent resource type.
+Every Azure resource type MUST use one API version consistently for its level 1 resource type. `Sync-ApiVersions.ps1` derives that version from all Bicep files under `src`: the most recent preview version is preferred when one is present; otherwise, the most recent stable version is used. This requirement applies consistently to every declaration, including resource modules, specifications, library and pattern modules, child resources, existing-resource references, and extension-resource references. A child resource or reference MUST use the same API version as its level 1 parent resource type.
 
 ### Outputs
 

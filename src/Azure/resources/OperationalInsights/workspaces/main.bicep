@@ -36,11 +36,11 @@ param extensions {
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.identity?
+	identity: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.name
+	name: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -53,19 +53,19 @@ param settings {
 			immediatePurgeDataOn30Days: bool?
 		}
 		@description('The network access type for ingestion.')
-		publicNetworkAccessForIngestion: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.publicNetworkAccessForIngestion
+		publicNetworkAccessForIngestion: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.properties.publicNetworkAccessForIngestion
 		@description('The network access type for query.')
-		publicNetworkAccessForQuery: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.publicNetworkAccessForQuery
+		publicNetworkAccessForQuery: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.properties.publicNetworkAccessForQuery
 		@description('The workspace data retention in days.')
 		@minValue(30)
 		retentionInDays: int
 		@description('The SKU of the workspace.')
-		sku: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.sku
+		sku: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.properties.sku
 		@description('The daily volume cap for ingestion.')
-		workspaceCapping: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.properties.workspaceCapping?
+		workspaceCapping: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.properties.workspaceCapping?
 	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.tags
+	tags: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.tags
 }
 
 /* RESOURCES */
@@ -115,7 +115,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 output id string = OperationalInsights_workspaces_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.OperationalInsights/workspaces@2025-07-01'>.identity? = OperationalInsights_workspaces_.?identity
+output identity resourceOutput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.identity? = OperationalInsights_workspaces_.?identity
 
 @description('The name.')
 output name string = OperationalInsights_workspaces_.name

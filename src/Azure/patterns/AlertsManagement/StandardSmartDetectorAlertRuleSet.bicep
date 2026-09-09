@@ -174,23 +174,3 @@ resource alertsManagement_smartDetectorAlertRules__TraceSeverityDetector 'micros
 	}
 	tags: alertRules.traceSeverity.tags
 }
-
-#disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource Insights_components_ProactiveDetectionConfigs__MigrationToAlertRulesCompleted 'Microsoft.Insights/components/ProactiveDetectionConfigs@2018-05-01-preview' = {
-	dependsOn: [
-		alertsManagement_smartDetectorAlertRules__Anomalies
-		alertsManagement_smartDetectorAlertRules__DependencyPerformanceDegradation
-		alertsManagement_smartDetectorAlertRules__ExceptionVolumeChangedDetector
-		alertsManagement_smartDetectorAlertRules__MemoryLeakDetector
-		alertsManagement_smartDetectorAlertRules__RequestPerformanceDegradation
-		alertsManagement_smartDetectorAlertRules__TraceSeverityDetector
-	]
-	name: 'migrationToAlertRulesCompleted'
-	parent: Insights_components_
-	properties: {
-		customEmails: []
-		enabled: true
-		ruleDefinitions: null
-		sendEmailsToSubscriptionOwners: false
-	}
-}

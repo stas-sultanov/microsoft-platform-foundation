@@ -102,7 +102,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 output id string = Network_virtualNetworkGateways_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.identity? = Network_virtualNetworkGateways_.?identity
+output identity resourceOutput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.identity? = Network_virtualNetworkGateways_.?identity
 
 @description('The name.')
 output name string = Network_virtualNetworkGateways_.name
