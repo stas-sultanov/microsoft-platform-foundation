@@ -38,7 +38,7 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/loadBalancers@2025-07-01'>.name
+	name: resourceInput<'Microsoft.Network/loadBalancers@2025-09-01'>.name
 	@description('The configurable properties.')
 	properties: resourceInput<'Microsoft.Network/loadBalancers@2025-07-01'>.properties
 	@description('The SKU.')

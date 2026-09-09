@@ -45,31 +45,38 @@ Projects that require a stable dependency MAY pin the foundation to a Git commit
 
 This model favors a small, current, maintainable configuration surface over accumulating deprecated compatibility layers.
 
+## Tooling
+
+The `tools` folder contains repository-maintenance scripts:
+
+- `Build-Bicep.ps1` compiles all Bicep files under `src`.
+- `Sync-ApiVersions.ps1` verifies or replaces Bicep resource API versions using `src/api-versions.json`.
+
 ## Module Organization
 
 ### Module Types
 
 | Area                 | Purpose                                                                      | Rules                                                                                                     |
 | -------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `Azure/library`      | Shared types, functions, and constants                                       | MUST NOT contain resources.                                                                               |
-| `Azure/patterns`     | Reusable compositions that deploy and wire multiple resource types           | MUST own the relationship between the resources they compose.                                             |
-| `Azure/resources`    | Opinionated canonical deployment modules for one primary Azure resource type | MUST create the primary resource and MAY create its child resources and extension resources, such as diagnostics and authorization. |
-| `Azure/specs`        | Scenario-specific specializations of one primary Azure resource type         | MUST create the primary resource specialization and MAY create its child resources and extension resources, such as diagnostics and authorization. MUST remain resource-specific and more constrained or opinionated than `Azure/resources` modules. |
-| `Entra/applications` | Entra application artifacts managed through Microsoft Graph                  | MUST be used for Microsoft Graph-driven Entra application artifacts.                                      |
+| `src/Azure/library`      | Shared types, functions, and constants                                       | MUST NOT contain resources.                                                                               |
+| `src/Azure/patterns`     | Reusable compositions that deploy and wire multiple resource types           | MUST own the relationship between the resources they compose.                                             |
+| `src/Azure/resources`    | Opinionated canonical deployment modules for one primary Azure resource type | MUST create the primary resource and MAY create its child resources and extension resources, such as diagnostics and authorization. |
+| `src/Azure/specs`        | Scenario-specific specializations of one primary Azure resource type         | MUST create the primary resource specialization and MAY create its child resources and extension resources, such as diagnostics and authorization. MUST remain resource-specific and more constrained or opinionated than `src/Azure/resources` modules. |
+| `src/Entra/applications` | Entra application artifacts managed through Microsoft Graph                  | MUST be used for Microsoft Graph-driven Entra application artifacts.                                      |
 
 ### Path Conventions
 
-- `Azure/library/<Name>.bicep`
-- `Azure/library/<Provider>/<resourceType>.bicep`
-- `Azure/patterns/<Domain>/<Name>.bicep`
-- `Azure/patterns/<Domain>/<SubDomain>/<Name>.bicep`
-- `Azure/resources/<Provider>/<resourceType>/main.bicep`
-- `Azure/resources/<Provider>/<resourceType>/<childResourceType>/main.bicep`
-- `Azure/resources/<Provider>/<resourceType>/<childResourceType>/<childResourceType>/main.bicep`
-- `Azure/specs/<Provider>/<resourceType>/<Name>.bicep`
-- `Azure/specs/<Provider>/<resourceType>/<childResourceType>/<Name>.bicep`
-- `Azure/specs/<Provider>/<resourceType>/<childResourceType>/<childResourceType>/<Name>.bicep`
-- `Entra/applications/<Name>.bicep`
+- `src/Azure/library/<Name>.bicep`
+- `src/Azure/library/<Provider>/<resourceType>.bicep`
+- `src/Azure/patterns/<Domain>/<Name>.bicep`
+- `src/Azure/patterns/<Domain>/<SubDomain>/<Name>.bicep`
+- `src/Azure/resources/<Provider>/<resourceType>/main.bicep`
+- `src/Azure/resources/<Provider>/<resourceType>/<childResourceType>/main.bicep`
+- `src/Azure/resources/<Provider>/<resourceType>/<childResourceType>/<childResourceType>/main.bicep`
+- `src/Azure/specs/<Provider>/<resourceType>/<Name>.bicep`
+- `src/Azure/specs/<Provider>/<resourceType>/<childResourceType>/<Name>.bicep`
+- `src/Azure/specs/<Provider>/<resourceType>/<childResourceType>/<childResourceType>/<Name>.bicep`
+- `src/Entra/applications/<Name>.bicep`
 
 Child resource type path segments MAY continue as deeply as the Azure resource type requires.
 
@@ -140,7 +147,7 @@ Within each section, all declarations MUST be sorted alphabetically.
 - Standard Bicep resource-derived types, such as `resourceInput` and `resourceOutput`, SHOULD be used wherever possible.
 - `settings.properties` MUST represent the Azure resource `properties` object. It MAY use `resourceInput<...>.properties` directly when the native Azure resource property shape is the intended contract, or a curated object type when the foundation intentionally exposes only selected properties.
 - Top-level parameters MUST be sorted alphabetically by parameter name. Parent-name parameters MUST remain top-level and participate in this ordering alongside `extensions`, `resources`, and `settings`.
-- Non-resource parameters SHOULD be avoided in `Azure/resources` and `Azure/specs` modules. When required, they MAY use domain-specific names only when they do not directly represent a standard Azure resource field, child resource collection, extension resource collection, or parent name.
+- Non-resource parameters SHOULD be avoided in `src/Azure/resources` and `src/Azure/specs` modules. When required, they MAY use domain-specific names only when they do not directly represent a standard Azure resource field, child resource collection, extension resource collection, or parent name.
 - Optional parameters and default values MUST be safe and predictable.
 
 ### Resources
@@ -152,6 +159,10 @@ Within each section, all declarations MUST be sorted alphabetically.
 
 Child resource type segments MAY continue as deeply as the Azure resource type requires.
 
+### API Versions
+
+Every Azure resource type MUST use the API version pinned for its level 1 resource type in [`src/api-versions.json`](src/api-versions.json). This requirement applies consistently to every declaration, including resource modules, specifications, library and pattern modules, child resources, existing-resource references, and extension-resource references. A child resource or reference MUST use the same API version as its level 1 parent resource type.
+
 ### Outputs
 
 - Every output MUST have a `@description` decorator.
@@ -161,7 +172,7 @@ Child resource type segments MAY continue as deeply as the Azure resource type r
 
 ## Validation
 
-All modules MUST comply with the rules defined in [bicepconfig.json](bicepconfig.json).
+All modules MUST comply with the rules defined in [bicepconfig.json](src/bicepconfig.json).
 
 All modules MUST pass all configured checks at all times.
 
