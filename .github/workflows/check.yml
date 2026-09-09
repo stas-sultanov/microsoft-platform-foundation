@@ -30,11 +30,8 @@ jobs:
       shell: pwsh
       run: ./tools/Sync-ApiVersions.ps1 ./src
 
-    - name: Check Azure CLI
-      run: az --version
-
-    - name: Check Bicep
-      run: az bicep version
+    - name: Upgrade Bicep
+      run: az bicep upgrade
       continue-on-error: true
 
     - name: Build Bicep Templates
