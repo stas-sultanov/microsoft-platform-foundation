@@ -66,6 +66,7 @@ param settings {
 
 /* VARIABLES */
 
+@description('The features of the gallery image.')
 var features = [
 	{
 		// NVMe-only currently is not supported.

@@ -9,6 +9,7 @@ metadata description = 'Provides reusable types for Microsoft.Network/dnsZones r
 
 /* TYPES */
 
+@description('An A record set.')
 @export()
 @sealed()
 type ARecord = {
@@ -20,6 +21,7 @@ type ARecord = {
 	values: string[]
 }
 
+@description('An NS record set.')
 @export()
 @sealed()
 type NSRecord = {

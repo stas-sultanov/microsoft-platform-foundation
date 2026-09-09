@@ -70,7 +70,7 @@ param settings {
 
 /* RESOURCES */
 
-resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspaces@2025-07-01' = {
+resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspaces@2026-03-01' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}

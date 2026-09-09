@@ -59,7 +59,7 @@ param settings {
 
 /* RESOURCES */
 
-resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' = {
+resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-04-01' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}

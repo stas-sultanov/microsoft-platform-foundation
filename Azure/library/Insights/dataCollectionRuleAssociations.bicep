@@ -9,6 +9,7 @@ metadata description = 'Provides reusable types for Microsoft.Insights/dataColle
 
 /* TYPES */
 
+@description('DataCollectionRuleAssociation resource configuration.')
 @export()
 @sealed()
 type Resource = {

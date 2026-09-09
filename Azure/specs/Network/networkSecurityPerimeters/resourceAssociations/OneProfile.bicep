@@ -46,18 +46,18 @@ param resources {
 
 /* EXISTING RESOURCES */
 
-resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPerimeters@2025-07-01' existing = {
+resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPerimeters@2025-09-01' existing = {
 	name: parentName
 }
 
-resource Network_networkSecurityPerimeters_profile_ 'Microsoft.Network/networkSecurityPerimeters/profiles@2025-07-01' existing = {
+resource Network_networkSecurityPerimeters_profile_ 'Microsoft.Network/networkSecurityPerimeters/profiles@2025-09-01' existing = {
 	name: parentProfileName
 	parent: Network_networkSecurityPerimeters_
 }
 
 /* RESOURCES */
 
-resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-07-01' = [
+resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-09-01' = [
 	for item in resources.resourceAssociations: {
 		name: item.name
 		parent: Network_networkSecurityPerimeters_

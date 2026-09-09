@@ -85,8 +85,8 @@ param settings {
 
 /* VARIABLES */
 
+@description('Indicates whether the current SKU is Premium.')
 var isPremiumSku = settings.sku.name == 'Premium'
-var isZoneRedundancySupported = isPremiumSku
 
 /* RESOURCES */
 
@@ -131,7 +131,7 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 		publicNetworkAccess: settings.properties.publicNetworkAccess
 		regionalEndpoints: settings.properties.regionalEndpoints
 		roleAssignmentMode: 'AbacRepositoryPermissions'
-		zoneRedundancy: isZoneRedundancySupported
+		zoneRedundancy: isPremiumSku
 			? settings.properties.zoneRedundancy
 			: null
 	}

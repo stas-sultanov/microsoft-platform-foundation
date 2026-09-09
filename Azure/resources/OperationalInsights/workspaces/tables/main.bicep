@@ -29,13 +29,13 @@ param settings {
 
 /* EXISTING RESOURCES */
 
-resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspaces@2025-07-01' existing = {
+resource OperationalInsights_workspaces_ 'Microsoft.OperationalInsights/workspaces@2026-03-01' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
-resource OperationalInsights_workspaces_tables_ 'Microsoft.OperationalInsights/workspaces/tables@2025-07-01' = {
+resource OperationalInsights_workspaces_tables_ 'Microsoft.OperationalInsights/workspaces/tables@2026-03-01' = {
 	name: settings.name
 	parent: OperationalInsights_workspaces_
 	properties: settings.properties

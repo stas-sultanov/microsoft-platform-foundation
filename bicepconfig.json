@@ -101,6 +101,21 @@
 				"simplify-json-null": {
 					"level": "error"
 				},
+				"use-description-outputs": {
+					"level": "error"
+				},
+				"use-description-params": {
+					"level": "error"
+				},
+				"use-description-type-properties": {
+					"level": "off"
+				},
+				"use-description-types": {
+					"level": "error"
+				},
+				"use-description-vars": {
+					"level": "off"
+				},
 				"use-parent-property": {
 					"level": "error"
 				},

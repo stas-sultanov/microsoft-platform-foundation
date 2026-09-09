@@ -38,40 +38,40 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.name
+	name: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('Address space contains an array of IP address ranges that can be used by subnets in the virtual network.')
-		addressSpace: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.addressSpace?
+		addressSpace: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.addressSpace?
 		@description('The BGP community associated with the virtual network.')
-		bgpCommunities: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.bgpCommunities?
+		bgpCommunities: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.bgpCommunities?
 		@description('The DDoS protection plan associated with the virtual network.')
-		ddosProtectionPlan: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.ddosProtectionPlan?
+		ddosProtectionPlan: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.ddosProtectionPlan?
 		@description('The DHCP options associated with the virtual network.')
-		dhcpOptions: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.dhcpOptions?
+		dhcpOptions: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.dhcpOptions?
 		@description('Indicates whether DDoS protection is enabled for all the protected resources in the virtual network.')
 		enableDdosProtection: bool?
 		@description('Indicates whether VM protection is enabled for all the subnets in the virtual network.')
 		enableVmProtection: bool?
 		@description('The encryption settings for the virtual network.')
-		encryption: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.encryption?
+		encryption: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.encryption?
 		@description('The flow timeout for the virtual network in minutes.')
 		flowTimeoutInMinutes: int?
 		@description('The IP allocations associated with the virtual network.')
-		ipAllocations: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.ipAllocations?
+		ipAllocations: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.ipAllocations?
 		@description('Indicates whether the private endpoint network policies are enabled for the virtual network.')
-		privateEndpointVNetPolicies: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.privateEndpointVNetPolicies?
+		privateEndpointVNetPolicies: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.privateEndpointVNetPolicies?
 		@description('A configurable list of summarized gateway prefixes advertised for the virtual network.')
-		summarizedGatewayPrefixes: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.properties.summarizedGatewayPrefixes?
+		summarizedGatewayPrefixes: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.summarizedGatewayPrefixes?
 	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/virtualNetworks@2025-07-01'>.tags
+	tags: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-07-01' = {
+resource Network_virtualNetworks_ 'Microsoft.Network/virtualNetworks@2025-09-01' = {
 	location: settings.location
 	name: settings.name
 	properties: settings.properties

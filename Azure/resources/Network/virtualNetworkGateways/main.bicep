@@ -42,20 +42,20 @@ param extensions {
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.identity?
+	identity: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.name
+	name: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.name
 	@description('The properties.')
-	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.properties
+	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.properties
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-07-01'>.tags
+	tags: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2025-07-01' = {
+resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2025-09-01' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}

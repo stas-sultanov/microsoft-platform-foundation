@@ -18,7 +18,8 @@ param requestsProperties resourceInput<'Microsoft.Authorization/roleEligibilityS
 
 /* VARIABLES */
 
-var scope = az.managementGroup()
+@description('The ID of the management group.')
+var scopeId = az.managementGroup().id
 
 /* RESOURCES */
 
@@ -26,12 +27,11 @@ var scope = az.managementGroup()
 resource Authorization_roleEligibilityScheduleRequests_ 'Microsoft.Authorization/roleEligibilityScheduleRequests@2024-09-01-preview' = [
 	for item in requestsProperties: {
 		name: sys.guid(
-			scope.id,
+			scopeId,
 			item.roleDefinitionId,
 			item.principalId,
 			item.scheduleInfo.startDateTime
 		)
 		properties: item
-		scope: scope
 	}
 ]

@@ -13,8 +13,10 @@ targetScope = 'resourceGroup'
 
 /* TYPES */
 
+@description('RoleAssignment resource input configuration.')
 @sealed()
-type RoleAssignmentResourceInput = {
+type ResourceInput = {
+	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('The object ID for the identity within Entra.')
@@ -32,7 +34,7 @@ type RoleAssignmentResourceInput = {
 param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-03-15'>.name
 
 @description('Collection of role assignments.')
-param roleAssignments RoleAssignmentResourceInput[]
+param roleAssignments ResourceInput[]
 
 /* EXISTING RESOURCES */
 

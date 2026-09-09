@@ -15,6 +15,30 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+/* TYPES */
+
+@description('Inbound endpoint resource configuration.')
+@sealed()
+type InboundEndpointResource = {
+	@description('The resource name.')
+	name: string
+	@description('Properties of the inbound endpoint.')
+	properties: resourceInput<'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01'>.tags
+}
+
+@description('Outbound endpoint resource configuration.')
+@sealed()
+type OutboundEndpointResource = {
+	@description('The resource name.')
+	name: string
+	@description('Properties of the outbound endpoint.')
+	properties: resourceInput<'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01'>.tags
+}
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -31,25 +55,11 @@ param extensions {
 param resources {
 	@description('The inbound endpoints.')
 	inboundEndpoints: {
-		*: {
-			@description('The resource name.')
-			name: string
-			@description('Properties of the inbound endpoint.')
-			properties: resourceInput<'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01'>.properties
-			@description('The tags.')
-			tags: resourceInput<'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01'>.tags
-		}
+		*: InboundEndpointResource
 	}
 	@description('The outbound endpoints.')
 	outboundEndpoints: {
-		*: {
-			@description('The resource name.')
-			name: string
-			@description('Properties of the outbound endpoint.')
-			properties: resourceInput<'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01'>.properties
-			@description('The tags.')
-			tags: resourceInput<'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01'>.tags
-		}
+		*: OutboundEndpointResource
 	}
 }
 

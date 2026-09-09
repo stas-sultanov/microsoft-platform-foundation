@@ -20,7 +20,7 @@ import * as InsightsDataCollectionRuleAssociations from '../../../library/Insigh
 import * as MaintenanceConfigurationAssignments from '../../../library/Maintenance/configurationAssignments.bicep'
 
 /* TYPES */
-
+@description('The extensions settings.')
 @export()
 @sealed()
 type Extensions = {
@@ -38,6 +38,7 @@ type Extensions = {
 	}
 }
 
+@description('The properties of the virtual machine scale set.')
 @sealed()
 type Properties = {
 	@description('Policy for automatic repairs.')
@@ -117,7 +118,7 @@ type Properties = {
 	@sealed()
 	storageProfile: {
 		@description('Specifies information about the image to use.')
-		imageReference: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.storageProfile.imageReference
+		imageReference: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.properties.virtualMachineProfile.storageProfile.imageReference
 		@description('Specifies information about the operating system disk used by the virtual machines in the scale set.')
 		@sealed()
 		osDisk: {
@@ -125,12 +126,13 @@ type Properties = {
 			@sealed()
 			managedDisk: {
 				@description('Specifies the storage account type for the managed disk. NOTE: UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk.')
-				storageAccountType: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-03-01'>.properties.virtualMachineProfile.storageProfile.osDisk.managedDisk.storageAccountType
+				storageAccountType: resourceInput<'Microsoft.Compute/virtualMachineScaleSets@2026-04-01'>.properties.virtualMachineProfile.storageProfile.osDisk.managedDisk.storageAccountType
 			}
 		}
 	}
 }
 
+@description('The sub resource reference.')
 @sealed()
 type SubResource = {
 	@description('The resource id.')
@@ -163,7 +165,7 @@ param settings {
 
 /* RESOURCES */
 
-resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' = {
+resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-04-01' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}

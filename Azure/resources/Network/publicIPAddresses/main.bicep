@@ -51,7 +51,7 @@ param settings {
 
 /* RESOURCES */
 
-resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2025-07-01' = {
+resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2025-09-01' = {
 	location: settings.location
 	name: settings.name
 	properties: (settings.?properties ?? {

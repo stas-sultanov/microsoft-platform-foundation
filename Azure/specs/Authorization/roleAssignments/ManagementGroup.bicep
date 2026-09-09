@@ -22,17 +22,17 @@ param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* VARIABLES */
 
-var scope = az.managementGroup()
+@description('The ID of the management group.')
+var scopeId = az.managementGroup().id
 
 /* RESOURCES */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
-		scope.id,
+		scopeId,
 		roleAssignments
 	): {
 		name: item.name
 		properties: item.properties
-		scope: scope
 	}
 ]

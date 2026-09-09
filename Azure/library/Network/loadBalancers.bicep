@@ -9,6 +9,7 @@ metadata description = 'Provides reusable types for Microsoft.Network/loadBalanc
 
 /* TYPES */
 
+@description('The load balancing rule child resource.')
 @export()
 @sealed()
 type LoadBalancingRule = {
@@ -28,35 +29,38 @@ type LoadBalancingRule = {
 	}
 }
 
+@description('The private frontend IP configuration child resource.')
 @export()
 @sealed()
 type PrivateFrontendIPConfigurationSettings = {
-	@description('Properties of the frontend IP configuration.')
+	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('The private IP address of the IP configuration.')
 		privateIPAddress: string
 		@description('The reference to the subnet resource.')
-		subnet: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2024-07-01'>.properties.subnet
+		subnet: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2025-09-01'>.properties.subnet
 	}
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-	zones: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2024-07-01'>.zones
+	zones: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2025-09-01'>.zones
 }
 
+@description('The probe child resource.')
 @export()
 @sealed()
 type ProbeSettings = {
 	@description('Properties of the probe.')
-	properties: resourceInput<'Microsoft.Network/loadBalancers/probes@2024-07-01'>.properties
+	properties: resourceInput<'Microsoft.Network/loadBalancers/probes@2025-09-01'>.properties
 }
 
+@description('The public frontend IP configuration child resource.')
 @export()
 @sealed()
 type PublicFrontendIPConfigurationSettings = {
-	@description('Properties of frontend IP configuration.')
+	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('The private IP address of the IP configuration.')
-		publicIPAddress: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2024-07-01'>.properties.publicIPAddress
+		publicIPAddress: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2025-09-01'>.properties.publicIPAddress
 	}
 }

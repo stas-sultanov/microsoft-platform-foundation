@@ -17,6 +17,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 /* TYPES */
 
+@description('Represents an autoscale profile for a resource.')
 @sealed()
 type AutoscaleProfile = {
 	@description('the number of instances that can be used during this profile.')
@@ -33,6 +34,7 @@ type AutoscaleProfile = {
 	rules: ScaleRule[]
 }
 
+@description('Represents a scale rule for an autoscale profile.')
 @sealed()
 type ScaleRule = {
 	@sealed()
@@ -134,7 +136,7 @@ param settings {
 
 /* EXISTING RESOURCES */
 
-resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-03-01' existing = {
+resource Compute_virtualMachineScaleSets_ 'Microsoft.Compute/virtualMachineScaleSets@2026-04-01' existing = {
 	name: settings.properties.virtualMachineScaleSetId.name
 	scope: resourceGroup(
 		settings.properties.virtualMachineScaleSetId.subscriptionId,

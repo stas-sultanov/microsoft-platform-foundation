@@ -71,6 +71,7 @@ param settings {
 
 /* VARIABLES */
 
+@description('Indicates whether soft delete and purge protection are supported for the current SKU.')
 var isSoftDeleteAndPurgeProtectionSupported = settings.sku.name == 'Premium' || settings.sku.name == 'Standard'
 
 /* RESOURCES */

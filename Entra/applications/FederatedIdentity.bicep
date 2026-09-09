@@ -18,6 +18,7 @@ extension microsoftGraph
 /* TYPES */
 
 // Federated Identity Credential
+@description('Information about a federated identity credential.')
 @sealed()
 type FederatedIdentityCredentialInfo = {
 	description: string
@@ -26,6 +27,7 @@ type FederatedIdentityCredentialInfo = {
 	subject: string
 }
 
+@description('The settings for the Entra application.')
 @export()
 @sealed()
 type Settings = {

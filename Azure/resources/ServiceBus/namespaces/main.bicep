@@ -67,6 +67,7 @@ param settings {
 
 /* VARIABLES */
 
+@description('Indicates whether the SKU is Premium.')
 var isPremiumSku = settings.sku.name == 'Premium'
 
 /* RESOURCES */

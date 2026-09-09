@@ -19,6 +19,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 /* TYPES */
 
+@description('DNS security rule resource configuration.')
 @sealed()
 type DnsSecurityRuleResource = {
 	@description('The resource name.')
@@ -29,6 +30,7 @@ type DnsSecurityRuleResource = {
 	tags: resourceInput<'Microsoft.Network/dnsResolverPolicies/dnsSecurityRules@2025-05-01'>.tags
 }
 
+@description('Virtual network link resource configuration.')
 @sealed()
 type VirtualNetworkLinkResource = {
 	@description('The resource name.')

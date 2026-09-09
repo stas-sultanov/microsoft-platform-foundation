@@ -19,24 +19,32 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 /* TYPES */
 
+@description('The configurable properties for the storage account.')
 @sealed()
 type StorageAccountPropertiesInput = {
-	accessTier:
-		| 'Hot'
-		| 'Cool'
-		| 'Cold'
-		| 'Smart'?
+	@description('The access tier for the storage account.')
+	accessTier: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.accessTier?
+	@description('Allow or disallow cross Entra tenant object replication.')
 	allowCrossTenantReplication: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.allowCrossTenantReplication?
+	@description('Restrict copy to and from Storage Accounts within an Entra tenant or with Private Links to the same VNet.')
 	allowedCopyScope: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.allowedCopyScope?
+	@description('The type of endpoint.')
 	dnsEndpointType: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.dnsEndpointType?
+	@description('The Internet protocol.')
 	dualStackEndpointPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.dualStackEndpointPreference?
+	@description('Enable or disable extended groups for the storage account.')
 	enableExtendedGroups: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.enableExtendedGroups?
+	@description('Status indicating whether Geo Priority Replication is enabled for the account.')
 	geoPriorityReplicationStatus: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.geoPriorityReplicationStatus?
+	@description('Enable or disable immutable storage with versioning for the storage account.')
 	immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.immutableStorageWithVersioning?
+	@description('Account HierarchicalNamespace enabled if sets to true.')
 	isHnsEnabled: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.isHnsEnabled?
+	@description('The network access control list for the storage account.')
 	networkAcls: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.networkAcls?
 	@description('The network access mode.')
 	publicNetworkAccess: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.publicNetworkAccess?
+	@description('Maintains information about the network routing choice opted by the user for data transfer.')
 	routingPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.routingPreference?
 }
 

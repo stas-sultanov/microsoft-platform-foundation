@@ -31,11 +31,11 @@ param extensions {
 @description('The child resources.')
 @sealed()
 param resources {
-	@description('The array of virtual network links.')
+	@description('The virtual network links.')
 	A: {
 		*: NetworkDnsZones.ARecord
 	}
-	@description('The array of virtual network links.')
+	@description('The virtual network links.')
 	virtualNetworkLinks: {
 		*: {
 			@description('The resource name.')
