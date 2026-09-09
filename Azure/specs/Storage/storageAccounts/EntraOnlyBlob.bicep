@@ -38,7 +38,7 @@ type StorageAccountPropertiesInput = {
 	geoPriorityReplicationStatus: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.geoPriorityReplicationStatus?
 	@description('Enable or disable immutable storage with versioning for the storage account.')
 	immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.immutableStorageWithVersioning?
-	@description('Account HierarchicalNamespace enabled if sets to true.')
+	@description('Indicates whether hierarchical namespace (HNS) is enabled')
 	isHnsEnabled: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.isHnsEnabled?
 	@description('The network access control list for the storage account.')
 	networkAcls: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.networkAcls?

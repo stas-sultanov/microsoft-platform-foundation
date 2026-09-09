@@ -31,7 +31,7 @@ param extensions {
 @description('The child resources.')
 @sealed()
 param resources {
-	@description('The virtual network links.')
+	@description('The A records.')
 	A: {
 		*: NetworkDnsZones.ARecord
 	}
