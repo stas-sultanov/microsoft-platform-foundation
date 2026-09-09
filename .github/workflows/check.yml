@@ -30,8 +30,12 @@ jobs:
       shell: pwsh
       run: ./tools/Sync-ApiVersions.ps1 ./src
 
-    - name: Install Bicep
-      run: az bicep install
+    - name: Check Azure CLI
+      run: az --version
+
+    - name: Check Bicep
+      run: az bicep version
+      continue-on-error: true
 
     - name: Build Bicep Templates
       shell: pwsh
