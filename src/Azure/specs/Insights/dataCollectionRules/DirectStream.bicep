@@ -42,7 +42,7 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The resource ID of the data collection endpoint that this rule can be used with.')
+		@description('The resource ID of the Microsoft.Insights/dataCollectionEndpoints resource.')
 		dataCollectionEndpointId: string?
 		@description('Data flow configuration.')
 		@sealed()

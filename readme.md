@@ -57,13 +57,13 @@ The `tools` folder contains repository-maintenance scripts:
 
 ### Module Types
 
-| Area                 | Purpose                                                                      | Rules                                                                                                     |
-| -------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `src/Azure/library`      | Shared types, functions, and constants                                       | MUST NOT contain resources.                                                                               |
-| `src/Azure/patterns`     | Reusable compositions that deploy and wire multiple resource types           | MUST own the relationship between the resources they compose.                                             |
-| `src/Azure/resources`    | Opinionated canonical deployment modules for one primary Azure resource type | MUST create the primary resource and MAY create its child resources and extension resources, such as diagnostics and authorization. |
+| Area                     | Purpose                                                                      | Rules                                                                                                                                                                                                                                                    |
+| ------------------------ | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/Azure/library`      | Shared types, functions, and constants                                       | MUST NOT contain resources.                                                                                                                                                                                                                              |
+| `src/Azure/patterns`     | Reusable compositions that deploy and wire multiple resource types           | MUST own the relationship between the resources they compose.                                                                                                                                                                                            |
+| `src/Azure/resources`    | Opinionated canonical deployment modules for one primary Azure resource type | MUST create the primary resource and MAY create its child resources and extension resources, such as diagnostics and authorization.                                                                                                                      |
 | `src/Azure/specs`        | Scenario-specific specializations of one primary Azure resource type         | MUST create the primary resource specialization and MAY create its child resources and extension resources, such as diagnostics and authorization. MUST remain resource-specific and more constrained or opinionated than `src/Azure/resources` modules. |
-| `src/Entra/applications` | Entra application artifacts managed through Microsoft Graph                  | MUST be used for Microsoft Graph-driven Entra application artifacts.                                      |
+| `src/Entra/applications` | Entra application artifacts managed through Microsoft Graph                  | MUST be used for Microsoft Graph-driven Entra application artifacts.                                                                                                                                                                                     |
 
 ### Path Conventions
 
@@ -117,6 +117,7 @@ Within each section, all declarations MUST be sorted alphabetically.
 - All declarations MUST be strongly typed.
 - Parameters and outputs MUST be explicit and predictable.
 - Boolean property descriptions MUST use the pattern `Specifies whether <subject> <condition>.` They MUST describe the boolean as a yes-or-no condition and MUST NOT use `whether or not`, `flag`, or imperative wording such as `Enable or disable`.
+- Azure resource ID property descriptions MUST use the pattern `The resource ID of the <provider/type> resource.` They MUST use the capitalization `ID` and identify the referenced Azure resource by its canonical Azure resource type. This rule applies only to Azure Resource Manager resource IDs, not Entra object IDs, subscription IDs, tenant IDs, application IDs, or other identifiers.
 - Module interfaces MUST represent the foundation contract and MAY reuse native Azure resource API types when that is the intended contract.
 - Obsolete, legacy, insecure, or foundation-controlled properties SHOULD NOT be exposed as configurable parameters.
 - A breaking interface change MAY be introduced when it produces a better foundation contract. Backward compatibility MUST NOT justify retaining an obsolete interface.
