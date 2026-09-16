@@ -105,7 +105,7 @@ Every Azure resource type MUST use one API version consistently for its level 1 
 
 `Sync-ApiVersions.ps1` derives that version from all Bicep files under `src`: the most recent preview version is preferred when one is present; otherwise, the most recent stable version is used.
 
-This requirement applies consistently to every declaration, including resource modules, specifications, library and pattern modules, child resources, existing-resource references, and extension-resource references. A child resource or reference MUST use the same API version as its level 1 parent resource type if possible.
+This requirement applies consistently to every declaration, including resource modules, specifications, library and pattern modules, child resources, existing-resource references, and extension-resource references. A child resource or reference MUST use the same API version as its level 1 parent resource.
 
 ## Outputs
 
