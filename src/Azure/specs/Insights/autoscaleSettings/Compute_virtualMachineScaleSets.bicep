@@ -39,7 +39,7 @@ type AutoscaleProfile = {
 type ScaleRule = {
 	@sealed()
 	metricTrigger: {
-		@description('A value indicating whether metric should divide per instance.')
+			@description('Specifies whether the metric is divided per instance.')
 		dividePerInstance: bool
 		@description('The name of the metric that defines what the rule monitors.')
 		metricName: string
@@ -114,7 +114,7 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The enabled flag. Specifies whether automatic scaling is enabled for the resource.')
+		@description('Specifies whether automatic scaling is enabled for the resource.')
 		enabled: bool
 		@description('The collection of notifications.')
 		notifications: resourceInput<'Microsoft.Insights/autoscaleSettings@2022-10-01'>.properties.notifications

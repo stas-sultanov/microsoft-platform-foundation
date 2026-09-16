@@ -50,7 +50,7 @@ param settings {
 		@description('A list of gallery image features.')
 		@sealed()
 		features: {
-			@description('Indicates whether the gallery image definition supports hibernation.')
+			@description('Specifies whether the gallery image definition supports hibernation.')
 			IsHibernateSupported: bool
 		}
 		@description('This is the gallery image definition identifier.')

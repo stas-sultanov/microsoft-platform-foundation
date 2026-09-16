@@ -38,7 +38,7 @@ type DistributeVersioner =
 
 @description('Represents a shared image distributor in an image template.')
 type ImageTemplateSharedImageDistributor = {
-	@description('Flag that indicates whether created image version should be excluded from latest.')
+	@description('Specifies whether the created image version is excluded from the latest version.')
 	excludeFromLatest: bool?
 	@description('Resource Id of the Azure Compute Gallery image.')
 	galleryImageId: 'string'

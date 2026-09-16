@@ -44,7 +44,7 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('Specifies whether to enable purge protection on the configuration store. Requires: sku.name == \'Premium\' or sku.name == \'Standard\'.')
+		@description('Specifies whether purge protection is enabled on the configuration store. Requires: sku.name == \'Premium\' or sku.name == \'Standard\'.')
 		enablePurgeProtection: bool?
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.properties.publicNetworkAccess
