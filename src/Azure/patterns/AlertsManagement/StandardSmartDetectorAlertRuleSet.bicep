@@ -41,7 +41,7 @@ param alertRules {
 	traceSeverity: ResourceInput
 }
 
-@description('The Microsoft.Insights/actionGroups resource id.')
+@description('The resource IDs of the Microsoft.Insights/actionGroups resources.')
 param commonActionGroups resourceInput<'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01'>.properties.actionGroups
 
 @description('The Microsoft.Insights/components resource name.')

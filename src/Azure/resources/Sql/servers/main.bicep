@@ -107,7 +107,7 @@ param settings {
 		isIPv6Enabled: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.isIPv6Enabled
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.publicNetworkAccess
-		@description('The resource id of a user assigned identity to be used by default.')
+		@description('The resource ID of the Microsoft.ManagedIdentity/userAssignedIdentities resource.')
 		primaryUserAssignedIdentityId: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.primaryUserAssignedIdentityId
 		@description('Specifies whether or not outbound network access is restricted for this server.')
 		restrictOutboundNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.restrictOutboundNetworkAccess
