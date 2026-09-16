@@ -21,9 +21,13 @@ extension microsoftGraph
 @description('Information about a federated identity credential.')
 @sealed()
 type FederatedIdentityCredentialInfo = {
+	@description('The unvalidated description of the federated identity credential, provided by the user. It has a limit of 600 characters.')
 	description: string
+	@description('The unique identifier for an entity.')
 	id: string
+	@description('The URL of the external identity provider, which must match the issuer claim of the external token being exchanged. The combination of the values of issuer and subject must be unique within the app. It has a limit of 600 characters.')
 	issuer: string
+	@description('The identifier of the external software workload within the external identity provider.')
 	subject: string
 }
 
@@ -35,28 +39,20 @@ type Settings = {
 	@maxLength(256)
 	@minLength(3)
 	displayName: string
-
 	@description('A collection of Entra federated identity credentials.')
 	federatedIdentityCredentials: FederatedIdentityCredentialInfo[]?
-
 	@description('Basic profile information of the application.')
 	info: resourceInput<'Microsoft.Graph/applications@beta'>.info
-
 	@description('The base64-encoded logo for the application.')
 	logo: string
-
 	@description('Management notes for the application.')
 	notes: string
-
 	@description('The owners of the application.')
 	owners: string[]?
-
 	@description('Specifies the resources that the application needs to access.')
 	requiredResourceAccess: resourceInput<'Microsoft.Graph/applications@beta'>.requiredResourceAccess?
-
 	@description('Specifies the Microsoft accounts that are supported for the current application.')
 	signInAudience: resourceInput<'Microsoft.Graph/applications@beta'>.signInAudience?
-
 	@description('Custom strings that can be used to categorize and identify the application.')
 	tags: resourceInput<'Microsoft.Graph/applications@beta'>.tags?
 }

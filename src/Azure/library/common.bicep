@@ -40,5 +40,6 @@ type ScopedResourceReference = {
 @description('Tags to be applied to the resource.')
 @export()
 type Tags = {
+	@description('A tag to be applied to the resource.')
 	*: string
 }
