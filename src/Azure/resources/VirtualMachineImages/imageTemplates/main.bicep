@@ -132,29 +132,29 @@ param settings {
 	@sealed()
 	properties: {
 		@description('Optional array of additional data disks to be added to the image.')
-		additionalDataDisks: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.additionalDataDisks
+		additionalDataDisks: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.additionalDataDisks?
 		@description('Indicates whether or not to automatically run the image template build on template creation or update.')
-		autoRun: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.autoRun
+		autoRun: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.autoRun?
 		@description('Maximum duration to wait while building the image template in minutes.')
-		buildTimeoutInMinutes: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.buildTimeoutInMinutes
+		buildTimeoutInMinutes: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.buildTimeoutInMinutes?
 		@description('Specifies the properties used to describe the customization steps of the image.')
-		customize: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.customize
+		customize: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.customize?
 		@description('The distribution targets where the image output needs to go to.')
 		distribute: ImageTemplateSharedImageDistributor[]
 		@description('Error handling options upon a build failure.')
-		errorHandling: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.errorHandling
+		errorHandling: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.errorHandling?
 		@description('Tags that will be applied to resources created by the service.')
-		managedResourceTags: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.managedResourceTags
+		managedResourceTags: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.managedResourceTags?
 		@description('Specifies optimization to be performed on the image.')
-		optimize: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.optimize
+		optimize: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.optimize?
 		@description('Specifies the properties used to describe the source image.')
 		source: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.source
 		@description('The staging resource group id used to build the image.')
 		stagingResourceGroup: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.stagingResourceGroup
 		@description('Configuration options and validations to be performed on the resulting image.')
-		validate: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.validate
+		validate: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.validate?
 		@description('Describes how the virtual machine is set up to build images.')
-		vmProfile: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.vmProfile
+		vmProfile: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.vmProfile?
 	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.tags
@@ -169,10 +169,10 @@ resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/im
 	location: settings.location
 	name: settings.name
 	properties: {
-		additionalDataDisks: settings.properties.additionalDataDisks
-		autoRun: settings.properties.autoRun
-		buildTimeoutInMinutes: settings.properties.buildTimeoutInMinutes
-		customize: settings.properties.customize
+		additionalDataDisks: settings.properties.?additionalDataDisks
+		autoRun: settings.properties.?autoRun
+		buildTimeoutInMinutes: settings.properties.?buildTimeoutInMinutes
+		customize: settings.properties.?customize
 		distribute: [
 			for item in settings.properties.distribute: union(
 				item,
@@ -198,13 +198,13 @@ resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/im
 				}
 			)
 		]
-		errorHandling: settings.properties.errorHandling
-		managedResourceTags: settings.properties.managedResourceTags
-		optimize: settings.properties.optimize
+		errorHandling: settings.properties.?errorHandling
+		managedResourceTags: settings.properties.?managedResourceTags
+		optimize: settings.properties.?optimize
 		source: settings.properties.source
 		stagingResourceGroup: settings.properties.stagingResourceGroup
-		validate: settings.properties.validate
-		vmProfile: settings.properties.vmProfile
+		validate: settings.properties.?validate
+		vmProfile: settings.properties.?vmProfile
 	}
 	tags: settings.tags
 }
