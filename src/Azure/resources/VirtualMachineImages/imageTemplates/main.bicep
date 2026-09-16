@@ -49,8 +49,8 @@ type ImageTemplateSharedImageDistributor = {
 	}?
 	@description('Specifies whether the created image version is excluded from the latest version.')
 	excludeFromLatest: bool?
-	@description('Resource Id of the Azure Compute Gallery image.')
-	galleryImageId: 'string'
+	@description('The resource ID of the Microsoft.Compute/galleries/images resource.')
+	galleryImageId: string
 	@description('Describes replication mode for distribution in Azure Compute Gallery.')
 	replicationMode:
 		| 'Full'
@@ -73,7 +73,7 @@ type ImageTemplateSharedImageDistributor = {
 		@description('The replication settings for all other target regions.')
 		*: {
 			@description('The name of the target region.')
-			name: 'string'
+			name: string
 			@description('The number of replicas to create in the target region.')
 			@minValue(1)
 			replicaCount: int?

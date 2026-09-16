@@ -44,7 +44,7 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The default data collection rule resource id.')
+		@description('The resource ID of the Microsoft.Insights/dataCollectionRules resource.')
 		defaultDataCollectionRuleResourceId: string?
 		@description('The features of the workspace.')
 		@sealed()

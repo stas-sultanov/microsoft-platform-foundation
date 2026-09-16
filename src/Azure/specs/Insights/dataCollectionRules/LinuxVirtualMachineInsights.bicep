@@ -40,7 +40,7 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The id of the destination Log Analytics workspace')
+		@description('The resource ID of the Microsoft.OperationalInsights/workspaces resource.')
 		workspaceId: string
 	}
 	@description('The tags.')

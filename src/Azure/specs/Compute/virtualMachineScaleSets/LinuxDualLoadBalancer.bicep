@@ -135,7 +135,7 @@ type Properties = {
 @description('The sub resource reference.')
 @sealed()
 type SubResource = {
-	@description('The resource id.')
+	@description('The ID of the referenced resource.')
 	id: string
 }
 
