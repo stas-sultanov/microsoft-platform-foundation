@@ -18,7 +18,7 @@ type LoadBalancingRule = {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('Receive bidirectional TCP Reset on TCP flow idle timeout or unexpected connection termination. This element is only used when the protocol is set to TCP.')
+		@description('Specifies whether to receive bidirectional TCP reset on TCP flow idle timeout or unexpected connection termination. Applies only when the protocol is TCP.')
 		enableTcpReset: bool
 		@description('The port. Note that value 0 enables "Any Port".')
 		@maxValue(65534)

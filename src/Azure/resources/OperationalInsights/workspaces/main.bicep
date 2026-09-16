@@ -49,7 +49,7 @@ param settings {
 		@description('The features of the workspace.')
 		@sealed()
 		features: {
-			@description('Whether to immediately purge data after 30 days. Requires: retentionInDays == 30.')
+			@description('Specifies whether data is purged immediately after 30 days. Requires: retentionInDays == 30.')
 			immediatePurgeDataOn30Days: bool?
 		}
 		@description('The network access type for ingestion.')

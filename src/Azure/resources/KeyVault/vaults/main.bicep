@@ -42,9 +42,9 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('Specifies whether protection against purge is enabled for this vault.')
+		@description('Specifies whether purge protection is enabled for this vault.')
 		enablePurgeProtection: bool
-		@description('Specifies whether the \'soft delete\' functionality is enabled for this key vault.')
+		@description('Specifies whether soft delete is enabled for this key vault.')
 		enableSoftDelete: bool
 		@description('Rules governing the accessibility of the key vault from specific network locations.')
 		networkAcls: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.properties.networkAcls?

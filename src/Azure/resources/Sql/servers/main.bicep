@@ -40,7 +40,7 @@ param resources {
 			properties: {
 				@description('Specifies whether audit events are sent to Azure Monitor.')
 				isAzureMonitorTargetEnabled: bool
-				@description('Specifies whether devops audit is enabled.')
+				@description('Specifies whether DevOps auditing is enabled.')
 				isDevopsAuditEnabled: bool
 				@description('Specifies the state of the audit.')
 				state: resourceInput<'Microsoft.Sql/servers/auditingSettings@2025-01-01'>.properties.state

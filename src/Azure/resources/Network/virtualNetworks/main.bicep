@@ -50,9 +50,9 @@ param settings {
 		ddosProtectionPlan: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.ddosProtectionPlan?
 		@description('The DHCP options associated with the virtual network.')
 		dhcpOptions: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.dhcpOptions?
-		@description('Indicates whether DDoS protection is enabled for all the protected resources in the virtual network.')
+		@description('Specifies whether DDoS protection is enabled for all protected resources in the virtual network.')
 		enableDdosProtection: bool?
-		@description('Indicates whether VM protection is enabled for all the subnets in the virtual network.')
+		@description('Specifies whether VM protection is enabled for all subnets in the virtual network.')
 		enableVmProtection: bool?
 		@description('The encryption settings for the virtual network.')
 		encryption: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.encryption?
