@@ -17,6 +17,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 /* TYPES */
 @description('Versioning settings for the Latest scheme.')
+@sealed()
 type DistributeVersionerLatest = {
 	@description('Major version for the generated version number.')
 	major: int?
@@ -25,6 +26,7 @@ type DistributeVersionerLatest = {
 }
 
 @description('Versioning settings for the Source scheme.')
+@sealed()
 type DistributeVersionerSource = {
 	@description('Version numbering scheme to be used.')
 	scheme: 'Source'
@@ -32,12 +34,19 @@ type DistributeVersionerSource = {
 
 @description('Versioning settings for a shared image distributor.')
 @discriminator('scheme')
+@sealed()
 type DistributeVersioner =
 	| DistributeVersionerLatest
 	| DistributeVersionerSource
 
 @description('Represents a shared image distributor in an image template.')
+@sealed()
 type ImageTemplateSharedImageDistributor = {
+	@description('Tags that will be applied to the artifact once it has been created/updated by the distributor.')
+	artifactTags: {
+		@description('A tag to be applied to the artifact.')
+		*: string
+	}?
 	@description('Specifies whether the created image version is excluded from the latest version.')
 	excludeFromLatest: bool?
 	@description('Resource Id of the Azure Compute Gallery image.')
@@ -47,7 +56,13 @@ type ImageTemplateSharedImageDistributor = {
 		| 'Full'
 		| 'Shallow'
 		| null
+	@description('The name to be used for the associated RunOutput.')
+	@minLength(1)
+	@maxLength(64)
+	runOutputName: string
+	@description('The target regions where the distributed Image Version is going to be replicated to.')
 	targetRegions: {
+		@description('The replication settings for the region where the resource is located.')
 		Default: {
 			@description('The number of replicas to create in the target region.')
 			@minValue(1)
@@ -55,6 +70,7 @@ type ImageTemplateSharedImageDistributor = {
 			@description('The type of storage account to use in the target region.')
 			storageAccountType: ImageTemplateSharedImageDistributorTargetRegionStorageAccountType
 		}
+		@description('The replication settings for all other target regions.')
 		*: {
 			@description('The name of the target region.')
 			name: 'string'
@@ -68,7 +84,7 @@ type ImageTemplateSharedImageDistributor = {
 	@description('Type of distribution.')
 	type: 'SharedImage'
 	@description('Describes how to generate new x.y.z version number for distribution.')
-	versioning: DistributeVersioner
+	versioning: DistributeVersioner?
 }
 
 @description('The type of storage account to use in the target region.')
@@ -113,6 +129,7 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.name
 	@description('The configurable properties.')
+	@sealed()
 	properties: {
 		@description('Optional array of additional data disks to be added to the image.')
 		additionalDataDisks: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.additionalDataDisks

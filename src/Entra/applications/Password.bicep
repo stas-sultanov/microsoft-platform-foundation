@@ -25,28 +25,20 @@ type Settings = {
 	@maxLength(256)
 	@minLength(3)
 	displayName: string
-
 	@description('Basic profile information of the application.')
 	info: resourceInput<'Microsoft.Graph/applications@beta'>.info
-
 	@description('The base64-encoded logo for the application.')
 	logo: string
-
 	@description('Management notes for the application.')
 	notes: string
-
 	@description('The owners of the application.')
 	owners: string[]?
-
 	@description('The collection of password credentials associated with the application.')
 	passwordCredentials: resourceInput<'Microsoft.Graph/applications@beta'>.passwordCredentials
-
 	@description('Specifies the resources that the application needs to access.')
 	requiredResourceAccess: resourceInput<'Microsoft.Graph/applications@beta'>.requiredResourceAccess?
-
 	@description('Specifies the Microsoft accounts that are supported for the current application.')
 	signInAudience: resourceInput<'Microsoft.Graph/applications@beta'>.signInAudience?
-
 	@description('Custom strings that can be used to categorize and identify the application.')
 	tags: resourceInput<'Microsoft.Graph/applications@beta'>.tags?
 }
