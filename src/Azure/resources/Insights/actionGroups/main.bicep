@@ -38,7 +38,7 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('Indicates whether this action group is enabled.')
+		@description('Specifies whether this action group is enabled.')
 		enabled: bool
 		@description('The short name of the action group.')
 		groupShortName: resourceInput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.properties.groupShortName

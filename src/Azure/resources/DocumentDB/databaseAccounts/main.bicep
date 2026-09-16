@@ -58,7 +58,7 @@ param settings {
 		locations: {
 			@description('The primary region.')
 			Primary: {
-				@description('Flag to indicate whether or not this region is an AvailabilityZone region')
+				@description('Specifies whether this region is an Availability Zone region.')
 				isZoneRedundant: bool
 			}
 			*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.locations[*]
