@@ -169,7 +169,7 @@ resource Sql_servers_databases__Master 'Microsoft.Sql/servers/databases@2025-01-
 }
 
 resource Sql_servers_firewallRules_ 'Microsoft.Sql/servers/firewallRules@2025-01-01' = [
-	for item in items(resources.firewallRules ?? {}): {
+	for item in sys.items(resources.firewallRules ?? {}): {
 		name: item.value.name
 		parent: Sql_servers_
 		properties: item.value.properties

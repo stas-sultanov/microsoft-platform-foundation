@@ -43,13 +43,21 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 	name: parentName
 }
 
+#disable-next-line use-recent-api-versions // to use new features, preview version is required
+resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview' existing = [
+	for item in roleAssignments: {
+		name: item.properties.roleDefinitionName
+		parent: DocumentDB_databaseAccounts_
+	}
+]
+
 /* RESOURCES */
 
 @batchSize(1)
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource DocumentDB_databaseAccounts_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-04-01-preview' = [
-	for item in roleAssignments: {
-		name: guid(
+	for (item, index) in roleAssignments: {
+		name: sys.guid(
 			item.properties.?scope ?? DocumentDB_databaseAccounts_.id,
 			item.properties.principalId,
 			item.properties.roleDefinitionName
@@ -57,11 +65,7 @@ resource DocumentDB_databaseAccounts_sqlRoleAssignments_ 'Microsoft.DocumentDB/d
 		parent: DocumentDB_databaseAccounts_
 		properties: {
 			principalId: item.properties.principalId
-			roleDefinitionId: resourceId(
-				'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions',
-				parentName,
-				item.properties.roleDefinitionName
-			)
+			roleDefinitionId: DocumentDB_databaseAccounts_sqlRoleDefinitions_[index].id
 			scope: item.properties.?scope ?? DocumentDB_databaseAccounts_.id
 		}
 	}
