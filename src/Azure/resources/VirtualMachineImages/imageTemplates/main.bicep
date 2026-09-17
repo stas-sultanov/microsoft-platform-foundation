@@ -13,7 +13,7 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import * as AuthorizationRoleAssignments from '../../../../../Foundation/Azure/library/Authorization/roleAssignments.bicep'
+import * as AuthorizationRoleAssignments from '../../../../Azure/library/Authorization/roleAssignments.bicep'
 
 /* TYPES */
 @description('Versioning settings for the Latest scheme.')
