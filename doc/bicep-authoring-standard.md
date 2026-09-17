@@ -47,6 +47,12 @@ Section headers after metadata declarations MUST use block comments, such as `/*
 
 Within each section, all declarations MUST be sorted alphabetically.
 
+## Function Namespaces
+
+Calls to standard Bicep functions MUST be explicitly qualified with their namespace, such as `sys.map`, `sys.items`, `sys.guid`, or `az.resourceId`.
+
+Unqualified standard function calls, such as `map(...)`, `items(...)`, `guid(...)`, or `resourceId(...)`, MUST NOT be used.
+
 ## Custom Types and Properties
 
 Type names MUST describe intent, such as `PropertiesInput`, `ResourceInput`, `Resource`, `ExtensionsInput`, or a scenario-specific name.

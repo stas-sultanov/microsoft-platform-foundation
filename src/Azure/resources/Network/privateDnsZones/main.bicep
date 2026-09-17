@@ -68,7 +68,7 @@ resource Network_privateDnsZones_ 'Microsoft.Network/privateDnsZones@2024-06-01'
 }
 
 resource Network_privateDnsZones_A_ 'Microsoft.Network/privateDnsZones/A@2024-06-01' = [
-	for item in items(resources.A): {
+	for item in sys.items(resources.A): {
 		parent: Network_privateDnsZones_
 		name: item.value.name
 		properties: {
@@ -84,7 +84,7 @@ resource Network_privateDnsZones_A_ 'Microsoft.Network/privateDnsZones/A@2024-06
 ]
 
 resource Network_privateDnsZones_virtualNetworkLinks_ 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = [
-	for item in items(resources.virtualNetworkLinks): {
+	for item in sys.items(resources.virtualNetworkLinks): {
 		location: settings.location
 		name: item.value.name
 		parent: Network_privateDnsZones_

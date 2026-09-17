@@ -99,7 +99,7 @@ resource Network_networkSecurityPerimeters_profiles_accessRules__Default 'Micros
 ]
 
 resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-09-01' = [
-	for item in items(resources.resourceAssociations ?? {}): {
+	for item in sys.items(resources.resourceAssociations ?? {}): {
 		name: item.value.name
 		parent: Network_networkSecurityPerimeters_
 		properties: {

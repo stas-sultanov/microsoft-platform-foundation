@@ -63,7 +63,7 @@ resource ManagedIdentity_userAssignedIdentities_ 'Microsoft.ManagedIdentity/user
 }
 
 resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30' = [
-	for item in items(resources.?federatedIdentityCredentials ?? {}): {
+	for item in sys.items(resources.?federatedIdentityCredentials ?? {}): {
 		name: item.value.name
 		parent: ManagedIdentity_userAssignedIdentities_
 		properties: item.value.properties

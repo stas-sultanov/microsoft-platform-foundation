@@ -89,7 +89,7 @@ resource Network_dnsResolverPolicies_ 'Microsoft.Network/dnsResolverPolicies@202
 }
 
 resource Network_dnsResolverPolicies_dnsSecurityRules_ 'Microsoft.Network/dnsResolverPolicies/dnsSecurityRules@2025-05-01' = [
-	for item in items(resources.dnsSecurityRules): {
+	for item in sys.items(resources.dnsSecurityRules): {
 		location: settings.location
 		name: item.value.name
 		parent: Network_dnsResolverPolicies_
@@ -99,7 +99,7 @@ resource Network_dnsResolverPolicies_dnsSecurityRules_ 'Microsoft.Network/dnsRes
 ]
 
 resource Network_dnsResolverPolicies_virtualNetworkLinks_ 'Microsoft.Network/dnsResolverPolicies/virtualNetworkLinks@2025-05-01' = [
-	for item in items(resources.virtualNetworkLinks): {
+	for item in sys.items(resources.virtualNetworkLinks): {
 		location: settings.location
 		name: item.value.name
 		parent: Network_dnsResolverPolicies_
