@@ -13,7 +13,7 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+import * as AuthorizationRoleAssignments from '../../../../../Foundation/Azure/library/Authorization/roleAssignments.bicep'
 
 /* TYPES */
 @description('Versioning settings for the Latest scheme.')
@@ -174,8 +174,8 @@ resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/im
 		buildTimeoutInMinutes: settings.properties.?buildTimeoutInMinutes
 		customize: settings.properties.?customize
 		distribute: [
-			for item in settings.properties.distribute: union(
-				item,
+			for item in settings.properties.distribute: shallowMerge([
+				item
 				{
 					targetRegions: concat(
 						[
@@ -196,7 +196,7 @@ resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/im
 						)
 					)
 				}
-			)
+			])
 		]
 		errorHandling: settings.properties.?errorHandling
 		managedResourceTags: settings.properties.?managedResourceTags
