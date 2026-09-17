@@ -42,7 +42,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview' = {
-	name: guid(
+	name: sys.guid(
 		DocumentDB_databaseAccounts_.id,
 		settings.properties.roleName
 	)

@@ -174,10 +174,10 @@ resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/im
 		buildTimeoutInMinutes: settings.properties.?buildTimeoutInMinutes
 		customize: settings.properties.?customize
 		distribute: [
-			for item in settings.properties.distribute: shallowMerge([
+			for item in settings.properties.distribute: sys.shallowMerge([
 				item
 				{
-					targetRegions: concat(
+					targetRegions: sys.concat(
 						[
 							{
 								name: settings.location
@@ -185,9 +185,9 @@ resource VirtualMachineImages_imageTemplates_ 'Microsoft.VirtualMachineImages/im
 								storageAccountType: item.targetRegions.Default.?storageAccountType
 							}
 						],
-						map(
-							filter(
-								items(item.targetRegions),
+						sys.map(
+							sys.filter(
+								sys.items(item.targetRegions),
 								region =>
 									region.key != 'Default'
 							),

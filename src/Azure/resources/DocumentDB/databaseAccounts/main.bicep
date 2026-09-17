@@ -91,7 +91,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 		databaseAccountOfferType: 'Standard'
 		disableLocalAuth: true
 		ipRules: settings.properties.ipRules
-		locations: concat(
+		locations: sys.concat(
 			[
 				{
 					failoverPriority: 0
@@ -99,9 +99,9 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 					locationName: settings.location
 				}
 			],
-			map(
-				filter(
-					items(settings.properties.locations),
+			sys.map(
+				sys.filter(
+					sys.items(settings.properties.locations),
 					item =>
 						item.key != 'Primary'
 				),
