@@ -10,6 +10,10 @@ Microsoft Platform Foundation is a Bicep module library that provides reusable, 
 
 It defines a small, current, strongly typed configuration surface for common platform capabilities so consuming solutions can configure workload intent without repeatedly making low-level Azure resource decisions.
 
+## Bicep Version
+
+Bicep CLI version for module authoring: [0.47.16](https://github.com/Azure/bicep/releases/tag/v0.47.16)
+
 ## Documentation
 
 - [Foundation Contract](doc/foundation-contract.md) defines the scope, design principles, and compatibility model.
