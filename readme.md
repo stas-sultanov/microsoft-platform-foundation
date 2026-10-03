@@ -1,7 +1,8 @@
 # Microsoft Platform Foundation
 
-[![CodeQL](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/github-code-scanning/codeql/badge.svg)][github_workflow_code_ql]
 [![Check](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/check.yml/badge.svg)][github_workflow_check]
+[![CodeQL](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/github-code-scanning/codeql/badge.svg)][github_workflow_code_ql]
+[![Copilot](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/agents/copilot-pull-request-reviewer/badge.svg)][github_workflow_copilot]
 [![Release](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/release.yml/badge.svg)][github_workflow_release]
 
 An opinionated Bicep module library for secure, reliable infrastructure on Microsoft Azure and Microsoft Entra ID.
@@ -44,6 +45,7 @@ Any support is much appreciated!
 
 [github_workflow_check]: https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/check.yml
 [github_workflow_code_ql]: https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/github-code-scanning/codeql
+[github_workflow_copilot]: https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/agents/copilot-pull-request-reviewer
 [github_workflow_release]: https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/release.yml
 [linked_in_profile]: https://www.linkedin.com/in/stas-sultanov
 [paypal_donation]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=K2DPD6J3DJ2FN
