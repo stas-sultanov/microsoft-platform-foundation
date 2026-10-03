@@ -1,34 +1,51 @@
 # Microsoft Platform Foundation
 
-An opinionated foundation for building secure and reliable IT solutions on Microsoft Azure and Microsoft Entra ID.
+[![Check](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/check.yml/badge.svg)][github_workflow_check]
+[![CodeQL](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/github-code-scanning/codeql/badge.svg)][github_workflow_code_ql]
+[![Copilot](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/agents/copilot-pull-request-reviewer/badge.svg)][github_workflow_copilot]
+[![Release](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/release.yml/badge.svg)][github_workflow_release]
 
-Created by [Stas Sultanov](https://www.linkedin.com/in/stas-sultanov)
+An opinionated Bicep module library for secure, reliable infrastructure on Microsoft Azure and Microsoft Entra ID.
 
-## Purpose
+Authored and maintained by [Stas Sultanov][linked_in_profile].
 
-Microsoft Platform Foundation is a Bicep module library that provides reusable, opinionated building blocks for Microsoft Azure and Microsoft Entra ID.
-
-It defines a small, current, strongly typed configuration surface for common platform capabilities so consuming solutions can configure workload intent without repeatedly making low-level Azure resource decisions.
+[Support the author](#support-the-author), if this library benefits your business.
 
 ## Bicep Version
 
-Bicep CLI version for module authoring: [0.47.16](https://github.com/Azure/bicep/releases/tag/v0.47.16)
+The foundation depends directly on Bicep, is tied to its version, and is updated with every new Bicep release.
+
+Bicep CLI version: [0.47.16](https://github.com/Azure/bicep/releases/tag/v0.47.16).
 
 ## Documentation
 
-- [Foundation Contract](doc/foundation-contract.md) defines the scope, design principles, and compatibility model.
-- [Module Organization](doc/module-organization.md) describes repository areas and path conventions.
-- [Bicep Authoring Standard](doc/bicep-authoring-standard.md) defines the required module authoring rules.
+- [Foundation Contract](doc/foundation-contract.md): design principles, security, and compatibility.
+- [Module Structure](doc/module-structure.md): module categories and paths.
+- [Bicep Authoring Rules](doc/bicep-authoring-rules.md): Bicep implementation conventions.
 
 ## Tooling
 
-The `tools` folder contains repository-maintenance scripts:
+- [Build](tools/Bicep-Build.ps1) — compile Bicep files under `src`.
+- [Format](tools/Bicep-Format.ps1) — format Bicep files under `src`.
+- [Publish](tools/Bicep-Publish.ps1) — publish Bicep files under `src` to an OCI registry.
+- [Sync API versions](tools/Sync-ApiVersions.ps1) — verify or align resource API versions across `src`.
 
-- `Bicep-Build.ps1` compiles all Bicep files under `src`.
-- `Bicep-Format.ps1` formats all Bicep files under `src`.
-- `Sync-ApiVersions.ps1` infers and verifies or replaces Bicep resource API versions across `src`.
+## Support the Author
 
-## References
+Donations express appreciation for the author’s dedication and the substantial effort invested in creating this library.
 
-- [Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
-- [Azure Resource Manager API Versions](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-resources)
+The author resides in a country affected by ongoing military conflict since February 2022.<br/>
+Due to the war, securing stable income is extremely difficult, and donations provide essential support.
+
+If you’d like to make a donation, please use the button below:
+
+[![Donate via PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)][paypal_donation]
+
+Any support is much appreciated!
+
+[github_workflow_check]: https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/check.yml
+[github_workflow_code_ql]: https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/github-code-scanning/codeql
+[github_workflow_copilot]: https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/agents/copilot-pull-request-reviewer
+[github_workflow_release]: https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/release.yml
+[linked_in_profile]: https://www.linkedin.com/in/stas-sultanov
+[paypal_donation]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=K2DPD6J3DJ2FN

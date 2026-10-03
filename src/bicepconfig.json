@@ -160,6 +160,9 @@
 			}
 		}
 	},
+	"experimentalFeaturesEnabled": {
+		"ociEnabled": true
+	},
 	"extensions": {
 		"microsoftGraph": "br:mcr.microsoft.com/bicep/extensions/microsoftgraph/beta:1.0.0"
 	},
