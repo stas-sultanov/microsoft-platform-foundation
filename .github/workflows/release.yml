@@ -1,0 +1,52 @@
+# The workflow to validate Bicep modules and publish them to GitHub Container Registry
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version in format [major].[minor].[patch]
+        required: true
+        type: string
+
+jobs:
+
+  release:
+
+    name: Release
+
+    if: github.ref == 'refs/heads/main'
+
+    permissions:
+      # Required to checkout the repo
+      contents: read
+      # Required to push artifacts to GitHub Container Registry
+      packages: write
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Upgrade Bicep
+      run: az bicep upgrade
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Verify API Versions
+      shell: pwsh
+      run: ./tools/Sync-ApiVersions.ps1 ./src
+
+    - name: Build Bicep Templates
+      shell: pwsh
+      run: ./tools/Bicep-Build.ps1 ./src
+
+    - name: Publish Bicep Modules
+      shell: pwsh
+      env:
+        DOCKER_REGISTRY: ghcr.io
+        DOCKER_USERNAME: ${{ github.actor }}
+        DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY: ${{ github.repository }}
+        VERSION: ${{ inputs.version }}
+      run: ./tools/Bicep-Publish.ps1 -Registry "ghcr.io/$($env:REPOSITORY.ToLowerInvariant())" -Version $env:VERSION -SourceRoot ./src

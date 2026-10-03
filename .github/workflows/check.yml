@@ -6,9 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
     paths:
-      - ".github/workflows/**"
+      - ".github/workflows/check.yml"
       - "src/**"
-      - "tools/**"
+      - "tools/Sync-ApiVersions.ps1"
+      - "tools/Bicep-Build.ps1"
 
 jobs:
 
@@ -23,16 +24,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Upgrade Bicep
+      run: az bicep upgrade
+
     - name: Checkout
       uses: actions/checkout@v4
 
     - name: Verify API Versions
       shell: pwsh
       run: ./tools/Sync-ApiVersions.ps1 ./src
-
-    - name: Upgrade Bicep
-      run: az bicep upgrade
-      continue-on-error: true
 
     - name: Build Bicep Templates
       shell: pwsh
