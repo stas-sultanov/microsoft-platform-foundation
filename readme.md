@@ -38,7 +38,7 @@ Due to the war, securing stable income is extremely difficult, and donations pro
 
 If you’d like to make a donation, please use the button below:
 
-[![](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)][paypal_donation]
+[![Donate via PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)][paypal_donation]
 
 Any support is much appreciated!
 

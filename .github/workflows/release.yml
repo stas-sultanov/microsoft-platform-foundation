@@ -27,8 +27,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Upgrade Bicep
-      run: az bicep upgrade
+    - name: Install Bicep
+      run: az bicep install --version v0.47.16
 
     - name: Checkout
       uses: actions/checkout@v4

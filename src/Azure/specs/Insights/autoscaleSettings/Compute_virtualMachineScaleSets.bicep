@@ -39,7 +39,7 @@ type AutoscaleProfile = {
 type ScaleRule = {
 	@sealed()
 	metricTrigger: {
-			@description('Specifies whether the metric is divided per instance.')
+		@description('Specifies whether the metric is divided per instance.')
 		dividePerInstance: bool
 		@description('The name of the metric that defines what the rule monitors.')
 		metricName: string
