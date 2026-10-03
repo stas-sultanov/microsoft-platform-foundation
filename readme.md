@@ -26,8 +26,8 @@ Bicep CLI version: [0.47.16](https://github.com/Azure/bicep/releases/tag/v0.47.1
 
 - [Build](tools/Bicep-Build.ps1) — compile Bicep files under `src`.
 - [Format](tools/Bicep-Format.ps1) — format Bicep files under `src`.
-- [Sync API versions](tools/Sync-ApiVersions.ps1) — verify or align resource API versions across `src`.
 - [Publish](tools/Bicep-Publish.ps1) — publish Bicep files under `src` to an OCI registry.
+- [Sync API versions](tools/Sync-ApiVersions.ps1) — verify or align resource API versions across `src`.
 
 ## Support the Author
 
