@@ -1,34 +1,23 @@
 # Microsoft Platform Foundation
 
-An opinionated foundation for building secure and reliable IT solutions on Microsoft Azure and Microsoft Entra ID.
-
-Created by [Stas Sultanov](https://www.linkedin.com/in/stas-sultanov)
-
-## Purpose
-
-Microsoft Platform Foundation is a Bicep module library that provides reusable, opinionated building blocks for Microsoft Azure and Microsoft Entra ID.
-
-It defines a small, current, strongly typed configuration surface for common platform capabilities so consuming solutions can configure workload intent without repeatedly making low-level Azure resource decisions.
+An opinionated Bicep module library for secure, reliable infrastructure on Microsoft Azure and Microsoft Entra ID.
 
 ## Bicep Version
 
-Bicep CLI version for module authoring: [0.47.16](https://github.com/Azure/bicep/releases/tag/v0.47.16)
+The foundation depends directly on Bicep, is tied to its version, and is updated with every new Bicep release.
+
+Bicep CLI version: [0.47.16](https://github.com/Azure/bicep/releases/tag/v0.47.16).
 
 ## Documentation
 
-- [Foundation Contract](doc/foundation-contract.md) defines the scope, design principles, and compatibility model.
-- [Module Organization](doc/module-organization.md) describes repository areas and path conventions.
-- [Bicep Authoring Standard](doc/bicep-authoring-standard.md) defines the required module authoring rules.
+- [Foundation Contract](doc/foundation-contract.md): design principles, security, and compatibility.
+- [Module Structure](doc/module-structure.md): module categories and paths.
+- [Bicep Authoring Rules](doc/bicep-authoring-rules.md): Bicep implementation conventions.
 
 ## Tooling
 
-The `tools` folder contains repository-maintenance scripts:
+- [Build](tools/Bicep-Build.ps1) — compile Bicep files under `src`.
+- [Format](tools/Bicep-Format.ps1) — format Bicep files under `src`.
+- [Sync API versions](tools/Sync-ApiVersions.ps1) — verify or align resource API versions across `src`.
 
-- `Bicep-Build.ps1` compiles all Bicep files under `src`.
-- `Bicep-Format.ps1` formats all Bicep files under `src`.
-- `Sync-ApiVersions.ps1` infers and verifies or replaces Bicep resource API versions across `src`.
-
-## References
-
-- [Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
-- [Azure Resource Manager API Versions](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-resources)
+Created by [Stas Sultanov](https://www.linkedin.com/in/stas-sultanov).

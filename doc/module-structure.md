@@ -1,6 +1,6 @@
-# Module Organization
+# Module Structure
 
-This repository organizes Bicep modules by intent: reusable library code, reusable multi-resource patterns, canonical resource modules, scenario-specific specifications, and Microsoft Graph-driven Entra application artifacts.
+Modules are grouped by purpose using the categories and paths below.
 
 ## Module Types
 

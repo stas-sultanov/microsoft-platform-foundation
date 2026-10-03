@@ -1,26 +1,11 @@
-# Bicep Authoring Standard
+# Bicep Authoring Rules
 
-All modules in this repository MUST strictly follow this authoring standard.
+All Bicep modules MUST follow the [Foundation Contract](foundation-contract.md) and these implementation rules.
 
-This standard moves from the general foundation contract to specific Bicep authoring rules. Apply earlier sections as the governing intent for later implementation details.
-
-## Authoring Principles
+## Declarations
 
 - All declarations MUST be strongly typed.
 - Parameters and outputs MUST be explicit and predictable.
-- Module interfaces MUST represent the foundation contract and MAY reuse native Azure resource API types when that is the intended contract.
-- Obsolete, legacy, insecure, or foundation-controlled properties SHOULD NOT be exposed as configurable parameters.
-- A breaking interface change MAY be introduced when it produces a better foundation contract. Backward compatibility MUST NOT justify retaining an obsolete interface.
-
-## Security Baseline
-
-- Data-plane access MUST use Microsoft Entra ID-based authorization where the service supports it.
-- Legacy authorization models, such as Key Vault access policies, MUST NOT be used where Microsoft Entra ID-based authorization is supported.
-- Keys, shared secrets, and passwords MUST NOT be used for data-plane access where Microsoft Entra ID-based authorization is supported.
-- Public access, firewall rules, and trusted-service exceptions MUST be explicit in the module interface.
-- TLS 1.3 MUST be enforced where the service supports it. Where TLS 1.3 is unavailable, the newest supported TLS version MUST be used.
-- Outputs MUST NOT include secrets, passwords, or authentication keys.
-- Customer Managed Keys (CMK) MUST NOT be assumed to be supported unless explicitly implemented by the module.
 
 ## File Structure
 
@@ -58,8 +43,6 @@ Unqualified standard function calls, such as `map(...)`, `items(...)`, `guid(...
 Type names MUST describe intent, such as `PropertiesInput`, `ResourceInput`, `Resource`, `ExtensionsInput`, or a scenario-specific name.
 
 Configurable property types SHOULD contain only properties that consumers are expected to control when the module defines a curated property contract.
-
-Resource API types MAY be used in module interfaces or internally.
 
 Standard Bicep resource-derived types, such as `resourceInput` and `resourceOutput`, SHOULD be used wherever possible.
 
