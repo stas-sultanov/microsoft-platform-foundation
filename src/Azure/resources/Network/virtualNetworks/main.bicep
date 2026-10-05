@@ -41,6 +41,10 @@ param settings {
 	name: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.name
 	@description('The configurable properties.')
 	@sealed()
+	@validate(
+		value => value.?enableDdosProtection != true || value.?ddosProtectionPlan != null,
+		'enableDdosProtection requires ddosProtectionPlan.'
+	)
 	properties: {
 		@description('Address space contains an array of IP address ranges that can be used by subnets in the virtual network.')
 		addressSpace: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.addressSpace?
@@ -50,7 +54,7 @@ param settings {
 		ddosProtectionPlan: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.ddosProtectionPlan?
 		@description('The DHCP options associated with the virtual network.')
 		dhcpOptions: resourceInput<'Microsoft.Network/virtualNetworks@2025-09-01'>.properties.dhcpOptions?
-		@description('Specifies whether DDoS protection is enabled for all protected resources in the virtual network.')
+		@description('Specifies whether DDoS protection is enabled for all protected resources in the virtual network. Requires: ddosProtectionPlan.')
 		enableDdosProtection: bool?
 		@description('Specifies whether VM protection is enabled for all subnets in the virtual network.')
 		enableVmProtection: bool?

@@ -46,7 +46,12 @@ param settings {
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/publicIPPrefixes@2025-09-01'>.tags
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-	zones: string[]
+	@minLength(1)
+	@maxLength(3)
+	zones: (
+		| '1'
+		| '2'
+		| '3')[]?
 }
 
 /* RESOURCES */
@@ -57,7 +62,7 @@ resource Network_publicIPPrefixes_ 'Microsoft.Network/publicIPPrefixes@2025-09-0
 	properties: settings.properties
 	sku: settings.sku
 	tags: settings.tags
-	zones: settings.zones
+	zones: settings.?zones
 }
 
 /* EXTENSIONS */

@@ -30,6 +30,11 @@ param settings {
 	properties: {
 		@description('The database options. Note: Either throughput or autoscaleSettings is required, but not both.')
 		@sealed()
+		@validate(
+			value =>
+				value.?throughput == null || value.?autoscaleSettings == null,
+			'throughput and autoscaleSettings are mutually exclusive.'
+		)
 		options: {
 			@description('The autoscale settings.')
 			@sealed()

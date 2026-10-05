@@ -32,8 +32,6 @@ type StorageAccountPropertiesInput = {
 	dnsEndpointType: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.dnsEndpointType?
 	@description('The Internet protocol.')
 	dualStackEndpointPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.dualStackEndpointPreference?
-	@description('Enable or disable extended groups for the storage account.')
-	enableExtendedGroups: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.enableExtendedGroups?
 	@description('Status indicating whether Geo Priority Replication is enabled for the account.')
 	geoPriorityReplicationStatus: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.geoPriorityReplicationStatus?
 	@description('Enable or disable immutable storage with versioning for the storage account.')

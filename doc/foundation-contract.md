@@ -7,7 +7,7 @@ All foundation modules MUST follow these architectural, security, and compatibil
 - **Encode architectural intent.** Modules MUST encode architectural and security decisions beyond simply mirroring ARM/Bicep or AVM resource schemas. Native Azure resource API types MAY be reused where they represent the intended contract.
 - **Exclude obsolete and unsafe options.** Modules MUST NOT expose deprecated APIs, legacy authentication, weak security modes, outdated SKUs, or unsupported configurations.
 - **Use secure defaults.** Modules MUST configure identity, encryption, TLS, RBAC, and diagnostics correctly by default. Properties controlled by the foundation SHOULD NOT be configurable by consumers.
-- **Enforce architectural invariants.** Strong types and template structure MUST prevent invalid configurations from being expressed.
+- **Enforce constraints and invariants.** Modules MUST add constraints and validation missing from native Bicep resource types, using strong types and template structure to prevent invalid configurations. For example, a SKU name typed as `string` MUST be restricted to an explicit set of supported values.
 - **Avoid generic escape hatches.** Module interfaces MUST NOT expose arbitrary property bags, `additionalSettings`, or raw ARM passthrough that bypasses the contract.
 
 ## Security Baseline

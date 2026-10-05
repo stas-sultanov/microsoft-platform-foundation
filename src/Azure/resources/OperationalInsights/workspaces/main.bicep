@@ -43,6 +43,11 @@ param settings {
 	name: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.name
 	@description('The configurable properties.')
 	@sealed()
+	@validate(
+		value =>
+			value.features.?immediatePurgeDataOn30Days != true || value.retentionInDays == 30,
+		'immediatePurgeDataOn30Days requires retentionInDays to be 30.'
+	)
 	properties: {
 		@description('The resource ID of the Microsoft.Insights/dataCollectionRules resource.')
 		defaultDataCollectionRuleResourceId: string?
