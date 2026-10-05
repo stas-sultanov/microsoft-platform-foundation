@@ -117,7 +117,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Network_virtualNetworkGateways_.id
 
 @description('The identity.')

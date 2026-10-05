@@ -53,5 +53,5 @@ resource ContainerRegistry_registries_replications_ 'Microsoft.ContainerRegistry
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = ContainerRegistry_registries_replications_.id

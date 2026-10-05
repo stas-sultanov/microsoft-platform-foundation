@@ -39,7 +39,7 @@ resource Network_virtualNetworkGateways_natRules_ 'Microsoft.Network/virtualNetw
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Network_virtualNetworkGateways_natRules_.id
 
 @description('The name.')

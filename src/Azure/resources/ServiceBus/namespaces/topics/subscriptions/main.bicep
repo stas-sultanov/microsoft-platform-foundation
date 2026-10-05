@@ -69,7 +69,7 @@ resource ServiceBus_namespaces_topics_subscriptions_rules_ 'Microsoft.ServiceBus
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = ServiceBus_namespaces_topics_subscriptions_.id
 
 @description('The name.')

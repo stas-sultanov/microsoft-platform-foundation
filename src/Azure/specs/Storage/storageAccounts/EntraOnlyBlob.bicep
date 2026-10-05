@@ -170,7 +170,7 @@ resource Insights_diagnosticSettings__Storage_storageAccounts__blobServices_ 'Mi
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Storage_storageAccounts_.id
 
 @description('The identity.')

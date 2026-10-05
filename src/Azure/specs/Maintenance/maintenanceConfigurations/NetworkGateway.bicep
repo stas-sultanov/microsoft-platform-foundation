@@ -60,7 +60,7 @@ resource Maintenance_maintenanceConfigurations_ 'Microsoft.Maintenance/maintenan
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Maintenance_maintenanceConfigurations_.id
 
 @description('The name.')

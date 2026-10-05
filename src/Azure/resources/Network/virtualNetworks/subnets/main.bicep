@@ -97,7 +97,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 
 /* OUTPUTS */
 
-@description('The resource ID of the Microsoft.Network/virtualNetworks/subnets resource.')
+@description('The ID.')
 output id string = Network_virtualNetworks_subnets_.id
 
 @description('The name.')

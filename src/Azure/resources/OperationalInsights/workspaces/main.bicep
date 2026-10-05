@@ -116,7 +116,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = OperationalInsights_workspaces_.id
 
 @description('The identity.')

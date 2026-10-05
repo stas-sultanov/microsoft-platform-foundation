@@ -57,7 +57,7 @@ resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/d
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = DocumentDB_databaseAccounts_sqlRoleDefinitions_.id
 
 @description('The name.')

@@ -89,7 +89,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Network_publicIPPrefixes_.id
 
 @description('The name.')
