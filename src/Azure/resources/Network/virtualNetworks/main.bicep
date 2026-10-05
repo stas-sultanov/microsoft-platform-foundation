@@ -42,7 +42,8 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	@validate(
-		value => value.?enableDdosProtection != true || value.?ddosProtectionPlan != null,
+		value =>
+			value.?enableDdosProtection != true || value.?ddosProtectionPlan != null,
 		'enableDdosProtection requires ddosProtectionPlan.'
 	)
 	properties: {
