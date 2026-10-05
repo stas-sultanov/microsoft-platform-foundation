@@ -60,7 +60,7 @@ resource Network_networkSecurityPerimeters_profiles_accessRules_ 'Microsoft.Netw
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Network_networkSecurityPerimeters_profiles_.id
 
 @description('The name.')

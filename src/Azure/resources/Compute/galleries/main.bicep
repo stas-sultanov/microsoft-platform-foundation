@@ -68,7 +68,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Compute_galleries_.id
 
 @description('The identity.')

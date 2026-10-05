@@ -19,6 +19,8 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 import * as MaintenanceConfigurationAssignments from '../../../library/Maintenance/configurationAssignments.bicep'
 
+import * as NetworkVirtualNetworkGateways from '../../../library/Network/virtualNetworkGateways.bicep'
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -37,6 +39,15 @@ param extensions {
 		configurationAssignments: MaintenanceConfigurationAssignments.Resource[]
 	}
 }
+
+@description('The child resources.')
+@sealed()
+param resources {
+	@description('The NAT rules.')
+	natRules: {
+		*: NetworkVirtualNetworkGateways.NatRuleChildResource
+	}
+}?
 
 @description('The resource settings.')
 @sealed()
@@ -64,6 +75,14 @@ resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGatewa
 	properties: settings.properties
 	tags: settings.tags
 }
+
+resource Network_virtualNetworkGateways_natRules_ 'Microsoft.Network/virtualNetworkGateways/natRules@2025-09-01' = [
+	for item in sys.items(resources.?natRules ?? {}): {
+		name: item.value.name
+		parent: Network_virtualNetworkGateways_
+		properties: item.value.properties
+	}
+]
 
 /* EXTENSIONS */
 
@@ -98,7 +117,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Network_virtualNetworkGateways_.id
 
 @description('The identity.')
@@ -106,3 +125,16 @@ output identity resourceOutput<'Microsoft.Network/virtualNetworkGateways@2025-09
 
 @description('The name.')
 output name string = Network_virtualNetworkGateways_.name
+
+@description('The properties.')
+output properties {
+	@description('The BGP settings.')
+	bgpSettings: {
+		@description('The BGP speaker\'s ASN.')
+		asn: resourceOutput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.properties.bgpSettings.asn?
+	}
+} = {
+	bgpSettings: {
+		asn: Network_virtualNetworkGateways_.properties.?bgpSettings.?asn
+	}
+}

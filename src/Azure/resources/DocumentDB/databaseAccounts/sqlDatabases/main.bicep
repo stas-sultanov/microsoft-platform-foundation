@@ -30,6 +30,11 @@ param settings {
 	properties: {
 		@description('The database options. Note: Either throughput or autoscaleSettings is required, but not both.')
 		@sealed()
+		@validate(
+			value =>
+				(value.?throughput == null) != (value.?autoscaleSettings == null),
+			'Exactly one of throughput or autoscaleSettings must be specified.'
+		)
 		options: {
 			@description('The autoscale settings.')
 			@sealed()
@@ -80,7 +85,7 @@ resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databas
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = DocumentDB_databaseAccounts_sqlDatabases_.id
 
 @description('The identity.')

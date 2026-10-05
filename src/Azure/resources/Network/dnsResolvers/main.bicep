@@ -120,7 +120,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Network_dnsResolvers_.id
 
 @description('The name.')

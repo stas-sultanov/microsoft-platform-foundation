@@ -232,7 +232,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = VirtualMachineImages_imageTemplates_.id
 
 @description('The identity.')

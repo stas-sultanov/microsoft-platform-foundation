@@ -34,6 +34,11 @@ param extensions {
 
 @description('The resource settings.')
 @sealed()
+@validate(
+	value =>
+		(value.sku.name == 'Premium' || value.sku.name == 'Standard') || (value.properties.?enablePurgeProtection == null && value.properties.?softDeleteRetentionInDays == null),
+	'SKUs Free and Developer do not support enablePurgeProtection and softDeleteRetentionInDays.'
+)
 param settings {
 	@description('The identity.')
 	identity: resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity?
@@ -125,7 +130,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = AppConfiguration_configurationStores_.id
 
 @description('The identity.')

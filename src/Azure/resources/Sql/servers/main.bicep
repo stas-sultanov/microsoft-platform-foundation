@@ -200,7 +200,7 @@ resource Insights_diagnosticSettings__Master 'Microsoft.Insights/diagnosticSetti
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Sql_servers_.id
 
 @description('The identity.')

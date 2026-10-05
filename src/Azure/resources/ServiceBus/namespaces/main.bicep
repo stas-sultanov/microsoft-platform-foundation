@@ -34,6 +34,11 @@ param extensions {
 
 @description('The resource settings.')
 @sealed()
+@validate(
+	value =>
+		value.sku.name == 'Premium' || (value.properties.?geoDataReplication == null && value.properties.?premiumMessagingPartitions == null && value.properties.?privateEndpointConnections == null),
+	'SKU Premium is required for geoDataReplication, premiumMessagingPartitions, and privateEndpointConnections.'
+)
 param settings {
 	@description('The identity.')
 	identity: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.identity?
@@ -46,29 +51,22 @@ param settings {
 	properties: {
 		@description('Alternate name specified when alias and namespace names are same.')
 		alternateName: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.alternateName?
-		@description('Geo-data replication settings for the namespace.')
+		@description('Geo-data replication settings for the namespace. Requires: sku.name == \'Premium\'.')
 		geoDataReplication: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.geoDataReplication?
 		@description('IP address type for namespace endpoints.')
 		ipAddressType: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.ipAddressType
 		@description('Number of premium messaging partitions for the namespace. Requires: sku.name == \'Premium\'.')
 		premiumMessagingPartitions: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.premiumMessagingPartitions?
-		@description('Private endpoint connections for the namespace.')
+		@description('Private endpoint connections for the namespace. Requires: sku.name == \'Premium\'.')
 		privateEndpointConnections: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.privateEndpointConnections?
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.publicNetworkAccess
-		@description('Value that indicates whether this namespace is zone-redundant. Requires: sku.name == \'Premium\'.')
-		zoneRedundant: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.zoneRedundant
 	}
 	@description('The SKU.')
 	sku: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.sku
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.tags
 }
-
-/* VARIABLES */
-
-@description('Indicates whether the SKU is Premium.')
-var isPremiumSku = settings.sku.name == 'Premium'
 
 /* RESOURCES */
 
@@ -82,12 +80,6 @@ resource ServiceBus_namespaces_ 'Microsoft.ServiceBus/namespaces@2026-01-01' = {
 		...settings.properties
 		disableLocalAuth: true
 		minimumTlsVersion: '1.3'
-		premiumMessagingPartitions: isPremiumSku
-			? settings.properties.?premiumMessagingPartitions
-			: null
-		zoneRedundant: isPremiumSku
-			? settings.properties.zoneRedundant
-			: false
 	}
 	sku: settings.sku
 	tags: settings.tags
@@ -117,7 +109,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = ServiceBus_namespaces_.id
 
 @description('The identity.')

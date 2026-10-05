@@ -44,6 +44,8 @@ Type names MUST describe intent, such as `PropertiesInput`, `ResourceInput`, `Re
 
 Configurable property types SHOULD contain only properties that consumers are expected to control when the module defines a curated property contract.
 
+**One validation boundary per semantic invariant group.** Place `@validate()` on the narrowest type that owns the related properties, and combine related conditions into a single predicate.
+
 Standard Bicep resource-derived types, such as `resourceInput` and `resourceOutput`, SHOULD be used wherever possible.
 
 `settings.properties` MUST represent the Azure resource `properties` object. It MAY use `resourceInput<...>.properties` directly when the native Azure resource property shape is the intended contract, or a curated object type when the foundation intentionally exposes only selected properties.

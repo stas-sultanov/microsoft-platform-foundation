@@ -41,6 +41,11 @@ param settings {
 	name: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.name
 	@description('The configurable properties.')
 	@sealed()
+	@validate(
+		value =>
+			value.enableSoftDelete || (!value.enablePurgeProtection && value.?softDeleteRetentionInDays == null),
+		'enablePurgeProtection and softDeleteRetentionInDays cannot be specified when enableSoftDelete is false.'
+	)
 	properties: {
 		@description('Specifies whether purge protection is enabled for this vault.')
 		enablePurgeProtection: bool
@@ -109,7 +114,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = KeyVault_vaults_.id
 
 @description('The name.')

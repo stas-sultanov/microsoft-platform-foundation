@@ -161,7 +161,8 @@
 		}
 	},
 	"experimentalFeaturesEnabled": {
-		"ociEnabled": true
+		"ociEnabled": true,
+		"userDefinedConstraints": true
 	},
 	"extensions": {
 		"microsoftGraph": "br:mcr.microsoft.com/bicep/extensions/microsoftgraph/beta:1.0.0"

@@ -41,7 +41,7 @@ resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'M
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_.id
 
 @description('The name.')

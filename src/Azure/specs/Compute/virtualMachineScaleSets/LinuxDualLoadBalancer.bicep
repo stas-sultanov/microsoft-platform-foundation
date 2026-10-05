@@ -305,7 +305,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Compute_virtualMachineScaleSets_.id
 
 @description('The identity.')

@@ -42,7 +42,22 @@ param settings {
 	@description('The configurable properties.')
 	properties: resourceInput<'Microsoft.Network/loadBalancers@2025-09-01'>.properties
 	@description('The SKU.')
-	sku: resourceInput<'Microsoft.Network/loadBalancers@2025-09-01'>.sku
+	@sealed()
+	@validate(
+		value =>
+			value.?tier != 'Global' || value.name == 'Standard',
+		'Tier Global requires the Standard SKU.'
+	)
+	sku: {
+		@description('The name of the SKU.')
+		name:
+			| 'Standard'
+			| 'Gateway'
+		@description('The tier of the SKU.')
+		tier:
+			| 'Regional'
+			| 'Global'
+	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/loadBalancers@2025-09-01'>.tags
 }
@@ -81,7 +96,7 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = Network_loadBalancers_.id
 
 @description('The properties.')

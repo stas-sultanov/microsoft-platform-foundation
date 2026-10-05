@@ -24,7 +24,11 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.name
 	@description('The configurable properties.')
-	properties: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.properties
+	@sealed()
+	properties: {
+		@description('Specifies whether the global registry endpoint routes traffic to this replication.')
+		regionEndpointEnabled: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.properties.regionEndpointEnabled?
+	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.tags
 }
@@ -49,5 +53,5 @@ resource ContainerRegistry_registries_replications_ 'Microsoft.ContainerRegistry
 
 /* OUTPUTS */
 
-@description('The id.')
+@description('The ID.')
 output id string = ContainerRegistry_registries_replications_.id
