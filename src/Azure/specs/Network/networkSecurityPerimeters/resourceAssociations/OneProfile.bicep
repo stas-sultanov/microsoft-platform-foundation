@@ -23,19 +23,19 @@ type ResourceAssociationChildResource = {
 	@sealed()
 	properties: {
 		@description('Access mode on the association.')
-		accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-09-01'>.properties.accessMode
+		accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01'>.properties.accessMode
 		@description('The PaaS resource to be associated.')
-		privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-09-01'>.properties.privateLinkResource
+		privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01'>.properties.privateLinkResource
 	}
 }
 
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.Network/networkSecurityPerimeters resource.')
-param parentName resourceInput<'Microsoft.Network/networkSecurityPerimeters@2025-09-01'>.name
+param parentName resourceInput<'Microsoft.Network/networkSecurityPerimeters@2026-01-01'>.name
 
 @description('The name of the Microsoft.Network/networkSecurityPerimeters/profiles resource under the parent perimeter specified by parentName.')
-param parentProfileName resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles@2025-09-01'>.name
+param parentProfileName resourceInput<'Microsoft.Network/networkSecurityPerimeters/profiles@2026-01-01'>.name
 
 @description('The child resources.')
 @sealed()
@@ -46,18 +46,18 @@ param resources {
 
 /* EXISTING RESOURCES */
 
-resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPerimeters@2025-09-01' existing = {
+resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPerimeters@2026-01-01' existing = {
 	name: parentName
 }
 
-resource Network_networkSecurityPerimeters_profile_ 'Microsoft.Network/networkSecurityPerimeters/profiles@2025-09-01' existing = {
+resource Network_networkSecurityPerimeters_profile_ 'Microsoft.Network/networkSecurityPerimeters/profiles@2026-01-01' existing = {
 	name: parentProfileName
 	parent: Network_networkSecurityPerimeters_
 }
 
 /* RESOURCES */
 
-resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2025-09-01' = [
+resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01' = [
 	for item in resources.resourceAssociations: {
 		name: item.name
 		parent: Network_networkSecurityPerimeters_

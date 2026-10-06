@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Network/networkWatchers resource with extensions.'
+metadata description = 'Provisions a Microsoft.Network/localNetworkGateways resource with extensions.'
 
 /* SCOPE */
 
@@ -32,17 +32,24 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/networkWatchers@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/localNetworkGateways@2026-01-01'>.name
+	@description('The configurable properties.')
+	@validate(
+		value =>
+			(value.?fqdn != null) != (value.?gatewayIpAddress != null),
+		'Either fqdn or gatewayIpAddress must be specified.'
+	)
+	properties: resourceInput<'Microsoft.Network/localNetworkGateways@2026-01-01'>.properties
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/networkWatchers@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/localNetworkGateways@2026-01-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_networkWatchers_ 'Microsoft.Network/networkWatchers@2026-01-01' = {
+resource Network_localNetworkGateways_ 'Microsoft.Network/localNetworkGateways@2026-01-01' = {
 	location: settings.location
 	name: settings.name
-	properties: {}
+	properties: settings.properties
 	tags: settings.tags
 }
 
@@ -50,19 +57,19 @@ resource Network_networkWatchers_ 'Microsoft.Network/networkWatchers@2026-01-01'
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
 	for item in AuthorizationRoleAssignments.CreateArray(
-		Network_networkWatchers_.id,
+		Network_localNetworkGateways_.id,
 		extensions.?Authorization.roleAssignments ?? []
 	): {
 		name: item.name
 		properties: item.properties
-		scope: Network_networkWatchers_
+		scope: Network_localNetworkGateways_
 	}
 ]
 
 /* OUTPUTS */
 
 @description('The ID.')
-output id string = Network_networkWatchers_.id
+output id string = Network_localNetworkGateways_.id
 
 @description('The name.')
-output name string = Network_networkWatchers_.name
+output name string = Network_localNetworkGateways_.name

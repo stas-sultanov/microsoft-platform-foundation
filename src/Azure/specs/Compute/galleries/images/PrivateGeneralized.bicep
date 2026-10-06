@@ -27,7 +27,7 @@ param extensions {
 }
 
 @description('The name of the parent Microsoft.Compute/galleries resource.')
-param parentName resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
+param parentName resourceInput<'Microsoft.Compute/galleries@2026-03-03'>.name
 
 @description('The resource settings.')
 @sealed()
@@ -35,16 +35,16 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Compute/galleries/images@2025-12-03'>.name
+	name: resourceInput<'Microsoft.Compute/galleries/images@2026-03-03'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('The architecture of the image. Applicable to OS disks only.')
-		architecture: resourceInput<'Microsoft.Compute/galleries/images@2025-12-03'>.properties.architecture
+		architecture: resourceInput<'Microsoft.Compute/galleries/images@2026-03-03'>.properties.architecture
 		@description('The description of this gallery image definition resource.')
 		description: string?
 		@description('Describes the disallowed disk types.')
-		disallowed: resourceInput<'Microsoft.Compute/galleries/images@2025-12-03'>.properties.disallowed?
+		disallowed: resourceInput<'Microsoft.Compute/galleries/images@2026-03-03'>.properties.disallowed?
 		@description('The end of life date of the gallery image definition.')
 		endOfLifeDate: string?
 		@description('A list of gallery image features.')
@@ -54,14 +54,14 @@ param settings {
 			IsHibernateSupported: bool
 		}
 		@description('This is the gallery image definition identifier.')
-		identifier: resourceInput<'Microsoft.Compute/galleries/images@2025-12-03'>.properties.identifier
+		identifier: resourceInput<'Microsoft.Compute/galleries/images@2026-03-03'>.properties.identifier
 		@description('This property allows you to specify the type of the OS that is included in the disk when creating a VM from a managed image.')
-		osType: resourceInput<'Microsoft.Compute/galleries/images@2025-12-03'>.properties.osType
+		osType: resourceInput<'Microsoft.Compute/galleries/images@2026-03-03'>.properties.osType
 		@description('The properties describe the recommended machine configuration for this Image Definition.')
-		recommended: resourceInput<'Microsoft.Compute/galleries/images@2025-12-03'>.properties.recommended?
+		recommended: resourceInput<'Microsoft.Compute/galleries/images@2026-03-03'>.properties.recommended?
 	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Compute/galleries/images@2025-12-03'>.tags
+	tags: resourceInput<'Microsoft.Compute/galleries/images@2026-03-03'>.tags
 }
 
 /* VARIABLES */
@@ -91,13 +91,13 @@ var features = [
 
 /* EXISTING RESOURCES */
 
-resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' existing = {
+resource Compute_galleries_ 'Microsoft.Compute/galleries@2026-03-03' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
-resource Compute_galleries_images_ 'Microsoft.Compute/galleries/images@2025-12-03' = {
+resource Compute_galleries_images_ 'Microsoft.Compute/galleries/images@2026-03-03' = {
 	location: settings.location
 	name: settings.name
 	parent: Compute_galleries_

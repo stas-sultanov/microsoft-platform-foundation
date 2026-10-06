@@ -28,7 +28,7 @@ param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
-resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' existing = {
+resource Compute_galleries_ 'Microsoft.Compute/galleries@2026-03-03' existing = {
 	name: galleryName
 	resource images_ 'images' existing = {
 		name: galleryImageName

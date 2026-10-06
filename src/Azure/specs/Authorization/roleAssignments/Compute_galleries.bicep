@@ -18,14 +18,14 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 /* PARAMETERS */
 
 @description('Name of the Microsoft.Compute/galleries resource.')
-param name resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
+param name resourceInput<'Microsoft.Compute/galleries@2026-03-03'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
-resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' existing = {
+resource Compute_galleries_ 'Microsoft.Compute/galleries@2026-03-03' existing = {
 	name: name
 }
 

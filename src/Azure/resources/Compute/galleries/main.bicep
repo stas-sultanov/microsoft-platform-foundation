@@ -30,20 +30,20 @@ param extensions {
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.identity?
+	identity: resourceInput<'Microsoft.Compute/galleries@2026-03-03'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.name
+	name: resourceInput<'Microsoft.Compute/galleries@2026-03-03'>.name
 	@description('The properties.')
-	properties: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.properties
+	properties: resourceInput<'Microsoft.Compute/galleries@2026-03-03'>.properties
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Compute/galleries@2025-12-03'>.tags
+	tags: resourceInput<'Microsoft.Compute/galleries@2026-03-03'>.tags
 }
 
 /* RESOURCES */
 
-resource Compute_galleries_ 'Microsoft.Compute/galleries@2025-12-03' = {
+resource Compute_galleries_ 'Microsoft.Compute/galleries@2026-03-03' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}
@@ -72,7 +72,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 output id string = Compute_galleries_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Compute/galleries@2025-12-03'>.identity? = Compute_galleries_.?identity
+output identity resourceOutput<'Microsoft.Compute/galleries@2026-03-03'>.identity? = Compute_galleries_.?identity
 
 @description('The name.')
 output name string = Compute_galleries_.name
