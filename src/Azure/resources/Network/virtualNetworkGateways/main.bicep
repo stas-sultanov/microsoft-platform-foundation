@@ -53,20 +53,20 @@ param resources {
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.identity?
+	identity: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.name
+	name: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.name
 	@description('The properties.')
-	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.properties
+	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.properties
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.tags
+	tags: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2025-09-01' = {
+resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2026-01-01' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}
@@ -76,7 +76,7 @@ resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGatewa
 	tags: settings.tags
 }
 
-resource Network_virtualNetworkGateways_natRules_ 'Microsoft.Network/virtualNetworkGateways/natRules@2025-09-01' = [
+resource Network_virtualNetworkGateways_natRules_ 'Microsoft.Network/virtualNetworkGateways/natRules@2026-01-01' = [
 	for item in sys.items(resources.?natRules ?? {}): {
 		name: item.value.name
 		parent: Network_virtualNetworkGateways_
@@ -121,7 +121,7 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 output id string = Network_virtualNetworkGateways_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.identity? = Network_virtualNetworkGateways_.?identity
+output identity resourceOutput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.identity? = Network_virtualNetworkGateways_.?identity
 
 @description('The name.')
 output name string = Network_virtualNetworkGateways_.name
@@ -131,7 +131,7 @@ output properties {
 	@description('The BGP settings.')
 	bgpSettings: {
 		@description('The BGP speaker\'s ASN.')
-		asn: resourceOutput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.properties.bgpSettings.asn?
+		asn: resourceOutput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.properties.bgpSettings.asn?
 	}
 } = {
 	bgpSettings: {

@@ -38,16 +38,16 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/networkSecurityGroups@2025-09-01'>.name
+	name: resourceInput<'Microsoft.Network/networkSecurityGroups@2026-01-01'>.name
 	@description('The configurable properties.')
-	properties: resourceInput<'Microsoft.Network/networkSecurityGroups@2025-09-01'>.properties
+	properties: resourceInput<'Microsoft.Network/networkSecurityGroups@2026-01-01'>.properties
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/networkSecurityGroups@2025-09-01'>.tags
+	tags: resourceInput<'Microsoft.Network/networkSecurityGroups@2026-01-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups@2025-09-01' = {
+resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups@2026-01-01' = {
 	location: settings.location
 	name: settings.name
 	properties: settings.properties

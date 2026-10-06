@@ -28,7 +28,7 @@ param storageQueueName string
 
 /* EXISTING RESOURCES */
 
-resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
+resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-06-01' existing = {
 	name: storageAccountName
 	resource queueServices_ 'queueServices' existing = {
 		name: 'default'

@@ -27,7 +27,7 @@ param extensions {
 }
 
 @description('The name of the parent Microsoft.Storage/storageAccounts resource.')
-param parentStorageAccountName resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
+param parentStorageAccountName resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.name
 
 @description('The child resources.')
 @sealed()
@@ -36,7 +36,7 @@ param resources {
 	immutabilityPolicies: {
 		@sealed()
 		Default: {
-			properties: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies@2026-04-01'>.properties
+			properties: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies@2026-06-01'>.properties
 		}
 	}
 }?
@@ -47,22 +47,22 @@ param settings {
 	@description('The name.')
 	@maxLength(63)
 	@minLength(3)
-	name: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.name
+	name: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		defaultEncryptionScope: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.defaultEncryptionScope?
-		denyEncryptionScopeOverride: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.denyEncryptionScopeOverride?
-		enableNfsV3AllSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.enableNfsV3AllSquash?
-		enableNfsV3RootSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.enableNfsV3RootSquash?
-		immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.immutableStorageWithVersioning?
-		metadata: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01'>.properties.metadata?
+		defaultEncryptionScope: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.defaultEncryptionScope?
+		denyEncryptionScopeOverride: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.denyEncryptionScopeOverride?
+		enableNfsV3AllSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.enableNfsV3AllSquash?
+		enableNfsV3RootSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.enableNfsV3RootSquash?
+		immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.immutableStorageWithVersioning?
+		metadata: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.metadata?
 	}
 }
 
 /* EXISTING RESOURCES */
 
-resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
+resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-06-01' existing = {
 	name: parentStorageAccountName
 
 	resource blobServices_ 'blobServices' existing = {
@@ -72,7 +72,7 @@ resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01'
 
 /* RESOURCES */
 
-resource Storage_storageAccounts_blobServices_containers_ 'Microsoft.Storage/storageAccounts/blobServices/containers@2026-04-01' = {
+resource Storage_storageAccounts_blobServices_containers_ 'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01' = {
 	name: settings.name
 	parent: Storage_storageAccounts_::blobServices_
 	properties: settings.properties

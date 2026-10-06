@@ -15,7 +15,7 @@ Authored and maintained by [Stas Sultanov][linked_in_profile].
 
 The foundation depends directly on Bicep, is tied to its version, and is updated with every new Bicep release.
 
-Bicep CLI version: [0.47.16](https://github.com/Azure/bicep/releases/tag/v0.47.16).
+Bicep CLI version: [0.48.1](https://github.com/Azure/bicep/releases/tag/v0.48.1).
 
 ## Documentation
 

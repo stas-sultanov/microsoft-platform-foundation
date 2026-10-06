@@ -16,5 +16,5 @@ type NatRuleChildResource = {
 	@description('The resource name.')
 	name: string
 	@description('Properties of the virtual network gateway NAT rule.')
-	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways/natRules@2025-09-01'>.properties
+	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways/natRules@2026-01-01'>.properties
 }

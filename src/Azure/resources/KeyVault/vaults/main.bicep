@@ -38,7 +38,7 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.name
+	name: resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.name
 	@description('The configurable properties.')
 	@sealed()
 	@validate(
@@ -52,7 +52,7 @@ param settings {
 		@description('Specifies whether soft delete is enabled for this key vault.')
 		enableSoftDelete: bool
 		@description('Rules governing the accessibility of the key vault from specific network locations.')
-		networkAcls: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.properties.networkAcls?
+		networkAcls: resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.properties.networkAcls?
 		@description('The network access mode.')
 		publicNetworkAccess:
 			| 'Enabled'
@@ -64,12 +64,12 @@ param settings {
 		softDeleteRetentionInDays: int?
 	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.KeyVault/vaults@2026-02-01'>.tags
+	tags: resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.tags
 }
 
 /* RESOURCES */
 
-resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-02-01' = {
+resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-05-15' = {
 	location: settings.location
 	name: settings.name
 	properties: {

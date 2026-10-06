@@ -23,27 +23,27 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @sealed()
 type StorageAccountPropertiesInput = {
 	@description('The access tier for the storage account.')
-	accessTier: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.accessTier?
+	accessTier: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.accessTier?
 	@description('Allow or disallow cross Entra tenant object replication.')
-	allowCrossTenantReplication: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.allowCrossTenantReplication?
+	allowCrossTenantReplication: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.allowCrossTenantReplication?
 	@description('Restrict copy to and from Storage Accounts within an Entra tenant or with Private Links to the same VNet.')
-	allowedCopyScope: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.allowedCopyScope?
+	allowedCopyScope: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.allowedCopyScope?
 	@description('The type of endpoint.')
-	dnsEndpointType: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.dnsEndpointType?
+	dnsEndpointType: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.dnsEndpointType?
 	@description('The Internet protocol.')
-	dualStackEndpointPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.dualStackEndpointPreference?
+	dualStackEndpointPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.dualStackEndpointPreference?
 	@description('Status indicating whether Geo Priority Replication is enabled for the account.')
-	geoPriorityReplicationStatus: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.geoPriorityReplicationStatus?
+	geoPriorityReplicationStatus: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.geoPriorityReplicationStatus?
 	@description('Enable or disable immutable storage with versioning for the storage account.')
-	immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.immutableStorageWithVersioning?
+	immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.immutableStorageWithVersioning?
 	@description('Indicates whether hierarchical namespace (HNS) is enabled')
-	isHnsEnabled: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.isHnsEnabled?
+	isHnsEnabled: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.isHnsEnabled?
 	@description('The network access control list for the storage account.')
-	networkAcls: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.networkAcls?
+	networkAcls: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.networkAcls?
 	@description('The network access mode.')
-	publicNetworkAccess: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.publicNetworkAccess?
+	publicNetworkAccess: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.publicNetworkAccess?
 	@description('Maintains information about the network routing choice opted by the user for data transfer.')
-	routingPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.properties.routingPreference?
+	routingPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.routingPreference?
 }
 
 /* PARAMETERS */
@@ -83,13 +83,13 @@ param resources {
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.identity?
+	identity: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
 	@maxLength(24)
 	@minLength(3)
-	name: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
+	name: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.name
 	@description('The configurable properties.')
 	properties: StorageAccountPropertiesInput
 	@description('The SKU.')
@@ -104,14 +104,14 @@ param settings {
 			| 'Standard_RAGZRS'
 	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.tags
+	tags: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.tags
 	@description('The pinned logical availability zones.')
-	zones: resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.zones?
+	zones: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.zones?
 }
 
 /* RESOURCES */
 
-resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' = {
+resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-06-01' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}
@@ -174,7 +174,7 @@ resource Insights_diagnosticSettings__Storage_storageAccounts__blobServices_ 'Mi
 output id string = Storage_storageAccounts_.id
 
 @description('The identity.')
-output identity resourceOutput<'Microsoft.Storage/storageAccounts@2026-04-01'>.identity? = Storage_storageAccounts_.?identity
+output identity resourceOutput<'Microsoft.Storage/storageAccounts@2026-06-01'>.identity? = Storage_storageAccounts_.?identity
 
 @description('The name.')
 output name string = Storage_storageAccounts_.name

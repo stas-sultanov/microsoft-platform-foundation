@@ -18,14 +18,14 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 /* PARAMETERS */
 
 @description('Name of the Microsoft.Storage/storageAccounts resource.')
-param name resourceInput<'Microsoft.Storage/storageAccounts@2026-04-01'>.name
+param name resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 
 /* EXISTING RESOURCES */
 
-resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
+resource Storage_storageAccounts_ 'Microsoft.Storage/storageAccounts@2026-06-01' existing = {
 	name: name
 }
 

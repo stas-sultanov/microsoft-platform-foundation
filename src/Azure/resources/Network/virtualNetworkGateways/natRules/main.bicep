@@ -18,20 +18,20 @@ import * as NetworkVirtualNetworkGateways from '../../../../library/Network/virt
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.Network/virtualNetworkGateways resource.')
-param parentName resourceInput<'Microsoft.Network/virtualNetworkGateways@2025-09-01'>.name
+param parentName resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.name
 
 @description('The resource settings.')
 param settings NetworkVirtualNetworkGateways.NatRuleChildResource
 
 /* EXISTING RESOURCES */
 
-resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2025-09-01' existing = {
+resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2026-01-01' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
-resource Network_virtualNetworkGateways_natRules_ 'Microsoft.Network/virtualNetworkGateways/natRules@2025-09-01' = {
+resource Network_virtualNetworkGateways_natRules_ 'Microsoft.Network/virtualNetworkGateways/natRules@2026-01-01' = {
 	name: settings.name
 	parent: Network_virtualNetworkGateways_
 	properties: settings.properties
