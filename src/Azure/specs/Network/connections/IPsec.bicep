@@ -17,42 +17,11 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
-/* TYPES */
+import {
+	IPSecPolicyInput
+} from '../../../library/Network/connections.bicep'
 
-@description('The configuration of a custom IPsec policy.')
-@sealed()
-type IpsecPolicyInput = {
-	@description('The Diffie-Hellman group for IKE key exchange.')
-	dhGroup:
-		| 'DHGroup24'
-		| 'ECP256'
-		| 'ECP384'
-	@description('The IKE encryption algorithm. Pair GCMAES256 with GCMAES256 integrity.')
-	ikeEncryption:
-		| 'AES256'
-		| 'GCMAES256'
-	@description('The IKE integrity and pseudo-random function algorithm.')
-	ikeIntegrity:
-		| 'SHA256'
-		| 'SHA384'
-	@description('The IPsec encryption algorithm. Pair GCMAES256 with GCMAES256 integrity.')
-	ipsecEncryption:
-		| 'AES256'
-		| 'GCMAES256'
-	@description('The IPsec integrity algorithm.')
-	ipsecIntegrity:
-		| 'GCMAES256'
-		| 'SHA256'
-	@description('The Perfect Forward Secrecy group for IPsec key exchange.')
-	pfsGroup:
-		| 'ECP256'
-		| 'ECP384'
-		| 'PFS24'
-	@description('The IPSec Security Association (also called Quick Mode or Phase 2 SA) payload size in KB for a site to site VPN tunnel.')
-	saDataSizeKilobytes: int
-	@description('The IPSec Security Association (also called Quick Mode or Phase 2 SA) lifetime in seconds for a site to site VPN tunnel.')
-	saLifeTimeSeconds: int
-}
+/* TYPES */
 
 @description('The settings for an IPsec connection.')
 @sealed()
@@ -74,10 +43,11 @@ type ConnectionPropertiesInput = {
 	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
 	@minLength(1)
 	@maxLength(1)
-	ipsecPolicies: IpsecPolicyInput[]
+	ipsecPolicies: IPSecPolicyInput[]
 	@description('The resource ID of the local network gateway for this IPsec connection.')
 	localNetworkGateway2: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.localNetworkGateway2
 	@description('The shared key for the connection.')
+	@secure()
 	sharedKey: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.sharedKey?
 	@description('The traffic selector policies.')
 	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.trafficSelectorPolicies?
