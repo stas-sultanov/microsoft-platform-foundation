@@ -162,6 +162,7 @@
 	},
 	"experimentalFeaturesEnabled": {
 		"ociEnabled": true,
+		"sourceMapping": true,
 		"userDefinedConstraints": true
 	},
 	"extensions": {
