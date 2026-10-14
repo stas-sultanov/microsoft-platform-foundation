@@ -24,14 +24,44 @@ import {
 /* TYPES */
 
 @description('The settings for an IPsec connection.')
+@discriminator('authenticationType')
 @sealed()
-type ConnectionPropertiesInput = {
+type ConnectionPropertiesInput =
+	| ConnectionPropertiesWithCertificateInput
+	| ConnectionPropertiesWithPskInput
+
+@description('The settings for an IPsec connection using certificate authentication.')
+@sealed()
+type ConnectionPropertiesWithCertificateInput = {
 	@description('The connection authentication type.')
-	authenticationType:
-		| 'Certificate'
-		| 'PSK'
+	authenticationType: 'Certificate'
 	@description('Certificate authentication settings for the connection.')
-	certificateAuthentication: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.certificateAuthentication?
+	certificateAuthentication: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.certificateAuthentication
+	@description('The dead peer detection timeout in seconds.')
+	dpdTimeoutSeconds: int?
+	@description('Specifies whether BGP is enabled for this connection.')
+	enableBgp: bool?
+	@description('The ingress NAT rules.')
+	ingressNatRules: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.ingressNatRules?
+	@description('The egress NAT rules.')
+	egressNatRules: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.egressNatRules?
+	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
+	@minLength(1)
+	@maxLength(1)
+	ipsecPolicies: IPSecPolicyInput[]
+	@description('The resource ID of the local network gateway for this IPsec connection.')
+	localNetworkGateway2: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.localNetworkGateway2
+	@description('The traffic selector policies.')
+	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.trafficSelectorPolicies?
+	@description('The resource ID of the primary Microsoft.Network/virtualNetworkGateways resource.')
+	virtualNetworkGateway1: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.virtualNetworkGateway1
+}
+
+@description('The settings for an IPsec connection using a pre-shared key.')
+@sealed()
+type ConnectionPropertiesWithPskInput = {
+	@description('The connection authentication type.')
+	authenticationType: 'PSK'
 	@description('The dead peer detection timeout in seconds.')
 	dpdTimeoutSeconds: int?
 	@description('Specifies whether BGP is enabled for this connection.')
@@ -48,7 +78,7 @@ type ConnectionPropertiesInput = {
 	localNetworkGateway2: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.localNetworkGateway2
 	@description('The shared key for the connection.')
 	@secure()
-	sharedKey: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.sharedKey?
+	sharedKey: string
 	@description('The traffic selector policies.')
 	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.trafficSelectorPolicies?
 	@description('The resource ID of the primary Microsoft.Network/virtualNetworkGateways resource.')
