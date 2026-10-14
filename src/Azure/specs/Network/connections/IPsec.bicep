@@ -38,6 +38,8 @@ type ConnectionPropertiesWithCertificateInput = {
 	@description('Certificate authentication settings for the connection.')
 	certificateAuthentication: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.certificateAuthentication
 	@description('The dead peer detection timeout in seconds.')
+	@minValue(9)
+	@maxValue(3600)
 	dpdTimeoutSeconds: int?
 	@description('Specifies whether BGP is enabled for this connection.')
 	enableBgp: bool?
@@ -48,6 +50,11 @@ type ConnectionPropertiesWithCertificateInput = {
 	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
 	@minLength(1)
 	@maxLength(1)
+	@validate(
+		value =>
+			length(filter(value, policy => (policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256'))) == 0,
+		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
+	)
 	ipsecPolicies: IPSecPolicyInput[]
 	@description('The resource ID of the local network gateway for this IPsec connection.')
 	localNetworkGateway2: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.localNetworkGateway2
@@ -63,6 +70,8 @@ type ConnectionPropertiesWithPskInput = {
 	@description('The connection authentication type.')
 	authenticationType: 'PSK'
 	@description('The dead peer detection timeout in seconds.')
+	@minValue(9)
+	@maxValue(3600)
 	dpdTimeoutSeconds: int?
 	@description('Specifies whether BGP is enabled for this connection.')
 	enableBgp: bool?
@@ -73,6 +82,11 @@ type ConnectionPropertiesWithPskInput = {
 	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
 	@minLength(1)
 	@maxLength(1)
+	@validate(
+		value =>
+			length(filter(value, policy => (policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256'))) == 0,
+		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
+	)
 	ipsecPolicies: IPSecPolicyInput[]
 	@description('The resource ID of the local network gateway for this IPsec connection.')
 	localNetworkGateway2: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.localNetworkGateway2
