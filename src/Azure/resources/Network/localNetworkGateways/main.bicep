@@ -45,8 +45,8 @@ param settings {
 		@sealed()
 		bgpSettings: {
 			@description('The autonomous system number of the on-premises BGP speaker. Azure VPN Gateway FAQ reserved ASNs are not allowed. Must differ from the connected Azure VPN gateway ASN.')
-			@minValue(0)
-			@maxValue(4294967295)
+			@minValue(1)
+			@maxValue(4294967294)
 			@validate(
 				value =>
 					!sys.contains(

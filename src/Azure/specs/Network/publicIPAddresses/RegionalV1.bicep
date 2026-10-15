@@ -17,6 +17,64 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
+/* TYPES */
+
+@description('The configurable properties for a regional public IP address.')
+@discriminator('publicIPAddressVersion')
+type PublicIPAddressPropertiesInput =
+	| PublicIPAddressPropertiesIPv4Input
+	| PublicIPAddressPropertiesIPv6Input
+
+@description('The configurable properties for an IPv4 regional public IP address.')
+@sealed()
+type PublicIPAddressPropertiesIPv4Input = {
+	@description('The DDoS protection custom policy associated with the public IP address.')
+	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ddosSettings?
+	@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')
+	@sealed()
+	dnsSettings: {
+		@description('The domain name label used to generate the Azure-managed FQDN.')
+		@minLength(1)
+		domainNameLabel: string
+		@description('The reuse scope for the generated domain name label. Can only be set at creation.')
+		domainNameLabelScope: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.domainNameLabelScope
+		@description('The reverse FQDN used to create an IPv4 PTR record.')
+		reverseFqdn: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.reverseFqdn?
+	}?
+	@description('The inbound idle timeout in minutes.')
+	@minValue(4)
+	@maxValue(30)
+	idleTimeoutInMinutes: int?
+	@description('The list of tags associated with the public IP address.')
+	ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipTags?
+	@description('The public IP address version.')
+	publicIPAddressVersion: 'IPv4'
+	@description('The public IP prefix this public IP address should be allocated from.')
+	publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.publicIPPrefix?
+}
+
+@description('The configurable properties for an IPv6 regional public IP address.')
+@sealed()
+type PublicIPAddressPropertiesIPv6Input = {
+	@description('The DDoS protection custom policy associated with the public IP address.')
+	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ddosSettings?
+	@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')
+	@sealed()
+	dnsSettings: {
+		@description('The domain name label used to generate the Azure-managed FQDN.')
+		@minLength(1)
+		domainNameLabel: string
+		@description('The reuse scope for the generated domain name label. Can only be set at creation.')
+		domainNameLabelScope: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.domainNameLabelScope
+	}?
+	@description('The list of tags associated with the public IP address.')
+	ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipTags?
+	@description('The public IP address version.')
+	publicIPAddressVersion: 'IPv6'
+	@description('The public IP prefix this public IP address should be allocated from.')
+	publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.publicIPPrefix?
+}
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -40,49 +98,16 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.name
 	@description('The configurable properties.')
-	@sealed()
 	@validate(
 		value =>
-			value.?publicIPAddressVersion != 'IPv6' || (value.?dnsSettings.?reverseFqdn == null && sys.empty(sys.filter(
+			value.?publicIPAddressVersion != 'IPv6' || sys.empty(sys.filter(
 				value.?ipTags ?? [],
 				tag =>
 					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
-			))),
-		'Reverse DNS and Internet routing preference are not supported for IPv6 public IP addresses.'
+			)),
+		'Internet routing preference is not supported for IPv6 public IP addresses.'
 	)
-	properties: {
-		@description('The DDoS protection custom policy associated with the public IP address.')
-		ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ddosSettings?
-		@description('Specifies what happens to the public IP address when the VM using it is deleted.')
-		deleteOption: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.deleteOption?
-		@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')
-		@sealed()
-		dnsSettings: {
-			@description('The domain name label used to generate the Azure-managed FQDN.')
-			@minLength(1)
-			domainNameLabel: string
-			@description('The reuse scope for the generated domain name label. Can only be set at creation.')
-			domainNameLabelScope:
-				| 'TenantReuse'
-				| 'SubscriptionReuse'
-				| 'ResourceGroupReuse'
-				| 'NoReuse'
-			@description('The reverse FQDN used to create an IPv4 PTR record.')
-			reverseFqdn: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.reverseFqdn?
-		}?
-		@description('The inbound idle timeout in minutes.')
-		@minValue(4)
-		@maxValue(30)
-		idleTimeoutInMinutes: int?
-		@description('The IP tags. Internet routing preference requires IPv4.')
-		ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipTags?
-		@description('The public IP address version.')
-		publicIPAddressVersion: (
-			| 'IPv4'
-			| 'IPv6')?
-		@description('The public IP prefix this public IP address should be allocated from.')
-		publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.publicIPPrefix?
-	}?
+	properties: PublicIPAddressPropertiesInput?
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.tags
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
