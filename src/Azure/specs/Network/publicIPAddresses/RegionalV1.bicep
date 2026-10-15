@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Network/publicIPAddresses resource with extensions.'
+metadata description = 'Provisions a regional Standard v1 Microsoft.Network/publicIPAddresses resource with an Azure-assigned static IP address and extensions.'
 
 /* SCOPE */
 
@@ -41,42 +41,47 @@ param settings {
 	name: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.name
 	@description('The configurable properties.')
 	@sealed()
+	@validate(
+		value =>
+			value.?publicIPAddressVersion != 'IPv6' || (value.?dnsSettings.?reverseFqdn == null && sys.empty(sys.filter(
+				value.?ipTags ?? [],
+				tag =>
+					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
+			))),
+		'Reverse DNS and Internet routing preference are not supported for IPv6 public IP addresses.'
+	)
 	properties: {
 		@description('The DDoS protection custom policy associated with the public IP address.')
 		ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ddosSettings?
 		@description('Specifies what happens to the public IP address when the VM using it is deleted.')
 		deleteOption: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.deleteOption?
-		@description('The FQDN of the DNS record associated with the public IP address.')
-		dnsSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings?
-		@description('The idle timeout of the public IP address.')
-		idleTimeoutInMinutes: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.idleTimeoutInMinutes?
-		@description('The IP address associated with the public IP address resource.')
-		ipAddress: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipAddress?
-		@description('The list of tags associated with the public IP address.')
+		@description('The DNS settings.')
+		@sealed()
+		dnsSettings: {
+			@description('The domain name label used to generate the Azure-managed FQDN.')
+			domainNameLabel: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.domainNameLabel?
+			@description('The reuse scope for the generated domain name label. Can only be set at creation.')
+			domainNameLabelScope: (
+				| 'TenantReuse'
+				| 'SubscriptionReuse'
+				| 'ResourceGroupReuse'
+				| 'NoReuse')?
+			@description('The reverse FQDN used to create an IPv4 PTR record.')
+			reverseFqdn: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.reverseFqdn?
+		}?
+		@description('The inbound idle timeout in minutes.')
+		@minValue(4)
+		@maxValue(30)
+		idleTimeoutInMinutes: int?
+		@description('The IP tags. Internet routing preference requires IPv4.')
 		ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipTags?
-		@description('The linked public IP address of the public IP address resource.')
-		linkedPublicIPAddress: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.linkedPublicIPAddress?
-		@description('The migration phase of the public IP address.')
-		migrationPhase: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.migrationPhase?
-		@description('The NAT gateway for the public IP address.')
-		natGateway: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.natGateway?
 		@description('The public IP address version.')
-		publicIPAddressVersion: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.publicIPAddressVersion?
+		publicIPAddressVersion: (
+			| 'IPv4'
+			| 'IPv6')?
 		@description('The public IP prefix this public IP address should be allocated from.')
 		publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.publicIPPrefix?
-		@description('The service public IP address of the public IP address resource.')
-		servicePublicIPAddress: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.servicePublicIPAddress?
 	}?
-	@description('The SKU.')
-	@sealed()
-	sku: {
-		@description('The name of the SKU.')
-		name:
-			| 'Standard'
-			| 'StandardV2'
-		@description('The tier of the SKU.')
-		tier: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.sku.tier?
-	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.tags
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
@@ -84,11 +89,12 @@ param settings {
 	@maxLength(3)
 	@validate(
 		value =>
-			length(value ?? []) == length(union(
-				value ?? [],
-				[]
-			)),
-		'Availability zones must be unique.'
+			value == null || sys.length(value!) == 1 || value == [
+				'1'
+				'2'
+				'3'
+			],
+		'Specify null, one zone, or exactly [\'1\', \'2\', \'3\'].'
 	)
 	zones: (
 		| '1'
@@ -105,7 +111,10 @@ resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2026-01
 		...(settings.?properties ?? {})
 		publicIPAllocationMethod: 'Static'
 	}
-	sku: settings.sku
+	sku: {
+		name: 'Standard'
+		tier: 'Regional'
+	}
 	tags: settings.tags
 	zones: settings.?zones
 }

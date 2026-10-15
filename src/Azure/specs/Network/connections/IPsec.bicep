@@ -52,7 +52,7 @@ type ConnectionPropertiesWithCertificateInput = {
 	@maxLength(1)
 	@validate(
 		value =>
-			length(filter(value, policy => (policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256'))) == 0,
+			sys.length(sys.filter(value, policy => (policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256'))) == 0,
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
 	ipsecPolicies: IPSecPolicyInput[]
@@ -84,7 +84,7 @@ type ConnectionPropertiesWithPskInput = {
 	@maxLength(1)
 	@validate(
 		value =>
-			length(filter(value, policy => (policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256'))) == 0,
+			sys.length(filter(value, policy => (policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256'))) == 0,
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
 	ipsecPolicies: IPSecPolicyInput[]
