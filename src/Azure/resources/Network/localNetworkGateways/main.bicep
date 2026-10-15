@@ -44,12 +44,31 @@ param settings {
 		@description('The local network gateway BGP speaker settings.')
 		@sealed()
 		bgpSettings: {
-			@description('The autonomous system number of the BGP speaker.')
+			@description('The autonomous system number of the on-premises BGP speaker. Azure VPN Gateway FAQ reserved ASNs are not allowed. Must differ from the connected Azure VPN gateway ASN.')
 			@minValue(0)
 			@maxValue(4294967295)
-			asn: int?
+			@validate(
+				value =>
+					!sys.contains(
+						[
+							8074
+							8075
+							12076
+							23456
+							65515
+							65517
+							65518
+							65519
+							65520
+							429496729
+						],
+						value
+					) && (value < 64496 || value > 64511) && (value < 65535 || value > 65551),
+				'The ASN must not be reserved by Azure or IANA according to the Azure VPN Gateway FAQ: 8074, 8075, 12076, 23456, 64496-64511, 65515, 65517-65520, 65535-65551, or 429496729.'
+			)
+			asn: int
 			@description('The BGP peering address and identifier of the BGP speaker.')
-			bgpPeeringAddress: string?
+			bgpPeeringAddress: string
 			@description('The weight added to routes learned from the BGP speaker.')
 			peerWeight: int?
 		}?

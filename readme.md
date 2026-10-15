@@ -5,7 +5,10 @@
 [![Copilot](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/agents/copilot-pull-request-reviewer/badge.svg)][github_workflow_copilot]
 [![Release](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/release.yml/badge.svg)][github_workflow_release]
 
-An opinionated Bicep module library for secure, reliable infrastructure on Microsoft Azure and Microsoft Entra ID.
+Microsoft Platform Foundation is an opinionated Bicep module library that deliberately:
+- removes obsolete and unsafe Azure capabilities;
+- tightens incomplete ARM/Bicep types and adds missing service constraints; and
+- reshapes native APIs where necessary to make invalid configuration impossible.
 
 Authored and maintained by [Stas Sultanov][linked_in_profile].
 

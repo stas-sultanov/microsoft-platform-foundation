@@ -55,17 +55,18 @@ param settings {
 		ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ddosSettings?
 		@description('Specifies what happens to the public IP address when the VM using it is deleted.')
 		deleteOption: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.deleteOption?
-		@description('The DNS settings.')
+		@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')
 		@sealed()
 		dnsSettings: {
 			@description('The domain name label used to generate the Azure-managed FQDN.')
-			domainNameLabel: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.domainNameLabel?
+			@minLength(1)
+			domainNameLabel: string
 			@description('The reuse scope for the generated domain name label. Can only be set at creation.')
-			domainNameLabelScope: (
+			domainNameLabelScope:
 				| 'TenantReuse'
 				| 'SubscriptionReuse'
 				| 'ResourceGroupReuse'
-				| 'NoReuse')?
+				| 'NoReuse'
 			@description('The reverse FQDN used to create an IPv4 PTR record.')
 			reverseFqdn: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.reverseFqdn?
 		}?

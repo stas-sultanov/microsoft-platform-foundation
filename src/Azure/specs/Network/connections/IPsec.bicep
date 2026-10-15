@@ -52,14 +52,20 @@ type ConnectionPropertiesWithCertificateInput = {
 	@maxLength(1)
 	@validate(
 		value =>
-			sys.length(sys.filter(value, policy => (policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256'))) == 0,
+			sys.length(sys.filter(
+				value,
+				policy =>
+					(policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256')
+			)) == 0,
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
 	ipsecPolicies: IPSecPolicyInput[]
 	@description('The resource ID of the local network gateway for this IPsec connection.')
 	localNetworkGateway2: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.localNetworkGateway2
-	@description('The traffic selector policies.')
+	@description('The custom traffic selector policies, configured independently of usePolicyBasedTrafficSelectors.')
 	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.trafficSelectorPolicies?
+	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
+	usePolicyBasedTrafficSelectors: bool?
 	@description('The resource ID of the primary Microsoft.Network/virtualNetworkGateways resource.')
 	virtualNetworkGateway1: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.virtualNetworkGateway1
 }
@@ -84,7 +90,11 @@ type ConnectionPropertiesWithPskInput = {
 	@maxLength(1)
 	@validate(
 		value =>
-			sys.length(filter(value, policy => (policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256'))) == 0,
+			sys.length(sys.filter(
+				value,
+				policy =>
+					(policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256')
+			)) == 0,
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
 	ipsecPolicies: IPSecPolicyInput[]
@@ -93,8 +103,10 @@ type ConnectionPropertiesWithPskInput = {
 	@description('The shared key for the connection.')
 	@secure()
 	sharedKey: string
-	@description('The traffic selector policies.')
+	@description('The custom traffic selector policies, configured independently of usePolicyBasedTrafficSelectors.')
 	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.trafficSelectorPolicies?
+	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
+	usePolicyBasedTrafficSelectors: bool?
 	@description('The resource ID of the primary Microsoft.Network/virtualNetworkGateways resource.')
 	virtualNetworkGateway1: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.virtualNetworkGateway1
 }
