@@ -20,8 +20,12 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('Represents an autoscale profile for a resource.')
 @sealed()
 type AutoscaleProfile = {
-	@description('the number of instances that can be used during this profile.')
+	@description('The number of instances that can be used during this profile. The minimum must not exceed the maximum.')
 	@sealed()
+	@validate(
+		value => value.minimum <= value.maximum,
+		'The minimum capacity must not exceed the maximum capacity.'
+	)
 	capacity: {
 		@description('The maximum number of instances for the resource. The actual maximum number of instances is limited by the cores that are available in the subscription.')
 		maximum: int
@@ -31,6 +35,7 @@ type AutoscaleProfile = {
 	@description('The name of the profile.')
 	name: string
 	@description('The collection of rules that provide the triggers and parameters for the scaling action. A maximum of 10 rules can be specified.')
+	@maxLength(10)
 	rules: ScaleRule[]
 }
 
@@ -88,8 +93,9 @@ type ScaleRule = {
 			| 'ExactCount'
 			| 'PercentChangeCount'
 			| 'ServiceAllowedNextValue'
-		@description('The number of instances that are involved in the scaling action. This value must be 1 or greater. The default value is 1.')
-		value: string
+		@description('The positive integer scaling value. This value must be 1 or greater.')
+		@minValue(1)
+		value: int
 	}
 }
 
@@ -121,6 +127,7 @@ param settings {
 		@description('The predictive autoscale policy mode.')
 		predictiveAutoscalePolicy: resourceInput<'Microsoft.Insights/autoscaleSettings@2022-10-01'>.properties.predictiveAutoscalePolicy
 		@description('The collection of automatic scaling profiles that specify different scaling parameters for different time periods. A maximum of 20 profiles can be specified.')
+		@maxLength(20)
 		profiles: AutoscaleProfile[]
 		@description('The identifier of the Virtual Machine Scale Set resource.')
 		@sealed()
@@ -169,7 +176,10 @@ resource Insights_autoscaleSettings_ 'Microsoft.Insights/autoscaleSettings@2022-
 							metricNamespace: 'Microsoft.Compute/virtualMachineScaleSets'
 							metricResourceUri: Compute_virtualMachineScaleSets_.id
 						}
-						scaleAction: rule.scaleAction
+						scaleAction: {
+							...rule.scaleAction
+							value: sys.string(rule.scaleAction.value)
+						}
 					}
 				)
 			}

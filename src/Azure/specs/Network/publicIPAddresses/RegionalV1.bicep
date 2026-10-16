@@ -67,7 +67,16 @@ type PublicIPAddressPropertiesIPv6Input = {
 		@description('The reuse scope for the generated domain name label. Can only be set at creation.')
 		domainNameLabelScope: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.domainNameLabelScope
 	}?
-	@description('The list of tags associated with the public IP address.')
+	@description('The list of tags associated with the public IP address. Internet routing preference is not supported for IPv6.')
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				tag =>
+					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
+			)),
+		'Internet routing preference requires an IPv4 public IP address.'
+	)
 	ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipTags?
 	@description('The public IP address version.')
 	publicIPAddressVersion: 'IPv6'
@@ -98,8 +107,8 @@ param extensions {
 			value.?properties.?ipTags ?? [],
 			tag =>
 				tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
-		)) || (value.?properties.?publicIPAddressVersion != 'IPv6' && sys.length(value.?zones ?? []) != 1),
-	'Internet routing preference requires an IPv4 public IP address without an explicitly single-zone configuration.'
+		)) || sys.length(value.?zones ?? []) != 1,
+	'Internet routing preference does not support an explicitly single-zone configuration.'
 )
 param settings {
 	@description('The geo-location.')

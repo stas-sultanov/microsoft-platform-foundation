@@ -45,7 +45,16 @@ type PublicIPPrefixPropertiesIPv4Input = {
 type PublicIPPrefixPropertiesIPv6Input = {
 	@description('The customIpPrefix that this prefix is associated with.')
 	customIPPrefix: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.customIPPrefix?
-	@description('The list of tags associated with the public IP prefix.')
+	@description('The list of tags associated with the public IP prefix. Internet routing preference is not supported for IPv6.')
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				tag =>
+					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
+			)),
+		'Internet routing preference requires an IPv4 public IP prefix.'
+	)
 	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
 	@description('The CIDR prefix length.')
 	@minValue(124)
