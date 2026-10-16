@@ -92,40 +92,41 @@ param extensions {
 
 @description('The resource settings.')
 @sealed()
+@validate(
+	value =>
+		sys.empty(sys.filter(
+			value.?properties.?ipTags ?? [],
+			tag =>
+				tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
+		)) || (value.?properties.?publicIPAddressVersion != 'IPv6' && sys.length(value.?zones ?? []) != 1),
+	'Internet routing preference requires an IPv4 public IP address without an explicitly single-zone configuration.'
+)
 param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
 	name: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.name
 	@description('The configurable properties.')
-	@validate(
-		value =>
-			value.?publicIPAddressVersion != 'IPv6' || sys.empty(sys.filter(
-				value.?ipTags ?? [],
-				tag =>
-					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
-			)),
-		'Internet routing preference is not supported for IPv6 public IP addresses.'
-	)
 	properties: PublicIPAddressPropertiesInput?
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.tags
-	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-	@minLength(1)
-	@maxLength(3)
-	@validate(
-		value =>
-			value == null || sys.length(value!) == 1 || value == [
-				'1'
-				'2'
-				'3'
-			],
-		'Specify null, one zone, or exactly [\'1\', \'2\', \'3\'].'
-	)
-	zones: (
-		| '1'
-		| '2'
-		| '3')[]?
+	@description('A list of availability zones denoting the IP allocated for the resource needs to come from. Internet routing preference does not support an explicitly single-zone configuration.')
+	zones:
+		| [
+			'1'
+		]
+		| [
+			'2'
+		]
+		| [
+			'3'
+		]
+		| [
+			'1'
+			'2'
+			'3'
+		]
+		| null
 }
 
 /* RESOURCES */

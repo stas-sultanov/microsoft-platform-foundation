@@ -34,6 +34,24 @@ param extensions {
 
 @description('The resource settings.')
 @sealed()
+@validate(
+	value =>
+		sys.length(sys.union(
+			[
+				value.location
+			],
+			sys.map(
+				sys.filter(
+					sys.items(value.properties.locations),
+					item =>
+						item.key != 'Primary'
+				),
+				item =>
+					item.value.?locationName
+			)
+		)) == sys.length(sys.items(value.properties.locations)),
+	'Cosmos DB regions must be unique, including the primary region from settings.location.'
+)
 param settings {
 	@description('The identity.')
 	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.identity?
@@ -43,10 +61,15 @@ param settings {
 	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
 	@description('The configurable properties.')
 	@sealed()
+	@validate(
+		value =>
+			value.capacityMode == 'Provisioned' || value.?capacity == null,
+		'capacity can only be specified when capacityMode is Provisioned.'
+	)
 	properties: {
 		@description('The policy for taking backups on an account.')
 		backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.backupPolicy
-		@description('Properties related to capacity enforcement on an account.')
+		@description('Properties related to capacity enforcement on an account. Requires capacityMode to be Provisioned.')
 		capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacity?
 		@description('The capacity mode for the Cosmos DB account.')
 		capacityMode: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacityMode
@@ -54,7 +77,7 @@ param settings {
 		consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.consistencyPolicy
 		@description('List of IpRules.')
 		ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.ipRules
-		@description('Locations enabled for the Cosmos DB account.')
+		@description('Locations enabled for the Cosmos DB account. Regions must be unique, including the primary region from settings.location.')
 		locations: {
 			@description('The primary region.')
 			Primary: {

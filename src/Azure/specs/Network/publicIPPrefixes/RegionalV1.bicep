@@ -17,6 +17,44 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
+/* TYPES */
+
+@description('The configurable properties for a regional public IP prefix.')
+@discriminator('publicIPAddressVersion')
+type PublicIPPrefixPropertiesInput =
+	| PublicIPPrefixPropertiesIPv4Input
+	| PublicIPPrefixPropertiesIPv6Input
+
+@description('The configurable properties for an IPv4 regional public IP prefix.')
+@sealed()
+type PublicIPPrefixPropertiesIPv4Input = {
+	@description('The customIpPrefix that this prefix is associated with.')
+	customIPPrefix: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.customIPPrefix?
+	@description('The list of tags associated with the public IP prefix.')
+	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
+	@description('The CIDR prefix length.')
+	@minValue(28)
+	@maxValue(31)
+	prefixLength: int
+	@description('The public IP address version.')
+	publicIPAddressVersion: 'IPv4'
+}
+
+@description('The configurable properties for an IPv6 regional public IP prefix.')
+@sealed()
+type PublicIPPrefixPropertiesIPv6Input = {
+	@description('The customIpPrefix that this prefix is associated with.')
+	customIPPrefix: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.customIPPrefix?
+	@description('The list of tags associated with the public IP prefix.')
+	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
+	@description('The CIDR prefix length.')
+	@minValue(124)
+	@maxValue(127)
+	prefixLength: int
+	@description('The public IP address version.')
+	publicIPAddressVersion: 'IPv6'
+}
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -40,46 +78,26 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.name
 	@description('The configurable properties.')
-	@sealed()
-	@validate(
-		value =>
-			value.publicIPAddressVersion == 'IPv4'
-				? value.prefixLength <= 32 && (value.?customIPPrefix != null || (value.prefixLength >= 28 && value.prefixLength <= 31))
-				: value.?customIPPrefix != null || (value.prefixLength >= 124 && value.prefixLength <= 127),
-		'Azure-assigned prefixes require IPv4 /28-/31 or IPv6 /124-/127.'
-	)
-	properties: {
-		@description('The customIpPrefix that this prefix is associated with.')
-		customIPPrefix: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.customIPPrefix?
-		@description('The IP tags for the public IP prefix.')
-		ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
-		@description('The CIDR prefix length.')
-		@minValue(1)
-		@maxValue(128)
-		prefixLength: int
-		@description('The public IP address version.')
-		publicIPAddressVersion:
-			| 'IPv4'
-			| 'IPv6'
-	}
+	properties: PublicIPPrefixPropertiesInput
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.tags
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-	@minLength(1)
-	@maxLength(3)
-	@validate(
-		value =>
-			value == null || sys.length(value!) == 1 || value == [
-				'1'
-				'2'
-				'3'
-			],
-		'Specify null, one zone, or exactly [\'1\', \'2\', \'3\'].'
-	)
-	zones: (
-		| '1'
-		| '2'
-		| '3')[]?
+	zones:
+		| [
+			'1'
+		]
+		| [
+			'2'
+		]
+		| [
+			'3'
+		]
+		| [
+			'1'
+			'2'
+			'3'
+		]
+		| null
 }
 
 /* RESOURCES */
