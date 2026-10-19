@@ -76,15 +76,6 @@ param extensions {
 	}
 }
 
-@description('The child resources.')
-@sealed()
-param resources {
-	@description('The VPN gateway NAT rules.')
-	natRules: {
-		*: NetworkVirtualNetworkGateways.NatRuleChildResource
-	}
-}?
-
 @description('The resource settings.')
 @sealed()
 param settings {
@@ -96,6 +87,11 @@ param settings {
 	name: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.name
 	@description('The configurable properties.')
 	@sealed()
+	@validate(
+		value =>
+			sys.empty(value.?natRules ?? []) || value.sku.name != 'VpnGw1AZ',
+		'VPN gateway NAT rules require VpnGw2AZ, VpnGw3AZ, VpnGw4AZ, or VpnGw5AZ.'
+	)
 	properties: {
 		@description('The custom BGP settings.')
 		bgpSettings: BgpSettingsInput?
@@ -103,8 +99,6 @@ param settings {
 		enableBgp: bool
 		@description('Specifies whether to translated the BGP routes using NAT.')
 		enableBgpRouteTranslationForNat: bool
-		@description('The GatewaySubnet resource reference used by both gateway instances.')
-		gatewaySubnet: NetworkVirtualNetworkGateways.GatewaySubnetReference
 		@description('Exactly two distinct Standard, Static public IP references, one per gateway instance. Deploy the public IP resources separately.')
 		@sealed()
 		@validate(
@@ -113,27 +107,13 @@ param settings {
 			'Instance0 and Instance1 gateway instances must use different public IP address resources.'
 		)
 		ipConfigurations: {
-			@sealed()
-			Instance0: {
-				@sealed()
-				publicIPAddress: {
-					@description('The resource ID of the Microsoft.Network/publicIPAddresses resource assigned to the Instance0 gateway instance.')
-					id: string
-				}
-				@description('The reference to the subnet resource.')
-				subnet: NetworkVirtualNetworkGateways.GatewaySubnetReference
-			}
-			@sealed()
-			Instance1: {
-				@sealed()
-				publicIPAddress: {
-					@description('The resource ID of the Microsoft.Network/publicIPAddresses resource assigned to the Instance1 gateway instance.')
-					id: string
-				}
-				@description('The reference to the subnet resource.')
-				subnet: NetworkVirtualNetworkGateways.GatewaySubnetReference
-			}
+			@description('The IP configuration for the Instance0 gateway instance.')
+			Instance0: NetworkVirtualNetworkGateways.IpConfigurationInput
+			@description('The IP configuration for the Instance1 gateway instance.')
+			Instance1: NetworkVirtualNetworkGateways.IpConfigurationInput
 		}
+		@description('The optional VPN gateway NAT rules. Nonempty rules require VpnGw2AZ or higher.')
+		natRules: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.properties.natRules?
 		@description('The SKU.')
 		@sealed()
 		sku: {
@@ -185,15 +165,14 @@ resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGatewa
 		ipConfigurations: [
 			NetworkVirtualNetworkGateways.CreateIpConfiguration(
 				'Instance0',
-				settings.properties.ipConfigurations.Instance0.publicIPAddress.id,
-				settings.properties.gatewaySubnet.id
+				settings.properties.ipConfigurations.Instance0
 			)
 			NetworkVirtualNetworkGateways.CreateIpConfiguration(
 				'Instance1',
-				settings.properties.ipConfigurations.Instance1.publicIPAddress.id,
-				settings.properties.gatewaySubnet.id
+				settings.properties.ipConfigurations.Instance1
 			)
 		]
+		natRules: settings.properties.?natRules
 		sku: {
 			name: settings.properties.sku.name
 			tier: settings.properties.sku.name
@@ -202,14 +181,6 @@ resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGatewa
 	}
 	tags: settings.tags
 }
-
-resource Network_virtualNetworkGateways_natRules_ 'Microsoft.Network/virtualNetworkGateways/natRules@2026-01-01' = [
-	for item in sys.items(resources.?natRules ?? {}): {
-		name: item.value.name
-		parent: Network_virtualNetworkGateways_
-		properties: item.value.properties
-	}
-]
 
 /* EXTENSIONS */
 

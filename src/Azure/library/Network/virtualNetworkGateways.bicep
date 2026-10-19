@@ -9,20 +9,30 @@ metadata description = 'Provides reusable types and functions for Microsoft.Netw
 
 /* TYPES */
 
-@description('A resource reference to a virtual network subnet named GatewaySubnet.')
+@description('The configurable public IP and subnet references for a gateway IP configuration.')
 @export()
 @sealed()
-type GatewaySubnetReference = {
-	@description('The resource ID of the Microsoft.Network/virtualNetworks/subnets resource named GatewaySubnet.')
-	@validate(
-		value =>
-			sys.endsWith(
-				sys.toLower(value),
-				'/subnets/gatewaysubnet'
-			),
-		'The subnet resource ID must refer to a subnet named GatewaySubnet.'
-	)
-	id: string
+type IpConfigurationInput = {
+	@description('The reference to a Standard, Static public IP address resource.')
+	@sealed()
+	publicIPAddress: {
+		@description('The resource ID of the Microsoft.Network/publicIPAddresses resource.')
+		id: string
+	}
+	@description('The reference to the subnet resource.')
+	@sealed()
+	subnet: {
+		@description('The resource ID of the Microsoft.Network/virtualNetworks/subnets resource named GatewaySubnet.')
+		@validate(
+			value =>
+				sys.endsWith(
+					sys.toLower(value),
+					'/subnets/gatewaysubnet'
+				),
+			'The subnet resource ID must refer to a subnet named GatewaySubnet.'
+		)
+		id: string
+	}
 }
 
 @description('The configuration of a Microsoft.Network/virtualNetworkGateways/natRules resource.')
@@ -56,17 +66,12 @@ func CreateBgpPeeringAddress(
 @export()
 func CreateIpConfiguration(
 	name string,
-	publicIpAddressId string,
-	subnetId string
+	input IpConfigurationInput
 ) resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.properties.ipConfigurations[*] => {
 	name: name
 	properties: {
 		privateIPAllocationMethod: 'Dynamic'
-		publicIPAddress: {
-			id: publicIpAddressId
-		}
-		subnet: {
-			id: subnetId
-		}
+		publicIPAddress: input.publicIPAddress
+		subnet: input.subnet
 	}
 }
