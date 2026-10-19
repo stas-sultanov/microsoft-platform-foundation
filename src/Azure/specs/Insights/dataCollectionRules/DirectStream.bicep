@@ -66,10 +66,10 @@ param settings {
 			@maxLength(63)
 			@validate(
 				value =>
-					sys.startsWith(
+					sys.take(
 						value,
-						'Custom-'
-					),
+						7
+					) == 'Custom-',
 				'Custom stream names must start with Custom-.'
 			)
 			name: string

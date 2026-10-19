@@ -121,7 +121,7 @@ resource Graph_applications_federatedIdentityCredentials_ 'Microsoft.Graph/appli
 		dependsOn: [
 			Graph_applications_
 		]
-		description: item.description
+		description: item.?description
 		issuer: item.issuer
 		name: '${uniqueName}/${item.name}'
 		subject: item.subject
