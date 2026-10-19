@@ -111,14 +111,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Sql_servers_databases_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Sql_servers_databases_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.Sql/servers/databases@2025-01-01'>.identity? = Sql_servers_databases_.?identity
-
-@description('The name.')
-output name string = Sql_servers_databases_.name

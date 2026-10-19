@@ -67,11 +67,3 @@ resource Maintenance_maintenanceConfigurations_ 'Microsoft.Maintenance/maintenan
 	}
 	tags: settings.tags
 }
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Maintenance_maintenanceConfigurations_.id
-
-@description('The name.')
-output name string = Maintenance_maintenanceConfigurations_.name

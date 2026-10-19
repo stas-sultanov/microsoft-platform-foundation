@@ -7,7 +7,7 @@ All foundation modules MUST follow these architectural, security, and compatibil
 - **Encode architectural intent.** Modules MUST encode architectural and security decisions beyond simply mirroring ARM/Bicep or AVM resource schemas. Native Azure resource API types MAY be reused where they represent the intended contract.
 - **Exclude obsolete and unsafe options.** Modules MUST NOT expose deprecated APIs, legacy authentication, weak security modes, outdated SKUs, or unsupported configurations.
 - **Use secure defaults.** Modules MUST configure identity, encryption, TLS, RBAC, and diagnostics correctly by default. Properties controlled by the foundation SHOULD NOT be configurable by consumers.
-- **Enforce constraints and invariants.** Modules MUST add constraints and validation missing from native Bicep resource types, using strong types and template structure to prevent invalid configurations. For example, a SKU name typed as `string` MUST be restricted to an explicit set of supported values.
+- **Enforce constraints and invariants.** Modules MUST add constraints and validation missing from native Bicep resource types, using strong types and template structure to prevent invalid configurations. For example, a SKU name typed as `string` MUST be restricted to an explicit set of supported values. SQL database SKU names MAY remain strings because the available values depend on the deployment region and cannot be represented by a fixed module allowlist.
 - **Avoid generic escape hatches.** Module interfaces MUST NOT expose arbitrary property bags, `additionalSettings`, or raw ARM passthrough that bypasses the contract.
 
 ## Security Baseline
@@ -16,7 +16,7 @@ All foundation modules MUST follow these architectural, security, and compatibil
 - **Transport.** TLS 1.3 MUST be enforced where supported; otherwise, the newest supported TLS version MUST be used.
 - **Network access.** Public access, firewall rules, and trusted-service exceptions MUST be explicit in the module interface.
 - **Encryption.** Platform-managed keys are the default. Customer-managed keys (CMK) MUST NOT be assumed to be supported unless explicitly implemented by the module.
-- **Outputs.** Outputs MUST NOT include secrets, passwords, or authentication keys.
+- **Outputs.** Outputs MUST NOT include secrets, passwords, or authentication keys, except generated Entra application password credentials that Microsoft Graph returns only when they are created. These secret values MUST be marked `@secure()`. This exception does not permit outputs in Azure resource or spec modules.
 
 ## Evolution and Compatibility
 

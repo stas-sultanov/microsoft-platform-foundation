@@ -22,6 +22,17 @@ param settings {
 	@description('The table name. Must end with "_CL" to denote a custom log table.')
 	@maxLength(63)
 	@minLength(4)
+	@validate(
+		value =>
+			sys.substring(
+				value,
+				sys.max(
+					0,
+					sys.length(value) - 3
+				)
+			) == '_CL',
+		'Custom log table names must end with _CL.'
+	)
 	name: resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2026-03-01'>.name
 	@description('The properties.')
 	properties: resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2026-03-01'>.properties
@@ -40,8 +51,3 @@ resource OperationalInsights_workspaces_tables_ 'Microsoft.OperationalInsights/w
 	parent: OperationalInsights_workspaces_
 	properties: settings.properties
 }
-
-/* OUTPUTS */
-
-@description('The name.')
-output name string = OperationalInsights_workspaces_tables_.name

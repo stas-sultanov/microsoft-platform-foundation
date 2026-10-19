@@ -24,7 +24,7 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 type StorageAccountPropertiesInput = {
 	@description('The access tier for the storage account.')
 	accessTier: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.accessTier?
-	@description('Allow or disallow cross Entra tenant object replication.')
+	@description('Specifies whether cross-tenant object replication is allowed.')
 	allowCrossTenantReplication: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.allowCrossTenantReplication?
 	@description('Restrict copy to and from Storage Accounts within an Entra tenant or with Private Links to the same VNet.')
 	allowedCopyScope: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.allowedCopyScope?
@@ -36,7 +36,7 @@ type StorageAccountPropertiesInput = {
 	geoPriorityReplicationStatus: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.geoPriorityReplicationStatus?
 	@description('Enable or disable immutable storage with versioning for the storage account.')
 	immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.immutableStorageWithVersioning?
-	@description('Indicates whether hierarchical namespace (HNS) is enabled')
+	@description('Specifies whether hierarchical namespace (HNS) is enabled.')
 	isHnsEnabled: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.isHnsEnabled?
 	@description('The network access control list for the storage account.')
 	networkAcls: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.networkAcls?
@@ -167,14 +167,3 @@ resource Insights_diagnosticSettings__Storage_storageAccounts__blobServices_ 'Mi
 		scope: Storage_storageAccounts_::blobServices_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Storage_storageAccounts_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.Storage/storageAccounts@2026-06-01'>.identity? = Storage_storageAccounts_.?identity
-
-@description('The name.')
-output name string = Storage_storageAccounts_.name

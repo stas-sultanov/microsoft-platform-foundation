@@ -117,11 +117,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Network_dnsResolvers_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_dnsResolvers_.id
-
-@description('The name.')
-output name string = Network_dnsResolvers_.name

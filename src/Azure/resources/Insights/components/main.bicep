@@ -41,6 +41,14 @@ param settings {
 		@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
 		publicNetworkAccessForQuery: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForQuery
 		@description('The resource ID of the Microsoft.OperationalInsights/workspaces resource.')
+		@validate(
+			value =>
+				sys.like(
+					value,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*'
+				),
+			'The value must be a Microsoft.OperationalInsights/workspaces resource ID.'
+		)
 		workspaceResourceId: string
 	}
 	@description('The tags.')
@@ -76,22 +84,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Insights_components_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Insights_components_.id
-
-@description('The name.')
-output name string = Insights_components_.name
-
-@description('The properties.')
-output properties {
-	@description('The application id.')
-	appId: string
-	@description('The instrumentation key.')
-	instrumentationKey: string
-} = {
-	appId: Insights_components_.properties.AppId
-	instrumentationKey: Insights_components_.properties.InstrumentationKey
-}

@@ -65,14 +65,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Compute_galleries_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Compute_galleries_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.Compute/galleries@2026-03-03'>.identity? = Compute_galleries_.?identity
-
-@description('The name.')
-output name string = Compute_galleries_.name

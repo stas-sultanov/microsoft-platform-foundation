@@ -127,14 +127,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: AppConfiguration_configurationStores_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = AppConfiguration_configurationStores_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.identity? = AppConfiguration_configurationStores_.?identity
-
-@description('The name.')
-output name string = AppConfiguration_configurationStores_.name

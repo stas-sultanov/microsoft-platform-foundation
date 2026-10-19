@@ -66,11 +66,3 @@ resource ServiceBus_namespaces_topics_subscriptions_rules_ 'Microsoft.ServiceBus
 		properties: item.value.properties
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = ServiceBus_namespaces_topics_subscriptions_.id
-
-@description('The name.')
-output name string = ServiceBus_namespaces_topics_subscriptions_.name

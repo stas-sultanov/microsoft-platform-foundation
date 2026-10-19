@@ -38,11 +38,3 @@ resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'M
 	parent: ManagedIdentity_userAssignedIdentities_
 	properties: settings.properties
 }
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_.id
-
-@description('The name.')
-output name string = ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_.name

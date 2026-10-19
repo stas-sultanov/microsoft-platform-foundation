@@ -102,11 +102,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Storage_storageAccounts_blobServices_containers_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Storage_storageAccounts_blobServices_containers_.id
-
-@description('The name.')
-output name string = Storage_storageAccounts_blobServices_containers_.name

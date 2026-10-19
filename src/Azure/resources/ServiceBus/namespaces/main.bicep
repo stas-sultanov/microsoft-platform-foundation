@@ -106,14 +106,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: ServiceBus_namespaces_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = ServiceBus_namespaces_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.identity? = ServiceBus_namespaces_.?identity
-
-@description('The name.')
-output name string = ServiceBus_namespaces_.name

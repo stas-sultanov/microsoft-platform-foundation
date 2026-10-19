@@ -44,7 +44,7 @@ Type names MUST describe intent, such as `PropertiesInput`, `ResourceInput`, `Re
 
 Configurable property types SHOULD contain only properties that consumers are expected to control when the module defines a curated property contract.
 
-**One validation boundary per semantic invariant group.** Place `@validate()` on the narrowest type that owns the related properties, and combine related conditions into a single predicate.
+**One validation boundary per semantic invariant group.** Place `@validate()` on the narrowest supported parameter or property declaration that owns the related values, and combine related conditions into a single predicate. Bicep does not support `@validate()` directly on type declarations; when a reusable type needs validation, apply it at its usage sites.
 
 Standard Bicep resource-derived types, such as `resourceInput` and `resourceOutput`, SHOULD be used wherever possible.
 
@@ -55,6 +55,8 @@ Custom type properties MUST be documented with `@description` when the property 
 Boolean property descriptions MUST use the pattern `Specifies whether <subject> <condition>.` They MUST describe the boolean as a yes-or-no condition and MUST NOT use `whether or not`, `flag`, or imperative wording such as `Enable or disable`.
 
 Azure resource ID property descriptions MUST use the pattern `The resource ID of the <provider/type> resource.` They MUST use the capitalization `ID` and identify the referenced Azure resource by its canonical Azure resource type. This rule applies only to Azure Resource Manager resource IDs, not Entra object IDs, subscription IDs, tenant IDs, application IDs, or other identifiers.
+
+Azure resource ID parameters and properties MUST be validated with `@validate()` using the built-in `sys.like()` function against the canonical resource ID pattern, for example `'/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*'`. `sys.like()` is case-insensitive, which matches Azure resource ID semantics. The `*` wildcard also matches `/` and empty text, so this is a shape check that catches wrong resource types and malformed values early; it is not a strict parser. Optional values MUST pass when `null` (`value == null || sys.like(value!, ...)`). Reference objects validate their `id` (`sys.like(value.?id ?? '', ...)`), and arrays validate every element with `sys.filter()`. The error message SHOULD use the pattern `The value must be a <provider/type> resource ID.`, adapted for reference objects, arrays, or additional constraints.
 
 ## Parameters
 
@@ -72,7 +74,7 @@ The standard parameter surface, meaning `extensions`, `resources`, and `settings
 
 Top-level resource modules, meaning modules that create a level 1 Azure resource type, MUST use the standard parameter surface: `extensions`, `resources`, and `settings`. The `resources` parameter is optional and MUST be omitted when the module does not create child resources.
 
-Child resource modules MUST use the same standard parameter surface and MUST also expose the immediate parent resource name as a top-level `parentName` parameter. If more than one parent name is required, each parent name MUST be a top-level parameter with a clear name, such as `parentNamespaceName` and `parentTopicName`.
+Child resource modules MUST use `settings`; `extensions` is optional and MAY be omitted when the module does not provision extension resources. The `resources` parameter is optional and MUST be omitted when the module does not create child resources. Child resource modules MUST also expose the immediate parent resource name as a top-level `parentName` parameter. If more than one parent name is required, each parent name MUST be a top-level parameter with a clear name, such as `parentNamespaceName` and `parentTopicName`.
 
 `extensions` MUST group extension resources by provider or concern, such as `Authorization`, `Insights`, `Maintenance`, or other. This includes diagnostics, authorization, assignments, and other resources scoped to the primary resource but not part of its child resource type hierarchy.
 
@@ -90,6 +92,8 @@ Resource names MUST be deterministic and MUST follow the Azure resource type pat
 
 Child resource type segments MAY continue as deeply as the Azure resource type requires.
 
+Nested child resource declarations MAY use only the child resource type segment followed by an underscore, such as `blobServices_` or `containers_`, because the containing declaration supplies the provider and parent path. This also applies to nested `existing` resources. Top-level child resource declarations MUST use the full type-path naming convention above.
+
 ## API Versions
 
 Every Azure resource type MUST use one API version consistently for its level 1 resource type.
@@ -99,6 +103,14 @@ Every Azure resource type MUST use one API version consistently for its level 1 
 This requirement applies consistently to every declaration, including resource modules, specifications, library and pattern modules, child resources, existing-resource references, and extension-resource references. A child resource or reference MUST use the same API version as its level 1 parent resource.
 
 ## Outputs
+
+Modules under `src/Azure/resources` and `src/Azure/specs` MUST NOT declare outputs.
+
+When consuming these modules, authors MUST declare the required resources as `existing` in the consuming Bicep file, using the deployed names and scopes. Each `existing` resource MUST include an explicit `dependsOn` entry for the module that deploys it. Consumers MUST read all required resource fields and properties through these references, not module outputs.
+
+Required properties vary by consumer and cannot be predicted by the module author. Existing-resource references let consumers select exactly what they need without expanding the module interface; the explicit dependency ensures runtime property reads wait for the module deployment.
+
+For module categories that permit outputs, the following rules apply.
 
 Every output MUST have a `@description` decorator.
 

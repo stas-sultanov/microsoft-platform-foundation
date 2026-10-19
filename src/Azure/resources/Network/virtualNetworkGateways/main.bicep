@@ -114,27 +114,3 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 		scope: Network_virtualNetworkGateways_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_virtualNetworkGateways_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.identity? = Network_virtualNetworkGateways_.?identity
-
-@description('The name.')
-output name string = Network_virtualNetworkGateways_.name
-
-@description('The properties.')
-output properties {
-	@description('The BGP settings.')
-	bgpSettings: {
-		@description('The BGP speaker\'s ASN.')
-		asn: resourceOutput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.properties.bgpSettings.asn?
-	}
-} = {
-	bgpSettings: {
-		asn: Network_virtualNetworkGateways_.properties.?bgpSettings.?asn
-	}
-}

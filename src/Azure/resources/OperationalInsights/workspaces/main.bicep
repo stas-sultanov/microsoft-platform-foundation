@@ -50,6 +50,14 @@ param settings {
 	)
 	properties: {
 		@description('The resource ID of the Microsoft.Insights/dataCollectionRules resource.')
+		@validate(
+			value =>
+				value == null || sys.like(
+					value!,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Insights/dataCollectionRules/*'
+				),
+			'The value must be a Microsoft.Insights/dataCollectionRules resource ID.'
+		)
 		defaultDataCollectionRuleResourceId: string?
 		@description('The features of the workspace.')
 		@sealed()
@@ -113,14 +121,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: OperationalInsights_workspaces_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = OperationalInsights_workspaces_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.identity? = OperationalInsights_workspaces_.?identity
-
-@description('The name.')
-output name string = OperationalInsights_workspaces_.name

@@ -98,14 +98,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Cache_redisEnterprise_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Cache_redisEnterprise_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.identity? = Cache_redisEnterprise_.?identity
-
-@description('The name.')
-output name string = Cache_redisEnterprise_.name

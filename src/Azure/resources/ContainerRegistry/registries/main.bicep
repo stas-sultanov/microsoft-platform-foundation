@@ -160,14 +160,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: ContainerRegistry_registries_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = ContainerRegistry_registries_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.identity? = ContainerRegistry_registries_.?identity
-
-@description('The name.')
-output name string = ContainerRegistry_registries_.name

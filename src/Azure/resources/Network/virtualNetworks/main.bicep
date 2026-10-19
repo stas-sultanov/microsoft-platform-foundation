@@ -104,11 +104,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Network_virtualNetworks_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_virtualNetworks_.id
-
-@description('The name.')
-output name string = Network_virtualNetworks_.name

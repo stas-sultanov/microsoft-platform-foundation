@@ -111,11 +111,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: KeyVault_vaults_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = KeyVault_vaults_.id
-
-@description('The name.')
-output name string = KeyVault_vaults_.name

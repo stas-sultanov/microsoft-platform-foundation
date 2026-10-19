@@ -132,26 +132,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Network_networkSecurityPerimeters_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_networkSecurityPerimeters_.id
-
-@description('The name.')
-output name string = Network_networkSecurityPerimeters_.name
-
-@description('The child resources.')
-output resources {
-	profiles: {
-		Default: {
-			name: string
-		}
-	}
-} = {
-	profiles: {
-		Default: {
-			name: resources.profiles.Default.name
-		}
-	}
-}

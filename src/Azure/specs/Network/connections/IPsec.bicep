@@ -60,13 +60,29 @@ type ConnectionPropertiesWithCertificateInput = {
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
 	ipsecPolicies: IPSecPolicyInput[]
-	@description('The resource ID of the local network gateway for this IPsec connection.')
+	@description('The resource ID of the Microsoft.Network/localNetworkGateways resource.')
+	@validate(
+		value =>
+			sys.like(
+				value.?id ?? '',
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/localNetworkGateways/*'
+			),
+		'The value must reference a Microsoft.Network/localNetworkGateways resource ID.'
+	)
 	localNetworkGateway2: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.localNetworkGateway2
 	@description('The custom traffic selector policies, configured independently of usePolicyBasedTrafficSelectors.')
 	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.trafficSelectorPolicies?
 	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
 	usePolicyBasedTrafficSelectors: bool?
 	@description('The resource ID of the primary Microsoft.Network/virtualNetworkGateways resource.')
+	@validate(
+		value =>
+			sys.like(
+				value.?id ?? '',
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworkGateways/*'
+			),
+		'The value must reference a Microsoft.Network/virtualNetworkGateways resource ID.'
+	)
 	virtualNetworkGateway1: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.virtualNetworkGateway1
 }
 
@@ -98,7 +114,15 @@ type ConnectionPropertiesWithPskInput = {
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
 	ipsecPolicies: IPSecPolicyInput[]
-	@description('The resource ID of the local network gateway for this IPsec connection.')
+	@description('The resource ID of the Microsoft.Network/localNetworkGateways resource.')
+	@validate(
+		value =>
+			sys.like(
+				value.?id ?? '',
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/localNetworkGateways/*'
+			),
+		'The value must reference a Microsoft.Network/localNetworkGateways resource ID.'
+	)
 	localNetworkGateway2: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.localNetworkGateway2
 	@description('The shared key for the connection.')
 	@secure()
@@ -108,6 +132,14 @@ type ConnectionPropertiesWithPskInput = {
 	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
 	usePolicyBasedTrafficSelectors: bool?
 	@description('The resource ID of the primary Microsoft.Network/virtualNetworkGateways resource.')
+	@validate(
+		value =>
+			sys.like(
+				value.?id ?? '',
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworkGateways/*'
+			),
+		'The value must reference a Microsoft.Network/virtualNetworkGateways resource ID.'
+	)
 	virtualNetworkGateway1: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.virtualNetworkGateway1
 }
 
@@ -173,11 +205,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Network_connections_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_connections_.id
-
-@description('The name.')
-output name string = Network_connections_.name
