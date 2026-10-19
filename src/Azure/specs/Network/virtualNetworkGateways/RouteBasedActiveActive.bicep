@@ -34,7 +34,7 @@ type BgpSettingsInput = {
 	@sealed()
 	@validate(
 		value =>
-			value == null || sys.length(sys.union(
+			value == null || (sys.length(sys.union(
 				sys.map(
 					sys.concat(
 						value!.Instance0,
@@ -44,8 +44,17 @@ type BgpSettingsInput = {
 						sys.toLower(address)
 				),
 				[]
-			)) == sys.length(value!.Instance0) + sys.length(value!.Instance1),
-		'Custom BGP peering IP addresses must be unique across the two gateway instances.'
+			)) == sys.length(value!.Instance0) + sys.length(value!.Instance1) && sys.empty(sys.filter(
+				sys.concat(value!.Instance0, value!.Instance1),
+				address => !sys.contains(
+					sys.map(
+						sys.range(0, 512),
+						index => '169.254.${21 + index / 256}.${index % 256}'
+					),
+					address
+				)
+			))),
+		'Custom BGP peering IP addresses must be unique across both instances and valid IPv4 addresses from 169.254.21.0 through 169.254.22.255.'
 	)
 	customBgpIpAddresses: {
 		@description('Custom Azure APIPA BGP addresses for the Instance0 instance.')
@@ -99,12 +108,12 @@ param settings {
 		enableBgp: bool
 		@description('Specifies whether to translated the BGP routes using NAT.')
 		enableBgpRouteTranslationForNat: bool
-		@description('Exactly two distinct Standard, Static public IP references, one per gateway instance. Deploy the public IP resources separately.')
+		@description('Two gateway IP configurations referencing the same subnet and distinct Standard, Static public IP resources. Deploy the public IP resources separately.')
 		@sealed()
 		@validate(
 			value =>
-				sys.toLower(value.Instance0.publicIPAddress.id) != sys.toLower(value.Instance1.publicIPAddress.id),
-			'Instance0 and Instance1 gateway instances must use different public IP address resources.'
+				sys.toLower(value.Instance0.subnet.id) == sys.toLower(value.Instance1.subnet.id) && sys.toLower(value.Instance0.publicIPAddress.id) != sys.toLower(value.Instance1.publicIPAddress.id),
+			'Both gateway instances must reference the same subnet and different public IP address resources.'
 		)
 		ipConfigurations: {
 			@description('The IP configuration for the Instance0 gateway instance.')
