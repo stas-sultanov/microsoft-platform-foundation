@@ -41,6 +41,14 @@ param settings {
 	@sealed()
 	properties: {
 		@description('The resource ID of the Microsoft.OperationalInsights/workspaces resource.')
+		@validate(
+			value =>
+				sys.like(
+					value,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*'
+				),
+			'The value must be a Microsoft.OperationalInsights/workspaces resource ID.'
+		)
 		workspaceId: string
 	}
 	@description('The tags.')

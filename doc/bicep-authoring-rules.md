@@ -56,6 +56,8 @@ Boolean property descriptions MUST use the pattern `Specifies whether <subject> 
 
 Azure resource ID property descriptions MUST use the pattern `The resource ID of the <provider/type> resource.` They MUST use the capitalization `ID` and identify the referenced Azure resource by its canonical Azure resource type. This rule applies only to Azure Resource Manager resource IDs, not Entra object IDs, subscription IDs, tenant IDs, application IDs, or other identifiers.
 
+Azure resource ID parameters and properties MUST be validated with `@validate()` using the built-in `sys.like()` function against the canonical resource ID pattern, for example `'/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*'`. `sys.like()` is case-insensitive, which matches Azure resource ID semantics. The `*` wildcard also matches `/` and empty text, so this is a shape check that catches wrong resource types and malformed values early; it is not a strict parser. Optional values MUST pass when `null` (`value == null || sys.like(value!, ...)`). Reference objects validate their `id` (`sys.like(value.?id ?? '', ...)`), and arrays validate every element with `sys.filter()`. The error message SHOULD use the pattern `The value must be a <provider/type> resource ID.`, adapted for reference objects, arrays, or additional constraints.
+
 ## Parameters
 
 Every parameter MUST have a `@description` decorator.

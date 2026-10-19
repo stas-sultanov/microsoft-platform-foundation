@@ -50,6 +50,14 @@ type ImageTemplateSharedImageDistributor = {
 	@description('Specifies whether the created image version is excluded from the latest version.')
 	excludeFromLatest: bool?
 	@description('The resource ID of the Microsoft.Compute/galleries/images resource.')
+	@validate(
+		value =>
+			sys.like(
+				value,
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/galleries/*/images/*'
+			),
+		'The value must be a Microsoft.Compute/galleries/images resource ID.'
+	)
 	galleryImageId: string
 	@description('Describes replication mode for distribution in Azure Compute Gallery.')
 	replicationMode:
@@ -184,6 +192,14 @@ param settings {
 		@description('Specifies the properties used to describe the source image.')
 		source: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.source
 		@description('The resource ID of the Microsoft.Resources/resourceGroups resource.')
+		@validate(
+			value =>
+				value == null || sys.like(
+					value!,
+					'/subscriptions/*/resourceGroups/*'
+				),
+			'The value must be a Microsoft.Resources/resourceGroups resource ID.'
+		)
 		stagingResourceGroup: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.stagingResourceGroup
 		@description('Configuration options and validations to be performed on the resulting image.')
 		validate: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.validate?

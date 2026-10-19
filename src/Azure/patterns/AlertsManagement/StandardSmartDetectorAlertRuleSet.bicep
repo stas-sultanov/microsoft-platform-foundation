@@ -42,6 +42,18 @@ param alertRules {
 }
 
 @description('The resource IDs of the Microsoft.Insights/actionGroups resources.')
+@validate(
+	value =>
+		sys.length(sys.filter(
+			value.groupIds,
+			id =>
+				!sys.like(
+					id,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Insights/actionGroups/*'
+				)
+		)) == 0,
+	'Each value must be a Microsoft.Insights/actionGroups resource ID.'
+)
 param commonActionGroups resourceInput<'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01'>.properties.actionGroups
 
 @description('The Microsoft.Insights/components resource name.')

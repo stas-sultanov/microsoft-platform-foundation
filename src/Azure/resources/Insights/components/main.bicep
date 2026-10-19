@@ -41,6 +41,14 @@ param settings {
 		@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
 		publicNetworkAccessForQuery: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForQuery
 		@description('The resource ID of the Microsoft.OperationalInsights/workspaces resource.')
+		@validate(
+			value =>
+				sys.like(
+					value,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*'
+				),
+			'The value must be a Microsoft.OperationalInsights/workspaces resource ID.'
+		)
 		workspaceResourceId: string
 	}
 	@description('The tags.')

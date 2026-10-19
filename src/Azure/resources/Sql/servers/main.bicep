@@ -108,6 +108,14 @@ param settings {
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.publicNetworkAccess
 		@description('The resource ID of the Microsoft.ManagedIdentity/userAssignedIdentities resource.')
+		@validate(
+			value =>
+				value == null || sys.like(
+					value!,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.ManagedIdentity/userAssignedIdentities/*'
+				),
+			'The value must be a Microsoft.ManagedIdentity/userAssignedIdentities resource ID.'
+		)
 		primaryUserAssignedIdentityId: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.primaryUserAssignedIdentityId
 		@description('Specifies whether or not outbound network access is restricted for this server.')
 		restrictOutboundNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.restrictOutboundNetworkAccess

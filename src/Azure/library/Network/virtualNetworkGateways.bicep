@@ -17,6 +17,14 @@ type IpConfigurationInput = {
 	@sealed()
 	publicIPAddress: {
 		@description('The resource ID of the Microsoft.Network/publicIPAddresses resource.')
+		@validate(
+			value =>
+				sys.like(
+					value,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/publicIPAddresses/*'
+				),
+			'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
+		)
 		id: string
 	}
 	@description('The reference to the subnet resource.')
@@ -25,11 +33,11 @@ type IpConfigurationInput = {
 		@description('The resource ID of the Microsoft.Network/virtualNetworks/subnets resource named GatewaySubnet.')
 		@validate(
 			value =>
-				sys.endsWith(
-					sys.toLower(value),
-					'/subnets/gatewaysubnet'
+				sys.like(
+					value,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworks/*/subnets/GatewaySubnet'
 				),
-			'The subnet resource ID must refer to a subnet named GatewaySubnet.'
+			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID of the subnet named GatewaySubnet.'
 		)
 		id: string
 	}

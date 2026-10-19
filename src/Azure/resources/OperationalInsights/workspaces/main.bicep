@@ -50,6 +50,14 @@ param settings {
 	)
 	properties: {
 		@description('The resource ID of the Microsoft.Insights/dataCollectionRules resource.')
+		@validate(
+			value =>
+				value == null || sys.like(
+					value!,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Insights/dataCollectionRules/*'
+				),
+			'The value must be a Microsoft.Insights/dataCollectionRules resource ID.'
+		)
 		defaultDataCollectionRuleResourceId: string?
 		@description('The features of the workspace.')
 		@sealed()

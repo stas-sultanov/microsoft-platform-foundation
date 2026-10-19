@@ -43,6 +43,14 @@ param settings {
 	@sealed()
 	properties: {
 		@description('The resource ID of the Microsoft.Insights/dataCollectionEndpoints resource.')
+		@validate(
+			value =>
+				value == null || sys.like(
+					value!,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Insights/dataCollectionEndpoints/*'
+				),
+			'The value must be a Microsoft.Insights/dataCollectionEndpoints resource ID.'
+		)
 		dataCollectionEndpointId: string?
 		@description('Data flow configuration.')
 		@sealed()

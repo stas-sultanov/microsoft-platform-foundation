@@ -108,7 +108,7 @@
 					"level": "error"
 				},
 				"use-description-type-properties": {
-					"level": "off"
+					"level": "error"
 				},
 				"use-description-types": {
 					"level": "error"
