@@ -76,22 +76,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Insights_components_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Insights_components_.id
-
-@description('The name.')
-output name string = Insights_components_.name
-
-@description('The properties.')
-output properties {
-	@description('The application id.')
-	appId: string
-	@description('The instrumentation key.')
-	instrumentationKey: string
-} = {
-	appId: Insights_components_.properties.AppId
-	instrumentationKey: Insights_components_.properties.InstrumentationKey
-}

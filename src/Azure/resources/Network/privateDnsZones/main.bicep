@@ -105,11 +105,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Network_privateDnsZones_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_privateDnsZones_.id
-
-@description('The name.')
-output name string = Network_privateDnsZones_.name

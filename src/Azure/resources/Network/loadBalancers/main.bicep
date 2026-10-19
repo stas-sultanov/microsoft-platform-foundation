@@ -93,16 +93,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Network_loadBalancers_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_loadBalancers_.id
-
-@description('The properties.')
-output properties {
-	@description('Collection of backend address pools used by a load balancer.')
-	backendAddressPools: resourceOutput<'Microsoft.Network/loadBalancers@2026-01-01'>.properties.backendAddressPools
-} = {
-	backendAddressPools: Network_loadBalancers_.properties.backendAddressPools
-}

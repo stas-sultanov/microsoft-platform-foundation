@@ -50,8 +50,3 @@ resource ContainerRegistry_registries_replications_ 'Microsoft.ContainerRegistry
 	properties: settings.properties
 	tags: settings.tags
 }
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = ContainerRegistry_registries_replications_.id

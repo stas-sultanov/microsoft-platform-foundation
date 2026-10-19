@@ -16,6 +16,13 @@ targetScope = 'resourceGroup'
 import * as AuthorizationRoleAssignments from '../../../../Azure/library/Authorization/roleAssignments.bicep'
 
 /* TYPES */
+@description('Versioning settings for a shared image distributor.')
+@discriminator('scheme')
+@sealed()
+type DistributeVersioner =
+	| DistributeVersionerLatest
+	| DistributeVersionerSource
+
 @description('Versioning settings for the Latest scheme.')
 @sealed()
 type DistributeVersionerLatest = {
@@ -31,13 +38,6 @@ type DistributeVersionerSource = {
 	@description('Version numbering scheme to be used.')
 	scheme: 'Source'
 }
-
-@description('Versioning settings for a shared image distributor.')
-@discriminator('scheme')
-@sealed()
-type DistributeVersioner =
-	| DistributeVersionerLatest
-	| DistributeVersionerSource
 
 @description('Represents a shared image distributor in an image template.')
 @sealed()
@@ -183,7 +183,7 @@ param settings {
 		optimize: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.optimize?
 		@description('Specifies the properties used to describe the source image.')
 		source: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.source
-		@description('The staging resource group id used to build the image.')
+		@description('The resource ID of the Microsoft.Resources/resourceGroups resource.')
 		stagingResourceGroup: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.stagingResourceGroup
 		@description('Configuration options and validations to be performed on the resulting image.')
 		validate: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.validate?
@@ -263,14 +263,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: VirtualMachineImages_imageTemplates_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = VirtualMachineImages_imageTemplates_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.identity? = VirtualMachineImages_imageTemplates_.?identity
-
-@description('The name.')
-output name string = VirtualMachineImages_imageTemplates_.name

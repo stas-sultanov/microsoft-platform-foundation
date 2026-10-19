@@ -36,11 +36,3 @@ resource Network_virtualNetworkGateways_natRules_ 'Microsoft.Network/virtualNetw
 	parent: Network_virtualNetworkGateways_
 	properties: settings.properties
 }
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_virtualNetworkGateways_natRules_.id
-
-@description('The name.')
-output name string = Network_virtualNetworkGateways_natRules_.name

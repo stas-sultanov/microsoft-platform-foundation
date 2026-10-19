@@ -94,11 +94,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Network_virtualNetworks_subnets_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_virtualNetworks_subnets_.id
-
-@description('The name.')
-output name string = Network_virtualNetworks_subnets_.name

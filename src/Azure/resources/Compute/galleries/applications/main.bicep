@@ -41,8 +41,3 @@ resource Compute_galleries_applications_ 'Microsoft.Compute/galleries/applicatio
 	parent: Compute_galleries_
 	properties: settings.properties
 }
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Compute_galleries_applications_.id

@@ -163,25 +163,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: DocumentDB_databaseAccounts_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = DocumentDB_databaseAccounts_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.identity? = DocumentDB_databaseAccounts_.?identity
-
-@description('The name.')
-output name string = DocumentDB_databaseAccounts_.name
-
-@description('The properties.')
-output properties {
-	@description('The connection endpoint for the Cosmos DB database account.')
-	documentEndpoint: string
-	@description('A unique identifier assigned to the database account.')
-	instanceId: string
-} = {
-	documentEndpoint: DocumentDB_databaseAccounts_.properties.documentEndpoint
-	instanceId: DocumentDB_databaseAccounts_.properties.instanceId
-}

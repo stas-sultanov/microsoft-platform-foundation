@@ -58,11 +58,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Network_networkWatchers_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_networkWatchers_.id
-
-@description('The name.')
-output name string = Network_networkWatchers_.name

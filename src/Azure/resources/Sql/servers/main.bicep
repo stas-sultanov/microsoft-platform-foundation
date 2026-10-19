@@ -197,21 +197,3 @@ resource Insights_diagnosticSettings__Master 'Microsoft.Insights/diagnosticSetti
 		scope: Sql_servers_databases__Master
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Sql_servers_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.Sql/servers@2025-01-01'>.identity? = Sql_servers_.?identity
-
-@description('The name.')
-output name string = Sql_servers_.name
-
-@description('The properties.')
-output properties {
-	fullyQualifiedDomainName: string
-} = {
-	fullyQualifiedDomainName: Sql_servers_.properties.fullyQualifiedDomainName
-}

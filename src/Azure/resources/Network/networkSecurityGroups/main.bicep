@@ -75,8 +75,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Network_networkSecurityGroups_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_networkSecurityGroups_.id

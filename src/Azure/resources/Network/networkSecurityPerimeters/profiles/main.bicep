@@ -57,11 +57,3 @@ resource Network_networkSecurityPerimeters_profiles_accessRules_ 'Microsoft.Netw
 		properties: item.value.properties
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_networkSecurityPerimeters_profiles_.id
-
-@description('The name.')
-output name string = Network_networkSecurityPerimeters_profiles_.name

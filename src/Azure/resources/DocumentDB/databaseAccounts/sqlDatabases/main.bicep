@@ -82,14 +82,3 @@ resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databas
 	}
 	tags: settings.tags
 }
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = DocumentDB_databaseAccounts_sqlDatabases_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.identity? = DocumentDB_databaseAccounts_sqlDatabases_.?identity
-
-@description('The name.')
-output name string = DocumentDB_databaseAccounts_sqlDatabases_.name

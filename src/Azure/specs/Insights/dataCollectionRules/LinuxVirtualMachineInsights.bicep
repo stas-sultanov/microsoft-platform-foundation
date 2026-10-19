@@ -105,14 +105,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Insights_dataCollectionRules_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Insights_dataCollectionRules_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.identity? = Insights_dataCollectionRules_.?identity
-
-@description('The name.')
-output name string = Insights_dataCollectionRules_.name

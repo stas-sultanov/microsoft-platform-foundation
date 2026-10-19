@@ -173,11 +173,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Network_connections_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_connections_.id
-
-@description('The name.')
-output name string = Network_connections_.name

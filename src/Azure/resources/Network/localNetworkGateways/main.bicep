@@ -104,11 +104,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Network_localNetworkGateways_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_localNetworkGateways_.id
-
-@description('The name.')
-output name string = Network_localNetworkGateways_.name

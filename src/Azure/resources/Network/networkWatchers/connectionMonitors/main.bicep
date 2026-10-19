@@ -44,11 +44,3 @@ resource Network_networkWatchers_connectionMonitors_ 'Microsoft.Network/networkW
 	properties: settings.properties
 	tags: settings.tags
 }
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Network_networkWatchers_connectionMonitors_.id
-
-@description('The name.')
-output name string = Network_networkWatchers_connectionMonitors_.name

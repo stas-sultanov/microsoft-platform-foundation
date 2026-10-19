@@ -104,9 +104,9 @@ param settings {
 	properties: {
 		@description('The custom BGP settings.')
 		bgpSettings: BgpSettingsInput?
-		@description('Specifies whether to enable BGP.')
+		@description('Specifies whether BGP is enabled.')
 		enableBgp: bool
-		@description('Specifies whether to translated the BGP routes using NAT.')
+		@description('Specifies whether BGP routes are translated using NAT.')
 		enableBgpRouteTranslationForNat: bool
 		@description('Two gateway IP configurations referencing the same subnet and distinct Standard, Static public IP resources. Deploy the public IP resources separately.')
 		@sealed()
@@ -221,14 +221,3 @@ resource Maintenance_configurationAssignments_ 'Microsoft.Maintenance/configurat
 		scope: Network_virtualNetworkGateways_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The resource ID of the VPN gateway.')
-output id string = Network_virtualNetworkGateways_.id
-
-@description('The identity of the VPN gateway.')
-output identity resourceOutput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.identity? = Network_virtualNetworkGateways_.?identity
-
-@description('The VPN gateway name.')
-output name string = Network_virtualNetworkGateways_.name

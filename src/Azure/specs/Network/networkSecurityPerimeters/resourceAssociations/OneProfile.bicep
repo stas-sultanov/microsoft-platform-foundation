@@ -50,7 +50,7 @@ resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPe
 	name: parentName
 }
 
-resource Network_networkSecurityPerimeters_profile_ 'Microsoft.Network/networkSecurityPerimeters/profiles@2026-01-01' existing = {
+resource Network_networkSecurityPerimeters_profiles_ 'Microsoft.Network/networkSecurityPerimeters/profiles@2026-01-01' existing = {
 	name: parentProfileName
 	parent: Network_networkSecurityPerimeters_
 }
@@ -64,7 +64,7 @@ resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Netw
 		properties: {
 			...item.properties
 			profile: {
-				id: Network_networkSecurityPerimeters_profile_.id
+				id: Network_networkSecurityPerimeters_profiles_.id
 			}
 		}
 	}

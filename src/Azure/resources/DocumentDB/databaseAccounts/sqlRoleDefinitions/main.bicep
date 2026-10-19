@@ -54,11 +54,3 @@ resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/d
 		type: 'CustomRole'
 	}
 }
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = DocumentDB_databaseAccounts_sqlRoleDefinitions_.id
-
-@description('The name.')
-output name string = DocumentDB_databaseAccounts_sqlRoleDefinitions_.name

@@ -74,14 +74,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: Insights_actionGroups_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Insights_actionGroups_.id
-
-@description('The identity.')
-output identity resourceOutput<'Microsoft.Insights/actionGroups@2024-10-01-preview'>.identity? = Insights_actionGroups_.?identity
-
-@description('The name.')
-output name string = Insights_actionGroups_.name

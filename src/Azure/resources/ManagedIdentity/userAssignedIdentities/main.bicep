@@ -82,20 +82,3 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		scope: ManagedIdentity_userAssignedIdentities_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = ManagedIdentity_userAssignedIdentities_.id
-
-@description('The name.')
-output name string = ManagedIdentity_userAssignedIdentities_.name
-
-@description('The properties.')
-output properties {
-	clientId: resourceOutput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.properties.clientId
-	principalId: resourceOutput<'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-30'>.properties.principalId
-} = {
-	clientId: ManagedIdentity_userAssignedIdentities_.properties.clientId
-	principalId: ManagedIdentity_userAssignedIdentities_.properties.principalId
-}

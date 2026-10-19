@@ -129,22 +129,3 @@ resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@202
 		scope: Insights_dataCollectionRules_
 	}
 ]
-
-/* OUTPUTS */
-
-@description('The ID.')
-output id string = Insights_dataCollectionRules_.id
-
-@description('The name.')
-output name string = Insights_dataCollectionRules_.name
-
-@description('The properties.')
-output properties {
-	@description('The ingestion endpoints to send data to the rule.')
-	endpoints: resourceOutput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.endpoints
-	@description('The immutable id of this data collection rule.')
-	immutableId: resourceOutput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.immutableId
-} = {
-	endpoints: Insights_dataCollectionRules_.properties.endpoints
-	immutableId: Insights_dataCollectionRules_.properties.immutableId
-}
