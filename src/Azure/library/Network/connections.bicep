@@ -18,7 +18,7 @@ type IPSecPolicyInput = {
 		| 'DHGroup24'
 		| 'ECP256'
 		| 'ECP384'
-	@description('The IKE encryption algorithm. Pair GCMAES256 with GCMAES256 integrity.')
+	@description('The IKE encryption algorithm.')
 	ikeEncryption:
 		| 'AES256'
 		| 'GCMAES256'
@@ -40,7 +40,9 @@ type IPSecPolicyInput = {
 		| 'ECP384'
 		| 'PFS24'
 	@description('The IPSec Security Association (also called Quick Mode or Phase 2 SA) payload size in KB for a site to site VPN tunnel.')
+	@minValue(1024)
 	saDataSizeKilobytes: int
 	@description('The IPSec Security Association (also called Quick Mode or Phase 2 SA) lifetime in seconds for a site to site VPN tunnel.')
+	@minValue(300)
 	saLifeTimeSeconds: int
 }

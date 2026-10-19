@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Network/publicIPPrefixes resource with extensions.'
+metadata description = 'Provisions a regional Standard v1 Microsoft.Network/publicIPPrefixes resource with extensions.'
 
 /* SCOPE */
 
@@ -16,6 +16,49 @@ targetScope = 'resourceGroup'
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
+
+/* TYPES */
+
+@description('The configurable properties for a regional public IP prefix.')
+@discriminator('publicIPAddressVersion')
+type PublicIPPrefixPropertiesInput =
+	| PublicIPPrefixPropertiesIPv4Input
+	| PublicIPPrefixPropertiesIPv6Input
+
+@description('The configurable properties for an IPv4 regional public IP prefix.')
+@sealed()
+type PublicIPPrefixPropertiesIPv4Input = {
+	@description('The list of tags associated with the public IP prefix.')
+	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
+	@description('The CIDR prefix length.')
+	@minValue(28)
+	@maxValue(31)
+	prefixLength: int
+	@description('The public IP address version.')
+	publicIPAddressVersion: 'IPv4'
+}
+
+@description('The configurable properties for an IPv6 regional public IP prefix.')
+@sealed()
+type PublicIPPrefixPropertiesIPv6Input = {
+	@description('The list of tags associated with the public IP prefix.')
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				tag =>
+					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
+			)),
+		'Internet routing preference requires an IPv4 public IP prefix.'
+	)
+	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
+	@description('The CIDR prefix length.')
+	@minValue(124)
+	@maxValue(127)
+	prefixLength: int
+	@description('The public IP address version.')
+	publicIPAddressVersion: 'IPv6'
+}
 
 /* PARAMETERS */
 
@@ -40,18 +83,26 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.name
 	@description('The configurable properties.')
-	properties: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties
-	@description('The SKU.')
-	sku: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.sku
+	properties: PublicIPPrefixPropertiesInput
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.tags
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-	@minLength(1)
-	@maxLength(3)
-	zones: (
-		| '1'
-		| '2'
-		| '3')[]?
+	zones:
+		| [
+			'1'
+		]
+		| [
+			'2'
+		]
+		| [
+			'3'
+		]
+		| [
+			'1'
+			'2'
+			'3'
+		]
+		| null
 }
 
 /* RESOURCES */
@@ -60,7 +111,10 @@ resource Network_publicIPPrefixes_ 'Microsoft.Network/publicIPPrefixes@2026-01-0
 	location: settings.location
 	name: settings.name
 	properties: settings.properties
-	sku: settings.sku
+	sku: {
+		name: 'Standard'
+		tier: 'Regional'
+	}
 	tags: settings.tags
 	zones: settings.?zones
 }

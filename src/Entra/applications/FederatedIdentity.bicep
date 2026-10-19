@@ -21,13 +21,21 @@ extension microsoftGraph
 @description('Information about a federated identity credential.')
 @sealed()
 type FederatedIdentityCredentialInfo = {
-	@description('The unvalidated description of the federated identity credential, provided by the user. It has a limit of 600 characters.')
-	description: string
-	@description('The unique identifier for an entity.')
-	id: string
-	@description('The URL of the external identity provider, which must match the issuer claim of the external token being exchanged. The combination of the values of issuer and subject must be unique within the app. It has a limit of 600 characters.')
+	@description('The credential description.')
+	@maxLength(600)
+	description: string?
+
+	@description('The credential name.')
+	@minLength(3)
+	@maxLength(120)
+	name: string
+
+	@description('The external identity provider URL.')
+	@maxLength(600)
 	issuer: string
-	@description('The identifier of the external software workload within the external identity provider.')
+
+	@description('The external workload subject.')
+	@maxLength(600)
 	subject: string
 }
 
@@ -39,7 +47,29 @@ type Settings = {
 	@maxLength(256)
 	@minLength(3)
 	displayName: string
-	@description('A collection of Entra federated identity credentials.')
+	@description('A collection of Entra federated identity credentials. Names and issuer/subject pairs must be unique; issuer/subject comparison is exact.')
+	@maxLength(20)
+	@validate(
+		value =>
+			value == null || (sys.length(sys.union(
+				sys.map(
+					value!,
+					item =>
+						item.name
+				),
+				[]
+			)) == sys.length(value!) && sys.length(sys.union(
+				sys.map(
+					value!,
+					item => [
+						item.issuer
+						item.subject
+					]
+				),
+				[]
+			)) == sys.length(value!)),
+		'Federated identity credential names and issuer/subject pairs must be unique.'
+	)
 	federatedIdentityCredentials: FederatedIdentityCredentialInfo[]?
 	@description('Basic profile information of the application.')
 	info: resourceInput<'Microsoft.Graph/applications@beta'>.info
@@ -91,9 +121,9 @@ resource Graph_applications_federatedIdentityCredentials_ 'Microsoft.Graph/appli
 		dependsOn: [
 			Graph_applications_
 		]
-		description: item.description
+		description: item.?description
 		issuer: item.issuer
-		name: '${uniqueName}/${item.id}'
+		name: '${uniqueName}/${item.name}'
 		subject: item.subject
 	}
 ]

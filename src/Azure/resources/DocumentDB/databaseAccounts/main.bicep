@@ -17,6 +17,17 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
+/* TYPES */
+
+@description('A secondary Cosmos DB region. Its failover priority is derived from its position in the Secondary array.')
+@sealed()
+type SecondaryRegionInput = {
+	@description('Specifies whether this region is an Availability Zone region.')
+	isZoneRedundant: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.locations[*].isZoneRedundant?
+	@description('The region name.')
+	locationName: string
+}
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -34,6 +45,20 @@ param extensions {
 
 @description('The resource settings.')
 @sealed()
+@validate(
+	value =>
+		sys.length(sys.union(
+			[
+				value.location
+			],
+			sys.map(
+				value.properties.locations.Secondary,
+				item =>
+					item.locationName
+			)
+		)) == sys.length(value.properties.locations.Secondary) + 1,
+	'Cosmos DB regions must be unique, including the primary region from settings.location.'
+)
 param settings {
 	@description('The identity.')
 	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.identity?
@@ -43,10 +68,15 @@ param settings {
 	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
 	@description('The configurable properties.')
 	@sealed()
+	@validate(
+		value =>
+			value.capacityMode == 'Provisioned' || value.?capacity == null,
+		'capacity can only be specified when capacityMode is Provisioned.'
+	)
 	properties: {
 		@description('The policy for taking backups on an account.')
 		backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.backupPolicy
-		@description('Properties related to capacity enforcement on an account.')
+		@description('Properties related to capacity enforcement on an account. Requires capacityMode to be Provisioned.')
 		capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacity?
 		@description('The capacity mode for the Cosmos DB account.')
 		capacityMode: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacityMode
@@ -54,14 +84,17 @@ param settings {
 		consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.consistencyPolicy
 		@description('List of IpRules.')
 		ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.ipRules
-		@description('Locations enabled for the Cosmos DB account.')
+		@description('Locations enabled for the Cosmos DB account. Regions must be unique, including the primary region from settings.location. Failover priorities are derived from the secondary array order, with the primary fixed to 0.')
+		@sealed()
 		locations: {
 			@description('The primary region.')
+			@sealed()
 			Primary: {
 				@description('Specifies whether this region is an Availability Zone region.')
 				isZoneRedundant: bool
 			}
-			*: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.locations[*]
+			@description('The secondary regions in failover order. Use an empty array for a primary-only account.')
+			Secondary: SecondaryRegionInput[]
 		}
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.publicNetworkAccess
@@ -100,13 +133,15 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 				}
 			],
 			sys.map(
-				sys.filter(
-					sys.items(settings.properties.locations),
-					item =>
-						item.key != 'Primary'
-				),
-				item =>
-					item.value
+				settings.properties.locations.Secondary,
+				(
+					item,
+					index
+				) => {
+					failoverPriority: index + 1
+					isZoneRedundant: item.?isZoneRedundant
+					locationName: item.locationName
+				}
 			)
 		)
 		minimalTlsVersion: 'Tls12'

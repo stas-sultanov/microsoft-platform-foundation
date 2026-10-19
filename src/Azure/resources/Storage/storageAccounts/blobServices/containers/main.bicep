@@ -50,10 +50,17 @@ param settings {
 	name: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.name
 	@description('The configurable properties.')
 	@sealed()
+	@validate(
+		value =>
+			value.?enableNfsV3AllSquash != true || value.?enableNfsV3RootSquash != true,
+		'enableNfsV3AllSquash and enableNfsV3RootSquash cannot both be true.'
+	)
 	properties: {
 		defaultEncryptionScope: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.defaultEncryptionScope?
 		denyEncryptionScopeOverride: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.denyEncryptionScopeOverride?
+		@description('Specifies whether NFSv3 all squash is enabled on the container. Cannot be true when enableNfsV3RootSquash is true.')
 		enableNfsV3AllSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.enableNfsV3AllSquash?
+		@description('Specifies whether NFSv3 root squash is enabled on the container. Cannot be true when enableNfsV3AllSquash is true.')
 		enableNfsV3RootSquash: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.enableNfsV3RootSquash?
 		immutableStorageWithVersioning: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.immutableStorageWithVersioning?
 		metadata: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.metadata?

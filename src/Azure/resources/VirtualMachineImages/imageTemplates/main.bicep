@@ -56,11 +56,11 @@ type ImageTemplateSharedImageDistributor = {
 		| 'Full'
 		| 'Shallow'
 		| null
-	@description('The name to be used for the associated RunOutput.')
+	@description('The name to be used for the associated RunOutput. Must be unique across distributors.')
 	@minLength(1)
 	@maxLength(64)
 	runOutputName: string
-	@description('The target regions where the distributed Image Version is going to be replicated to.')
+	@description('The target regions where the distributed Image Version is going to be replicated to. Region names must be unique within each distributor, including the implicit primary region from settings.location.')
 	targetRegions: {
 		@description('The replication settings for the region where the resource is located.')
 		Default: {
@@ -121,6 +121,28 @@ param resources {
 
 @description('The resource settings.')
 @sealed()
+@validate(
+	value =>
+		sys.empty(sys.filter(
+			value.properties.distribute,
+			distributor =>
+				sys.length(sys.union(
+					[
+						value.location
+					],
+					sys.map(
+						sys.filter(
+							sys.items(distributor.targetRegions),
+							region =>
+								region.key != 'Default'
+						),
+						region =>
+							region.value.?name
+					)
+				)) != sys.length(sys.items(distributor.targetRegions))
+		)),
+	'Target region names must be unique within each distributor, including the primary region from settings.location.'
+)
 param settings {
 	@description('The identity.')
 	identity: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.identity?
@@ -139,7 +161,19 @@ param settings {
 		buildTimeoutInMinutes: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.buildTimeoutInMinutes?
 		@description('Specifies the properties used to describe the customization steps of the image.')
 		customize: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.customize?
-		@description('The distribution targets where the image output needs to go to.')
+		@description('The distribution targets where the image output needs to go to. RunOutput names must be unique across distributors.')
+		@validate(
+			value =>
+				sys.length(sys.union(
+					sys.map(
+						value,
+						distributor =>
+							distributor.runOutputName
+					),
+					[]
+				)) == sys.length(value),
+			'runOutputName values must be unique across distributors.'
+		)
 		distribute: ImageTemplateSharedImageDistributor[]
 		@description('Error handling options upon a build failure.')
 		errorHandling: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.errorHandling?

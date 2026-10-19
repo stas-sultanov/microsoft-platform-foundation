@@ -62,8 +62,16 @@ param settings {
 			@description('Columns in the stream declaration.')
 			columns: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.properties.streamDeclarations.*.columns
 			@description('The stream declaration name.')
+			@minLength(8)
 			@maxLength(63)
-			@minLength(3)
+			@validate(
+				value =>
+					sys.take(
+						value,
+						7
+					) == 'Custom-',
+				'Custom stream names must start with Custom-.'
+			)
 			name: string
 		}
 	}

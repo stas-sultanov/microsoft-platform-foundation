@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.AppConfiguration/configurationStores/keyValues resource.'
+metadata description = 'Provisions multiple Microsoft.AppConfiguration/configurationStores/keyValues resources.'
 
 /* SCOPE */
 
