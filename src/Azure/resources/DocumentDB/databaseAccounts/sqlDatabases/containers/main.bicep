@@ -11,6 +11,10 @@ metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlDa
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as DocumentDBDatabaseAccounts from '../../../../../library/DocumentDB/databaseAccounts.bicep'
+
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
@@ -27,27 +31,13 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The request unit throughput settings.')
-		@sealed()
+		@description('The throughput settings.')
 		@validate(
 			value =>
 				value.?throughput == null || value.?autoscaleSettings == null,
 			'throughput and autoscaleSettings cannot both be specified.'
 		)
-		options: {
-			@description('The autoscale settings.')
-			@sealed()
-			autoscaleSettings: {
-				@description('The maximum throughput the container can autoscale to.')
-				@maxValue(10000000)
-				@minValue(4000)
-				maxThroughput: int
-			}?
-			@description('Request Units per second.')
-			@maxValue(10000000)
-			@minValue(400)
-			throughput: int?
-		}?
+		options: DocumentDBDatabaseAccounts.ThroughputOptions?
 		@sealed()
 		resource: {
 			@description('Analytical TTL.')

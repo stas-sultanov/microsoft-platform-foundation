@@ -32,7 +32,33 @@ type BgpSettings = {
 		@minLength(1)
 		@validate(
 			value =>
-				IsValidCustomBgpIpAddresses(value),
+				sys.length(sys.union(
+					value,
+					[]
+				)) == sys.length(value) && sys.empty(sys.filter(
+					value,
+					address =>
+						!((sys.startsWith(
+							address,
+							'169.254.21.'
+						) || sys.startsWith(
+							address,
+							'169.254.22.'
+						)) && sys.contains(
+							sys.map(
+								sys.range(
+									0,
+									256
+								),
+								n =>
+									sys.string(n)
+							),
+							sys.substring(
+								address,
+								11
+							)
+						))
+				)),
 			'Custom BGP peering IP addresses must be unique IPv4 addresses from 169.254.21.0 through 169.254.22.255.'
 		)
 		Instance0: string[]
@@ -40,7 +66,33 @@ type BgpSettings = {
 		@minLength(1)
 		@validate(
 			value =>
-				IsValidCustomBgpIpAddresses(value),
+				sys.length(sys.union(
+					value,
+					[]
+				)) == sys.length(value) && sys.empty(sys.filter(
+					value,
+					address =>
+						!((sys.startsWith(
+							address,
+							'169.254.21.'
+						) || sys.startsWith(
+							address,
+							'169.254.22.'
+						)) && sys.contains(
+							sys.map(
+								sys.range(
+									0,
+									256
+								),
+								n =>
+									sys.string(n)
+							),
+							sys.substring(
+								address,
+								11
+							)
+						))
+				)),
 			'Custom BGP peering IP addresses must be unique IPv4 addresses from 169.254.21.0 through 169.254.22.255.'
 		)
 		Instance1: string[]
@@ -121,43 +173,3 @@ func CreateIpConfiguration(
 		subnet: input.subnet
 	}
 }
-
-@description('Checks whether the provided value is a valid custom BGP peering IPv4 address within the range 169.254.21.0 through 169.254.22.255.')
-@export()
-func IsValidCustomBgpIpAddress(
-	address string
-) bool =>
-	(sys.startsWith(
-		address,
-		'169.254.21.'
-	) || sys.startsWith(
-		address,
-		'169.254.22.'
-	)) && sys.contains(
-		sys.map(
-			sys.range(
-				0,
-				256
-			),
-			n =>
-				sys.string(n)
-		),
-		sys.substring(
-			address,
-			11
-		)
-	)
-
-@description('Checks whether the provided values are unique, valid custom BGP peering IPv4 addresses within the range 169.254.21.0 through 169.254.22.255. An empty array is valid.')
-@export()
-func IsValidCustomBgpIpAddresses(
-	addresses string[]
-) bool =>
-	sys.length(sys.union(
-		addresses,
-		[]
-	)) == sys.length(addresses) && sys.empty(sys.filter(
-		addresses,
-		address =>
-			!IsValidCustomBgpIpAddress(address)
-	))
