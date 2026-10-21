@@ -50,7 +50,7 @@ resource Network_localNetworkGateways_ 'Microsoft.Network/localNetworkGateways@2
 		bgpSettings: settings.properties.?bgpSettings
 		fqdn: settings.properties.?fqdn
 		gatewayIpAddress: settings.properties.?gatewayIpAddress
-		localNetworkAddressSpace: settings.properties.localNetworkAddressSpace
+		localNetworkAddressSpace: settings.properties.?localNetworkAddressSpace
 	}
 	tags: settings.tags
 }
