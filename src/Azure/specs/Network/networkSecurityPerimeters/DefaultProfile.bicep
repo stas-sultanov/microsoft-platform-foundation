@@ -46,7 +46,7 @@ param resources {
 			@description('The child resources.')
 			@sealed()
 			resources: {
-				accessRules: NetworkNetworkSecurityPerimeters.AccessRuleChildResource[]
+				accessRules: NetworkNetworkSecurityPerimeters.AccessRuleResource[]
 			}
 		}
 	}

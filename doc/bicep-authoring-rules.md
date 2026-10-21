@@ -40,7 +40,13 @@ Unqualified standard function calls, such as `map(...)`, `items(...)`, `guid(...
 
 ## Custom Types and Properties
 
-Type names MUST describe intent, such as `PropertiesInput`, `ResourceInput`, `Resource`, `ExtensionsInput`, or a scenario-specific name.
+Type names MUST describe the value they represent and follow these conventions:
+
+- `Resource` MUST represent resource settings whose represented fields already have the intended Azure shape and can be used without translation or completion. Deployment context, such as `parent` or `scope`, MAY be supplied by the consuming module.
+- Types representing child resource settings MUST put the child resource type name before `Resource`, such as `KeyValueResource`, `KeyResource`, or `NatRuleResource`.
+- The `Input` suffix MUST be used only with `Resource` or `Properties`, optionally preceded by a resource or scenario name, such as `ResourceInput`, `LoadBalancingRuleResourceInput`, `PropertiesInput`, or `ConnectionPropertiesInput`. It MUST indicate consumer configuration that requires translation or completion before becoming the intended Azure resource settings or properties. Processing MAY occur in a helper function or directly in a resource declaration.
+- Types whose represented fields already have the intended Azure shape MUST NOT gain the `Input` suffix merely because they are used as parameters or enforce stronger validation. Custom aliases for Azure-shaped properties MAY use `Properties` or `<Kind>Properties`; native resource-derived types SHOULD be preferred.
+- Nested configuration, domain values, references, and union variants MUST use descriptive names without the `Input` suffix, such as `IpConfiguration`, `BgpSettings`, `IPSecPolicy`, `ResourceReference`, or `BgpWithFqdn`.
 
 Configurable property types SHOULD contain only properties that consumers are expected to control when the module defines a curated property contract.
 

@@ -11,7 +11,7 @@ metadata description = 'Provides reusable types for Microsoft.Network/localNetwo
 
 @description('The BGP speaker settings for the local network gateway.')
 @sealed()
-type BgpSettingsInput = {
+type BgpSettings = {
 	@description('The autonomous system number of the on-premises BGP speaker. Azure VPN Gateway FAQ reserved ASNs are not allowed. Must differ from the connected Azure VPN gateway ASN.')
 	@minValue(1)
 	@maxValue(4294967294)
@@ -41,23 +41,13 @@ type BgpSettingsInput = {
 	peerWeight: int?
 }
 
-@description('The local network gateway properties for one of the supported BGP and endpoint configurations.')
-@discriminator('configuration')
-@export()
-@sealed()
-type PropertiesInput =
-	| BgpWithFqdnInput
-	| BgpWithIpInput
-	| StaticWithFqdnInput
-	| StaticWithIpInput
-
 @description('A local network gateway using BGP and an FQDN endpoint.')
 @sealed()
-type BgpWithFqdnInput = {
+type BgpWithFqdn = {
 	@description('The selected BGP and endpoint configuration.')
 	configuration: 'BgpWithFqdn'
 	@description('The local network gateway BGP speaker settings.')
-	bgpSettings: BgpSettingsInput
+	bgpSettings: BgpSettings
 	@description('The FQDN of the local network gateway.')
 	fqdn: string
 	@description('The address space of the local network site.')
@@ -66,20 +56,30 @@ type BgpWithFqdnInput = {
 
 @description('A local network gateway using BGP and an IP address endpoint.')
 @sealed()
-type BgpWithIpInput = {
+type BgpWithIp = {
 	@description('The selected BGP and endpoint configuration.')
 	configuration: 'BgpWithIp'
 	@description('The local network gateway BGP speaker settings.')
-	bgpSettings: BgpSettingsInput
+	bgpSettings: BgpSettings
 	@description('The IP address of the local network gateway.')
 	gatewayIpAddress: string
 	@description('The address space of the local network site.')
 	localNetworkAddressSpace: resourceInput<'Microsoft.Network/localNetworkGateways@2026-01-01'>.properties.localNetworkAddressSpace?
 }
 
+@description('The local network gateway properties for one of the supported BGP and endpoint configurations.')
+@discriminator('configuration')
+@export()
+@sealed()
+type PropertiesInput =
+	| BgpWithFqdn
+	| BgpWithIp
+	| StaticWithFqdn
+	| StaticWithIp
+
 @description('A local network gateway using static routing and an FQDN endpoint.')
 @sealed()
-type StaticWithFqdnInput = {
+type StaticWithFqdn = {
 	@description('The selected BGP and endpoint configuration.')
 	configuration: 'StaticWithFqdn'
 	@description('The FQDN of the local network gateway.')
@@ -90,7 +90,7 @@ type StaticWithFqdnInput = {
 
 @description('A local network gateway using static routing and an IP address endpoint.')
 @sealed()
-type StaticWithIpInput = {
+type StaticWithIp = {
 	@description('The selected BGP and endpoint configuration.')
 	configuration: 'StaticWithIp'
 	@description('The IP address of the local network gateway.')

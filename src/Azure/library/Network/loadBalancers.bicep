@@ -12,7 +12,7 @@ metadata description = 'Provides reusable types for Microsoft.Network/loadBalanc
 @description('The load balancing rule child resource.')
 @export()
 @sealed()
-type LoadBalancingRule = {
+type LoadBalancingRuleResourceInput = {
 	@description('The name.')
 	name: string
 	@description('The configurable properties.')
@@ -32,7 +32,7 @@ type LoadBalancingRule = {
 @description('The private frontend IP configuration child resource.')
 @export()
 @sealed()
-type PrivateFrontendIPConfigurationSettings = {
+type PrivateFrontendIPConfiguration = {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -48,7 +48,7 @@ type PrivateFrontendIPConfigurationSettings = {
 @description('The probe child resource.')
 @export()
 @sealed()
-type ProbeSettings = {
+type Probe = {
 	@description('Properties of the probe.')
 	properties: resourceInput<'Microsoft.Network/loadBalancers/probes@2026-01-01'>.properties
 }
@@ -56,7 +56,7 @@ type ProbeSettings = {
 @description('The public frontend IP configuration child resource.')
 @export()
 @sealed()
-type PublicFrontendIPConfigurationSettings = {
+type PublicFrontendIPConfiguration = {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {

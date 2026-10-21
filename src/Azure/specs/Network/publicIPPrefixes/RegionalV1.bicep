@@ -22,12 +22,12 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The configurable properties for a regional public IP prefix.')
 @discriminator('publicIPAddressVersion')
 type PublicIPPrefixPropertiesInput =
-	| PublicIPPrefixPropertiesIPv4Input
-	| PublicIPPrefixPropertiesIPv6Input
+	| PublicIPPrefixPropertiesIPv4
+	| PublicIPPrefixPropertiesIPv6
 
 @description('The configurable properties for an IPv4 regional public IP prefix.')
 @sealed()
-type PublicIPPrefixPropertiesIPv4Input = {
+type PublicIPPrefixPropertiesIPv4 = {
 	@description('The list of tags associated with the public IP prefix.')
 	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
 	@description('The CIDR prefix length.')
@@ -40,7 +40,7 @@ type PublicIPPrefixPropertiesIPv4Input = {
 
 @description('The configurable properties for an IPv6 regional public IP prefix.')
 @sealed()
-type PublicIPPrefixPropertiesIPv6Input = {
+type PublicIPPrefixPropertiesIPv6 = {
 	@description('The list of tags associated with the public IP prefix.')
 	@validate(
 		value =>

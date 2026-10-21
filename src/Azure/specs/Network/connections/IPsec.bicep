@@ -18,7 +18,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 import {
-	IPSecPolicyInput
+	IPSecPolicy
 } from '../../../library/Network/connections.bicep'
 
 /* TYPES */
@@ -27,12 +27,12 @@ import {
 @discriminator('authenticationType')
 @sealed()
 type ConnectionPropertiesInput =
-	| ConnectionPropertiesWithCertificateInput
-	| ConnectionPropertiesWithPskInput
+	| ConnectionPropertiesWithCertificate
+	| ConnectionPropertiesWithPsk
 
 @description('The settings for an IPsec connection using certificate authentication.')
 @sealed()
-type ConnectionPropertiesWithCertificateInput = {
+type ConnectionPropertiesWithCertificate = {
 	@description('The connection authentication type.')
 	authenticationType: 'Certificate'
 	@description('Certificate authentication settings for the connection.')
@@ -59,7 +59,7 @@ type ConnectionPropertiesWithCertificateInput = {
 			)) == 0,
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
-	ipsecPolicies: IPSecPolicyInput[]
+	ipsecPolicies: IPSecPolicy[]
 	@description('The resource ID of the Microsoft.Network/localNetworkGateways resource.')
 	@validate(
 		value =>
@@ -88,7 +88,7 @@ type ConnectionPropertiesWithCertificateInput = {
 
 @description('The settings for an IPsec connection using a pre-shared key.')
 @sealed()
-type ConnectionPropertiesWithPskInput = {
+type ConnectionPropertiesWithPsk = {
 	@description('The connection authentication type.')
 	authenticationType: 'PSK'
 	@description('The dead peer detection timeout in seconds.')
@@ -113,7 +113,7 @@ type ConnectionPropertiesWithPskInput = {
 			)) == 0,
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
-	ipsecPolicies: IPSecPolicyInput[]
+	ipsecPolicies: IPSecPolicy[]
 	@description('The resource ID of the Microsoft.Network/localNetworkGateways resource.')
 	@validate(
 		value =>

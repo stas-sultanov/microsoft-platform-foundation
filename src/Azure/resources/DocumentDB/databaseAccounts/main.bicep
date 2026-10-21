@@ -19,9 +19,9 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 /* TYPES */
 
-@description('A geo-replication location input.')
+@description('A geo-replication location.')
 @sealed()
-type LocationInput = {
+type Location = {
 	@description('Specifies whether this region is an Availability Zone region.')
 	isZoneRedundant: bool
 	@description('The region name.')
@@ -98,7 +98,7 @@ param settings {
 				)) == sys.length(value),
 			'locations must be unique.'
 		)
-		locations: LocationInput[]
+		locations: Location[]
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.publicNetworkAccess
 	}

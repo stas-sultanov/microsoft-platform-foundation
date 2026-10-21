@@ -14,7 +14,7 @@ $ErrorActionPreference = 'Stop'
 
 $SourceRoot = (Resolve-Path -Path $SourceRoot -ErrorAction Stop).Path
 $bicepFiles = Get-ChildItem -Path $SourceRoot -Recurse -Filter '*.bicep' -File |
-	Sort-Object -Property FullName
+Sort-Object -Property FullName
 
 if (-not $bicepFiles) {
 	throw "No Bicep templates found under '$SourceRoot'."
@@ -29,7 +29,8 @@ foreach ($file in $bicepFiles) {
 		$ErrorActionPreference = 'Continue'
 		$formatOutput = & az bicep format --file $file.FullName 2>&1
 		$formatExitCode = $LASTEXITCODE
-	} finally {
+	}
+ finally {
 		$ErrorActionPreference = $previousErrorActionPreference
 	}
 
