@@ -17,9 +17,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
-import {
-	IPSecPolicy
-} from '../../../library/Network/connections.bicep'
+import * as NetworkConnections from '../../../library/Network/connections.bicep'
 
 /* TYPES */
 
@@ -59,7 +57,7 @@ type ConnectionPropertiesWithCertificate = {
 			)) == 0,
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
-	ipsecPolicies: IPSecPolicy[]
+	ipsecPolicies: NetworkConnections.IPSecPolicy[]
 	@description('The resource ID of the Microsoft.Network/localNetworkGateways resource.')
 	@validate(
 		value =>
@@ -113,7 +111,7 @@ type ConnectionPropertiesWithPsk = {
 			)) == 0,
 		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
 	)
-	ipsecPolicies: IPSecPolicy[]
+	ipsecPolicies: NetworkConnections.IPSecPolicy[]
 	@description('The resource ID of the Microsoft.Network/localNetworkGateways resource.')
 	@validate(
 		value =>

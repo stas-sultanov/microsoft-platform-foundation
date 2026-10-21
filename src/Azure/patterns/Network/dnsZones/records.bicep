@@ -13,18 +13,15 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import {
-	ARecord
-	NSRecord
-} from '../../../library/Network/dnsZones.bicep'
+import * as NetworkDnsZones from '../../../library/Network/dnsZones.bicep'
 
 /* PARAMETERS */
 
 @description('The A records.')
-param A ARecord[] = []
+param A NetworkDnsZones.ARecord[] = []
 
 @description('The NS records.')
-param NS NSRecord[] = []
+param NS NetworkDnsZones.NSRecord[] = []
 
 @description('The name of the parent Microsoft.Network/dnsZones resource.')
 param parentName resourceInput<'Microsoft.Network/dnsZones@2018-05-01'>.name

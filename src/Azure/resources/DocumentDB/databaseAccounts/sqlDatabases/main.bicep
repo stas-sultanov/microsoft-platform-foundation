@@ -11,6 +11,10 @@ metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlDa
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as DocumentDBDatabaseAccounts from '../../../../library/DocumentDB/databaseAccounts.bicep'
+
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
@@ -28,27 +32,13 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The database options. Note: Either throughput or autoscaleSettings is required, but not both.')
-		@sealed()
+		@description('The throughput settings.')
 		@validate(
 			value =>
-				(value.?throughput == null) != (value.?autoscaleSettings == null),
-			'Exactly one of throughput or autoscaleSettings must be specified.'
+				value.?throughput == null || value.?autoscaleSettings == null,
+			'throughput and autoscaleSettings cannot both be specified.'
 		)
-		options: {
-			@description('The autoscale settings.')
-			@sealed()
-			autoscaleSettings: {
-				@maxValue(10000000)
-				@minValue(4000)
-				@description('The maximum throughput the database can autoscale to.')
-				maxThroughput: int
-			}?
-			@description('Request Units per second.')
-			@maxValue(10000000)
-			@minValue(400)
-			throughput: int?
-		}
+		options: DocumentDBDatabaseAccounts.ThroughputOptions?
 	}
 	@description('Tags to put on the resource.')
 	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.tags
@@ -72,10 +62,7 @@ resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databas
 	name: settings.name
 	parent: DocumentDB_databaseAccounts_
 	properties: {
-		options: {
-			throughput: settings.properties.options.?throughput
-			autoscaleSettings: settings.properties.options.?autoscaleSettings
-		}
+		options: settings.properties.?options
 		resource: {
 			id: settings.name
 		}
