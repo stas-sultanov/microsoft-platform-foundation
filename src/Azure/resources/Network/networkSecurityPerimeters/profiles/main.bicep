@@ -24,7 +24,7 @@ param parentName resourceInput<'Microsoft.Network/networkSecurityPerimeters@2026
 @sealed()
 param resources {
 	accessRules: {
-		*: NetworkNetworkSecurityPerimeters.AccessRuleChildResource
+		*: NetworkNetworkSecurityPerimeters.AccessRuleResource
 	}
 }?
 

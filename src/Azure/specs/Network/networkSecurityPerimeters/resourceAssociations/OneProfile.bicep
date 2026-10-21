@@ -16,7 +16,7 @@ targetScope = 'resourceGroup'
 @description('The configuration of a Microsoft.Network/networkSecurityPerimeters/resourceAssociations resource.')
 @export()
 @sealed()
-type ResourceAssociationChildResource = {
+type ResourceAssociationResourceInput = {
 	@description('The resource name.')
 	name: string
 	@description('Properties of the NSP resource association.')
@@ -41,7 +41,7 @@ param parentProfileName resourceInput<'Microsoft.Network/networkSecurityPerimete
 @sealed()
 param resources {
 	@description('The collection of resource associations.')
-	resourceAssociations: ResourceAssociationChildResource[]
+	resourceAssociations: ResourceAssociationResourceInput[]
 }
 
 /* EXISTING RESOURCES */

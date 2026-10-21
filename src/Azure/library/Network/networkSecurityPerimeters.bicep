@@ -12,7 +12,7 @@ metadata description = 'Provides reusable types for Microsoft.Network/networkSec
 @description('The configuration of a Microsoft.Network/networkSecurityPerimeters/profiles/accessRules resource.')
 @export()
 @sealed()
-type AccessRuleChildResource = {
+type AccessRuleResource = {
 	@description('The resource name.')
 	name: string
 	@description('Properties of the NSP access rule.')
@@ -22,7 +22,7 @@ type AccessRuleChildResource = {
 @description('The configuration of a Microsoft.Network/networkSecurityPerimeters/resourceAssociations resource.')
 @export()
 @sealed()
-type ResourceAssociationChildResource = {
+type ResourceAssociationResource = {
 	@description('The resource name.')
 	name: string
 	@description('Properties of the NSP resource association.')

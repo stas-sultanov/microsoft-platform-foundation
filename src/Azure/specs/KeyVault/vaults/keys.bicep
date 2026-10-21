@@ -21,7 +21,7 @@ import * as KeyVaultVaults from '../../../library/KeyVault/vaults.bicep'
 param parentName resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.name
 
 @description('The child key resources.')
-param resources KeyVaultVaults.KeyChildResource[]
+param resources KeyVaultVaults.KeyResource[]
 
 /* EXISTING RESOURCES */
 

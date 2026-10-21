@@ -12,7 +12,7 @@ metadata description = 'Provides reusable types for Microsoft.Network/connection
 @description('The configuration of a custom IPsec policy.')
 @export()
 @sealed()
-type IPSecPolicyInput = {
+type IPSecPolicy = {
 	@description('The Diffie-Hellman group for IKE key exchange.')
 	dhGroup:
 		| 'DHGroup24'

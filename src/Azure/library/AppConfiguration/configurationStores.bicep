@@ -12,7 +12,7 @@ metadata description = 'Provides reusable types for Microsoft.AppConfiguration/c
 @description('The configuration of a Microsoft.AppConfiguration/configurationStores/keyValues resource.')
 @export()
 @sealed()
-type KeyValueChildResource = {
+type KeyValueResource = {
 	@description('The name.')
 	name: string
 	@description('The properties.')

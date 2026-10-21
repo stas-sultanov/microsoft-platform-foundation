@@ -21,51 +21,6 @@ import * as MaintenanceConfigurationAssignments from '../../../library/Maintenan
 
 import * as NetworkVirtualNetworkGateways from '../../../library/Network/virtualNetworkGateways.bicep'
 
-/* TYPES */
-
-@description('Optional BGP settings. When supplied, BGP is enabled; otherwise, it is disabled. Azure allocates ordinary BGP peering IP addresses automatically.')
-@sealed()
-type BgpSettingsInput = {
-	@description('The BGP autonomous system number.')
-	@minValue(1)
-	@maxValue(4294967294)
-	asn: int?
-	@description('Optional custom Azure APIPA BGP peering addresses for each gateway instance. Azure permits 169.254.21.0 through 169.254.22.255; verify addresses against the remote peers.')
-	@sealed()
-	@validate(
-		value =>
-			value == null || (sys.length(sys.union(
-				sys.map(
-					sys.concat(
-						value!.Instance0,
-						value!.Instance1
-					),
-					address =>
-						sys.toLower(address)
-				),
-				[]
-			)) == sys.length(value!.Instance0) + sys.length(value!.Instance1) && sys.empty(sys.filter(
-				sys.concat(value!.Instance0, value!.Instance1),
-				address => !sys.contains(
-					sys.map(
-						sys.range(0, 512),
-						index => '169.254.${21 + index / 256}.${index % 256}'
-					),
-					address
-				)
-			))),
-		'Custom BGP peering IP addresses must be unique across both instances and valid IPv4 addresses from 169.254.21.0 through 169.254.22.255.'
-	)
-	customBgpIpAddresses: {
-		@description('Custom Azure APIPA BGP addresses for the Instance0 instance.')
-		@minLength(1)
-		Instance0: string[]
-		@description('Custom Azure APIPA BGP addresses for the Instance1 instance.')
-		@minLength(1)
-		Instance1: string[]
-	}?
-}
-
 /* PARAMETERS */
 
 @description('The extension resource settings.')
@@ -103,7 +58,7 @@ param settings {
 	)
 	properties: {
 		@description('The custom BGP settings.')
-		bgpSettings: BgpSettingsInput?
+		bgpSettings: NetworkVirtualNetworkGateways.BgpSettings?
 		@description('Specifies whether BGP is enabled.')
 		enableBgp: bool
 		@description('Specifies whether BGP routes are translated using NAT.')
@@ -117,9 +72,9 @@ param settings {
 		)
 		ipConfigurations: {
 			@description('The IP configuration for the Instance0 gateway instance.')
-			Instance0: NetworkVirtualNetworkGateways.IpConfigurationInput
+			Instance0: NetworkVirtualNetworkGateways.IpConfiguration
 			@description('The IP configuration for the Instance1 gateway instance.')
-			Instance1: NetworkVirtualNetworkGateways.IpConfigurationInput
+			Instance1: NetworkVirtualNetworkGateways.IpConfiguration
 		}
 		@description('The optional VPN gateway NAT rules. Nonempty rules require VpnGw2AZ or higher.')
 		natRules: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.properties.natRules?

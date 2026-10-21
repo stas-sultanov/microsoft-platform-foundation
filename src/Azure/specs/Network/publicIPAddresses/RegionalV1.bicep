@@ -22,12 +22,12 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @description('The configurable properties for a regional public IP address.')
 @discriminator('publicIPAddressVersion')
 type PublicIPAddressPropertiesInput =
-	| PublicIPAddressPropertiesIPv4Input
-	| PublicIPAddressPropertiesIPv6Input
+	| PublicIPAddressPropertiesIPv4
+	| PublicIPAddressPropertiesIPv6
 
 @description('The configurable properties for an IPv4 regional public IP address.')
 @sealed()
-type PublicIPAddressPropertiesIPv4Input = {
+type PublicIPAddressPropertiesIPv4 = {
 	@description('The DDoS protection custom policy associated with the public IP address.')
 	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ddosSettings?
 	@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')
@@ -55,7 +55,7 @@ type PublicIPAddressPropertiesIPv4Input = {
 
 @description('The configurable properties for an IPv6 regional public IP address.')
 @sealed()
-type PublicIPAddressPropertiesIPv6Input = {
+type PublicIPAddressPropertiesIPv6 = {
 	@description('The DDoS protection custom policy associated with the public IP address.')
 	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ddosSettings?
 	@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')

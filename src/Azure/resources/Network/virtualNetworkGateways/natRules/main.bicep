@@ -21,7 +21,7 @@ import * as NetworkVirtualNetworkGateways from '../../../../library/Network/virt
 param parentName resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.name
 
 @description('The resource settings.')
-param settings NetworkVirtualNetworkGateways.NatRuleChildResource
+param settings NetworkVirtualNetworkGateways.NatRuleResource
 
 /* EXISTING RESOURCES */
 

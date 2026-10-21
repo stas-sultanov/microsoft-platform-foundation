@@ -45,7 +45,7 @@ param extensions {
 param resources {
 	@description('The NAT rules.')
 	natRules: {
-		*: NetworkVirtualNetworkGateways.NatRuleChildResource
+		*: NetworkVirtualNetworkGateways.NatRuleResource
 	}
 }?
 

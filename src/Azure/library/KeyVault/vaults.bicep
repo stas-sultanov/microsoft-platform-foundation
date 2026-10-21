@@ -12,7 +12,7 @@ metadata description = 'Provides reusable types for Microsoft.KeyVault/vaults re
 @description('The configuration of a Microsoft.KeyVault/vaults/keys resource.')
 @export()
 @sealed()
-type KeyChildResource = {
+type KeyResource = {
 	@description('The name.')
 	name: resourceInput<'Microsoft.KeyVault/vaults/keys@2026-05-15'>.name
 	@description('The properties.')
