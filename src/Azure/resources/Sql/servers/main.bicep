@@ -107,7 +107,7 @@ param settings {
 		isIPv6Enabled: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.isIPv6Enabled
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.publicNetworkAccess
-		@description('The resource ID of the Microsoft.ManagedIdentity/userAssignedIdentities resource.')
+		@description('The ID of the Microsoft.ManagedIdentity/userAssignedIdentities resource.')
 		@validate(
 			value =>
 				value == null || sys.like(

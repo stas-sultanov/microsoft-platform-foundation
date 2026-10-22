@@ -38,7 +38,7 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The resource ID of the Microsoft.OperationalInsights/workspaces resource.')
+		@description('The ID of the Microsoft.OperationalInsights/workspaces resource.')
 		@validate(
 			value =>
 				sys.like(

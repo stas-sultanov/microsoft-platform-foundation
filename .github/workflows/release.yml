@@ -31,7 +31,7 @@ jobs:
       run: az bicep install --version v0.48.1
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Verify API Versions
       shell: pwsh

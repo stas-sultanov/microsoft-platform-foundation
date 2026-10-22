@@ -40,7 +40,7 @@ param settings {
 		publicNetworkAccessForIngestion: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForIngestion
 		@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
 		publicNetworkAccessForQuery: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForQuery
-		@description('The resource ID of the Microsoft.OperationalInsights/workspaces resource.')
+		@description('The ID of the Microsoft.OperationalInsights/workspaces resource.')
 		@validate(
 			value =>
 				sys.like(

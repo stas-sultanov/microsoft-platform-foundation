@@ -49,7 +49,7 @@ type ImageTemplateSharedImageDistributor = {
 	}?
 	@description('Specifies whether the created image version is excluded from the latest version.')
 	excludeFromLatest: bool?
-	@description('The resource ID of the Microsoft.Compute/galleries/images resource.')
+	@description('The ID of the Microsoft.Compute/galleries/images resource.')
 	@validate(
 		value =>
 			sys.like(
@@ -191,7 +191,7 @@ param settings {
 		optimize: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.optimize?
 		@description('Specifies the properties used to describe the source image.')
 		source: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.source
-		@description('The resource ID of the Microsoft.Resources/resourceGroups resource.')
+		@description('The ID of the Microsoft.Resources/resourceGroups resource.')
 		@validate(
 			value =>
 				value == null || sys.like(

@@ -41,7 +41,7 @@ param alertRules {
 	traceSeverity: ResourceInput
 }
 
-@description('The resource IDs of the Microsoft.Insights/actionGroups resources.')
+@description('The IDs of the Microsoft.Insights/actionGroups resources.')
 @validate(
 	value =>
 		sys.length(sys.filter(

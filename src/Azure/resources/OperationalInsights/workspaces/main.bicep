@@ -49,7 +49,7 @@ param settings {
 		'immediatePurgeDataOn30Days requires retentionInDays to be 30.'
 	)
 	properties: {
-		@description('The resource ID of the Microsoft.Insights/dataCollectionRules resource.')
+		@description('The ID of the Microsoft.Insights/dataCollectionRules resource.')
 		@validate(
 			value =>
 				value == null || sys.like(
