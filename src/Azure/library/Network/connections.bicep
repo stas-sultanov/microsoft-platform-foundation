@@ -46,3 +46,35 @@ type IPSecPolicy = {
 	@minValue(300)
 	saLifeTimeSeconds: int
 }
+
+@description('The reference to a Microsoft.Network/localNetworkGateways resource.')
+@export()
+@sealed()
+type LocalNetworkGatewayReference = {
+	@description('The resource ID.')
+	@validate(
+		value =>
+			sys.like(
+				value,
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/localNetworkGateways/*'
+			),
+		'The value must reference a Microsoft.Network/localNetworkGateways resource ID.'
+	)
+	id: string
+}
+
+@description('The reference to a Microsoft.Network/virtualNetworkGateways resource.')
+@export()
+@sealed()
+type VirtualNetworkGatewayReference = {
+	@description('The resource ID.')
+	@validate(
+		value =>
+			sys.like(
+				value,
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworkGateways/*'
+			),
+		'The value must reference a Microsoft.Network/virtualNetworkGateways resource ID.'
+	)
+	id: string
+}
