@@ -49,14 +49,14 @@ type ConnectionPropertiesInput = {
 	ipsecPolicies: NetworkConnections.IPSecPolicy[]
 	@description('The reference to the Microsoft.Network/localNetworkGateways resource.')
 	localNetworkGateway2: NetworkConnections.LocalNetworkGatewayReference
-	@description('The resource ID of the Microsoft.KeyVault/vaults/secrets resource that holds the shared key for the connection.')
+	@description('The ID of the Microsoft.KeyVault/vaults/secrets resource.')
 	@validate(
 		value =>
 			sys.like(
 				value,
 				'/subscriptions/*/resourceGroups/*/providers/Microsoft.KeyVault/vaults/*/secrets/*'
 			),
-		'The value must reference a Microsoft.KeyVault/vaults/secrets resource ID.'
+		'The value must be a Microsoft.KeyVault/vaults/secrets resource ID.'
 	)
 	sharedKeyKeyVaultId: string
 	@description('The custom traffic selector policies, configured independently of usePolicyBasedTrafficSelectors.')

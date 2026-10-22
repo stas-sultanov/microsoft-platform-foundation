@@ -106,7 +106,7 @@ type IpConfiguration = {
 	@description('The reference to a Standard, Static public IP address resource.')
 	@sealed()
 	publicIPAddress: {
-		@description('The resource ID of the Microsoft.Network/publicIPAddresses resource.')
+		@description('The ID of the Microsoft.Network/publicIPAddresses resource.')
 		@validate(
 			value =>
 				sys.like(
@@ -117,17 +117,17 @@ type IpConfiguration = {
 		)
 		id: string
 	}
-	@description('The reference to the subnet resource.')
+	@description('The reference to the subnet resource named GatewaySubnet.')
 	@sealed()
 	subnet: {
-		@description('The resource ID of the Microsoft.Network/virtualNetworks/subnets resource named GatewaySubnet.')
+		@description('The ID of the Microsoft.Network/virtualNetworks/subnets resource.')
 		@validate(
 			value =>
 				sys.like(
 					value,
 					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworks/*/subnets/GatewaySubnet'
 				),
-			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID of the subnet named GatewaySubnet.'
+			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
 		)
 		id: string
 	}

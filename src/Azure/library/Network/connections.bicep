@@ -51,14 +51,14 @@ type IPSecPolicy = {
 @export()
 @sealed()
 type LocalNetworkGatewayReference = {
-	@description('The resource ID.')
+	@description('The ID of the Microsoft.Network/localNetworkGateways resource.')
 	@validate(
 		value =>
 			sys.like(
 				value,
 				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/localNetworkGateways/*'
 			),
-		'The value must reference a Microsoft.Network/localNetworkGateways resource ID.'
+		'The value must be a Microsoft.Network/localNetworkGateways resource ID.'
 	)
 	id: string
 }
@@ -67,14 +67,14 @@ type LocalNetworkGatewayReference = {
 @export()
 @sealed()
 type VirtualNetworkGatewayReference = {
-	@description('The resource ID.')
+	@description('The ID of the Microsoft.Network/virtualNetworkGateways resource.')
 	@validate(
 		value =>
 			sys.like(
 				value,
 				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworkGateways/*'
 			),
-		'The value must reference a Microsoft.Network/virtualNetworkGateways resource ID.'
+		'The value must be a Microsoft.Network/virtualNetworkGateways resource ID.'
 	)
 	id: string
 }

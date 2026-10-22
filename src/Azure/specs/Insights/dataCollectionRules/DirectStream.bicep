@@ -42,7 +42,7 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The resource ID of the Microsoft.Insights/dataCollectionEndpoints resource.')
+		@description('The ID of the Microsoft.Insights/dataCollectionEndpoints resource.')
 		@validate(
 			value =>
 				value == null || sys.like(
