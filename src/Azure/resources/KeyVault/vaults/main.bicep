@@ -47,6 +47,10 @@ param settings {
 		'enablePurgeProtection and softDeleteRetentionInDays cannot be specified when enableSoftDelete is false.'
 	)
 	properties: {
+		@description('Specifies whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault.')
+		enabledForDeployment: bool?
+		@description('Specifies whether Azure Resource Manager is permitted to retrieve secrets from the key vault.')
+		enabledForTemplateDeployment: bool?
 		@description('Specifies whether purge protection is enabled for this vault.')
 		enablePurgeProtection: bool
 		@description('Specifies whether soft delete is enabled for this key vault.')
@@ -58,7 +62,7 @@ param settings {
 			| 'Enabled'
 			| 'Disabled'
 			| 'SecuredByPerimeter'
-		@description('The \'soft delete\' data retention days.')
+		@description('The soft deleted data retention days.')
 		@maxValue(90)
 		@minValue(7)
 		softDeleteRetentionInDays: int?
@@ -73,6 +77,8 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-05-15' = {
 	location: settings.location
 	name: settings.name
 	properties: {
+		enabledForDeployment: settings.properties.?enabledForDeployment
+		enabledForTemplateDeployment: settings.properties.?enabledForTemplateDeployment
 		enablePurgeProtection: settings.properties.enableSoftDelete && settings.properties.enablePurgeProtection
 			? true
 			: null
@@ -84,7 +90,7 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-05-15' = {
 			family: 'A'
 			name: 'standard'
 		}
-		softDeleteRetentionInDays: settings.properties.?softDeleteRetentionInDays ?? 7
+		softDeleteRetentionInDays: settings.properties.?softDeleteRetentionInDays
 		tenantId: az.tenant().tenantId
 	}
 	tags: settings.tags
