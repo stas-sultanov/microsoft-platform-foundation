@@ -17,6 +17,19 @@ extension microsoftGraph
 
 /* TYPES */
 
+@description('The result of creating a password credential.')
+@sealed()
+@secure()
+type PasswordCredentialResult = {
+	@description('The hint for the password credential.')
+	hint: string
+	@description('The unique identifier for the password credential.')
+	keyId: string
+	@description('The secret text for the password credential.')
+	@secure()
+	secretText: string
+}
+
 @description('The Entra application settings.')
 @export()
 @sealed()
@@ -77,15 +90,12 @@ resource Graph_servicePrincipals_ 'Microsoft.Graph/servicePrincipals@beta' = {
 /* OUTPUTS */
 
 @description('The result.')
+@sealed()
+@secure()
 output result {
 	appId: string
 	applicationObjectId: string
-	passwordCredentials: {
-		hint: string
-		keyId: string
-		@secure()
-		secretText: string
-	}[]
+	passwordCredentials: PasswordCredentialResult[]
 	servicePrincipalObjectId: string
 } = {
 	appId: Graph_applications_.appId

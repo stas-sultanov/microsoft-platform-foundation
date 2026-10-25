@@ -13,7 +13,7 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import * as AuthorizationRoleAssignments from '../../../../Azure/library/Authorization/roleAssignments.bicep'
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
 /* TYPES */
 @description('Versioning settings for a shared image distributor.')
@@ -71,6 +71,7 @@ type ImageTemplateSharedImageDistributor = {
 	@description('The target regions where the distributed Image Version is going to be replicated to. Region names must be unique within each distributor, including the implicit primary region from settings.location.')
 	targetRegions: {
 		@description('The replication settings for the region where the resource is located.')
+		@sealed()
 		Default: {
 			@description('The number of replicas to create in the target region.')
 			@minValue(1)
@@ -79,6 +80,7 @@ type ImageTemplateSharedImageDistributor = {
 			storageAccountType: ImageTemplateSharedImageDistributorTargetRegionStorageAccountType
 		}
 		@description('The replication settings for all other target regions.')
+		@sealed()
 		*: {
 			@description('The name of the target region.')
 			name: string
@@ -122,6 +124,7 @@ param resources {
 		@sealed()
 		SourceImage: {
 			@description('The configurable properties.')
+			@sealed()
 			properties: {}
 		}?
 	}
@@ -163,7 +166,7 @@ param settings {
 	properties: {
 		@description('Optional array of additional data disks to be added to the image.')
 		additionalDataDisks: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.additionalDataDisks?
-		@description('Indicates whether or not to automatically run the image template build on template creation or update.')
+		@description('Specifies whether the image template build runs automatically on template creation or update.')
 		autoRun: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.autoRun?
 		@description('Maximum duration to wait while building the image template in minutes.')
 		buildTimeoutInMinutes: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.buildTimeoutInMinutes?

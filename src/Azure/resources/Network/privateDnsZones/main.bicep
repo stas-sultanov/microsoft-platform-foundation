@@ -37,6 +37,7 @@ param resources {
 	}
 	@description('The virtual network links.')
 	virtualNetworkLinks: {
+		@sealed()
 		*: {
 			@description('The resource name.')
 			name: string

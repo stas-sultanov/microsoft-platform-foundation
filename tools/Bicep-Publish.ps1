@@ -1,101 +1,96 @@
 <#
 .SYNOPSIS
 	Publishes every Bicep file under a source root to an OCI registry.
-
 .DESCRIPTION
-	Each Bicep file is published as a separate module artifact. The artifact
-	repository is derived from the file path relative to the source root,
-	lowercased, without the '.bicep' extension, and with a trailing 'main'
-	segment removed:
-
-	  Azure/resources/Network/virtualNetworks/main.bicep -> <Registry>/azure/resources/network/virtualnetworks:<Version>
-	  Azure/library/common.bicep                         -> <Registry>/azure/library/common:<Version>
-
-	Existing tags are never overwritten. Use -WhatIf to preview targets.
-
-.PARAMETER Registry
+	Publishes each Bicep file as a separate module artifact.
+.PARAMETER registry
 	Registry and repository prefix, for example 'ghcr.io/owner/repo'.
-
-.PARAMETER Version
+.PARAMETER version
 	Semantic version used as the artifact tag, for example '1.2.3' or '1.2.3-beta.1'.
-
-.PARAMETER SourceRoot
+.PARAMETER sourceRoot
 	Root folder containing Bicep sources. Defaults to the repository's src folder.
+.NOTES
+	Author: Stas Sultanov
 #>
 
-[CmdletBinding(SupportsShouldProcess)]
-param(
-	[Parameter(Mandatory)]
-	[ValidatePattern('^[a-z0-9.\-]+(:[0-9]+)?(/[a-z0-9._\-]+)*$')]
-	[string]$Registry,
+#Requires -Version 7.0
 
-	[Parameter(Mandatory)]
-	[ValidatePattern('^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z\-]+(\.[0-9A-Za-z\-]+)*)?$')]
-	[string]$Version,
+[CmdletBinding(SupportsShouldProcess = $true)]
+param
+(
+	[Parameter(Mandatory = $true)]
+	[ValidatePattern('^[a-z0-9.\-]+(:[0-9]+)?(/[a-z0-9._\-]+)*$', Options = [System.Text.RegularExpressions.RegexOptions]::None)]
+	[String] $registry,
 
-	[string]$SourceRoot = (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'src')
+	[Parameter(Mandatory = $true)]
+	[ValidatePattern('^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z\-]+(\.[0-9A-Za-z\-]+)*)?$', Options = [System.Text.RegularExpressions.RegexOptions]::None)]
+	[String] $version,
+
+	[ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+	[String] $sourceRoot = (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'src')
 )
 
-$ErrorActionPreference = 'Stop'
+begin
+{
+	$ErrorActionPreference = 'Stop';
 
-$SourceRoot = (Resolve-Path -Path $SourceRoot -ErrorAction Stop).Path
-$bicepFiles = Get-ChildItem -Path $SourceRoot -Recurse -Filter '*.bicep' -File |
-Sort-Object -Property FullName
-
-if (-not $bicepFiles) {
-	throw "No Bicep templates found under '$SourceRoot'."
+	Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath 'Common.psm1') -Force;
 }
 
-$modules = foreach ($file in $bicepFiles) {
-	$relativePath = $file.FullName.Substring($SourceRoot.Length).TrimStart('\', '/')
-	$segments = [System.Collections.Generic.List[string]]($relativePath -split '[\\/]')
-	$segments[-1] = [System.IO.Path]::GetFileNameWithoutExtension($segments[-1])
-	if ($segments.Count -gt 1 -and $segments[-1] -ceq 'main') {
-		$segments.RemoveAt($segments.Count - 1)
+process
+{
+	trap
+	{
+		Write-Step $false $_.Exception.Message;
+		exit 1;
 	}
 
-	[pscustomobject]@{
-		File       = $file.FullName
-		Repository = "$Registry/$(($segments -join '/').ToLowerInvariant())"
-	}
+	$bicepFiles = Invoke-Step 'Find Bicep files' { Get-BicepFile -sourceRoot $sourceRoot } { param($result) "$($result.Count) file(s)" };
+
+	$modules = Invoke-Step 'Resolve artifact repositories' {
+		$items = @(
+			foreach ($file in $bicepFiles)
+			{
+				$segments = [System.Collections.Generic.List[String]]($file.RelativePath -split '[\\/]');
+				$segments[-1] = [System.IO.Path]::GetFileNameWithoutExtension($segments[-1]);
+
+				if ($segments.Count -gt 1 -and $segments[-1] -ceq 'main')
+				{
+					$segments.RemoveAt($segments.Count - 1);
+				}
+
+				[PSCustomObject]@{
+					File        = $file.FullName;
+					DisplayPath = $file.DisplayPath;
+					Repository  = "$registry/$(($segments -join '/').ToLowerInvariant())";
+				};
+			}
+		);
+
+		$duplicates = @($items | Group-Object -Property Repository | Where-Object -Property Count -GT 1);
+
+		if ($duplicates.Count -gt 0)
+		{
+			$collisions = $duplicates | ForEach-Object { "Artifact '$($_.Name)' is produced by: $($_.Group.File -join ', ')" };
+
+			throw "Artifact repository name collision detected.$([System.Environment]::NewLine)$($collisions -join [System.Environment]::NewLine)";
+		}
+
+		$items;
+	} { param($result) "$($result.Count) module(s)" };
+
+	$failureCount = Invoke-StepForEach $modules { param($module) "Publish $($module.DisplayPath) -> $($module.Repository):$version" } {
+		param($module)
+
+		$target = "br:$($module.Repository):$version";
+
+		if (-not $PSCmdlet.ShouldProcess($module.File, "Publish to $target"))
+		{
+			return [PSCustomObject]@{ Skipped = $true };
+		}
+
+		Invoke-AzBicep 'publish' $module.File @('--target', $target, '--with-source');
+	};
+
+	exit ($failureCount -gt 0 ? 1 : 0);
 }
-
-$duplicates = $modules | Group-Object -Property Repository | Where-Object -Property Count -GT 1
-if ($duplicates) {
-	$duplicates | ForEach-Object { Write-Host "Artifact '$($_.Name)' is produced by: $($_.Group.File -join ', ')" }
-	throw 'Artifact repository name collision detected.'
-}
-
-$failedFiles = [System.Collections.Generic.List[string]]::new()
-
-foreach ($module in $modules) {
-	$target = "br:$($module.Repository):$Version"
-
-	if (-not $PSCmdlet.ShouldProcess($module.File, "Publish to $target")) {
-		continue
-	}
-
-	Write-Host "Publishing $($module.File) -> $target"
-	$previousErrorActionPreference = $ErrorActionPreference
-	try {
-		$ErrorActionPreference = 'Continue'
-		$publishOutput = & az bicep publish --file $module.File --target $target --with-source 2>&1
-		$publishExitCode = $LASTEXITCODE
-	}
-	finally {
-		$ErrorActionPreference = $previousErrorActionPreference
-	}
-
-	if ($publishExitCode -ne 0) {
-		$failedFiles.Add($module.File)
-		Write-Host "Publish failed for $($module.File):"
-		$publishOutput | ForEach-Object { Write-Host $_ }
-	}
-}
-
-if ($failedFiles.Count -gt 0) {
-	Write-Host "Bicep publish completed with error(s) in $($failedFiles.Count) file(s)."
-	exit 1
-}
-
-exit 0

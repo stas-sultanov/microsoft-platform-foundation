@@ -1,49 +1,47 @@
 <#
 .SYNOPSIS
-	Builds every Bicep file under a source root.
-
-.PARAMETER SourceRoot
+	Builds all Bicep files under a source root, or only selected files.
+.PARAMETER sourceRoot
 	Root folder containing Bicep sources. Defaults to the repository's src folder.
+.PARAMETER files
+	Optional list of Bicep file paths relative to sourceRoot. When omitted, builds every Bicep file.
+.EXAMPLE
+	.\tools\Bicep-Build.ps1 -files 'Azure\library\common.bicep', 'Entra\applications\Password.bicep'
+.NOTES
+	Author: Stas Sultanov
 #>
 
-param(
-	[string]$SourceRoot = (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'src')
+#Requires -Version 7.0
+
+param
+(
+	[ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+	[String] $sourceRoot = (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'src'),
+
+	[ValidateCount(1, [Int32]::MaxValue)]
+	[ValidateScript({ -not [String]::IsNullOrWhiteSpace($_) -and -not [System.IO.Path]::IsPathRooted($_) })]
+	[String[]] $files = @()
 )
 
-$ErrorActionPreference = 'Stop'
+begin {
+	$ErrorActionPreference = 'Stop';
 
-$SourceRoot = (Resolve-Path -Path $SourceRoot -ErrorAction Stop).Path
-$bicepFiles = Get-ChildItem -Path $SourceRoot -Recurse -Filter '*.bicep' -File |
-Sort-Object -Property FullName
-
-if (-not $bicepFiles) {
-	throw "No Bicep templates found under '$SourceRoot'."
+	Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath 'Common.psm1') -Force;
 }
 
-$failedFiles = [System.Collections.Generic.List[string]]::new()
-
-foreach ($file in $bicepFiles) {
-	Write-Host "Building $($file.FullName)"
-	$previousErrorActionPreference = $ErrorActionPreference
-	try {
-		$ErrorActionPreference = 'Continue'
-		$buildOutput = & az bicep build --file $file.FullName --stdout 2>&1
-		$buildExitCode = $LASTEXITCODE
-	}
- finally {
-		$ErrorActionPreference = $previousErrorActionPreference
+process {
+	trap {
+		Write-Step $false $_.Exception.Message;
+		exit 1;
 	}
 
-	if ($buildExitCode -ne 0) {
-		$failedFiles.Add($file.FullName)
-		Write-Host "Build failed for $($file.FullName):"
-		$buildOutput | ForEach-Object { Write-Host $_ }
-	}
+	$bicepFiles = Invoke-Step 'Find Bicep files' { Get-BicepFile -sourceRoot $sourceRoot -files $files } { param($result) "$($result.Count) file(s)" };
+
+	$failureCount = Invoke-StepForEach $bicepFiles { param($file) "Build $($file.DisplayPath)" } {
+		param($file)
+
+		Invoke-AzBicep 'build' $file.FullName @('--stdout');
+	};
+
+	exit ($failureCount -gt 0 ? 1 : 0);
 }
-
-if ($failedFiles.Count -gt 0) {
-	Write-Host "Bicep build completed with error(s) in $($failedFiles.Count) file(s)."
-	exit 1
-}
-
-exit 0

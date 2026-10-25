@@ -31,6 +31,7 @@ param extensions {
 param resources {
 	@description('The federated identity credentials.')
 	federatedIdentityCredentials: {
+		@sealed()
 		*: {
 			@description('The resource name.')
 			name: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.name

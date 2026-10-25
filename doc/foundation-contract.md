@@ -4,22 +4,27 @@ All foundation modules MUST follow these architectural, security, and compatibil
 
 ## Design Principles
 
-- **Encode architectural intent.** Modules MUST encode architectural and security decisions beyond simply mirroring ARM/Bicep or AVM resource schemas. Native Azure resource API types MAY be reused where they represent the intended contract.
-- **Exclude obsolete and unsafe options.** Modules MUST NOT expose deprecated APIs, legacy authentication, weak security modes, outdated SKUs, or unsupported configurations.
-- **Use secure defaults.** Modules MUST configure identity, encryption, TLS, RBAC, and diagnostics correctly by default. Properties controlled by the foundation SHOULD NOT be configurable by consumers.
-- **Enforce constraints and invariants.** Modules MUST add constraints and validation missing from native Bicep resource types, using strong types and template structure to prevent invalid configurations. For example, a SKU name typed as `string` MUST be restricted to an explicit set of supported values. SQL database SKU names MAY remain strings because the available values depend on the deployment region and cannot be represented by a fixed module allowlist.
-- **Avoid generic escape hatches.** Module interfaces MUST NOT expose arbitrary property bags, `additionalSettings`, or raw ARM passthrough that bypasses the contract.
+- Modules MUST encode architectural and security decisions beyond simply mirroring ARM/Bicep or AVM resource schemas.
+- Modules MUST NOT expose SKUs or configurations that Microsoft documents as deprecated, retired, or unsupported.
+- Modules MUST NOT expose security modes prohibited by this contract or Microsoft's service-specific security recommendations.
+- Module interfaces MUST NOT expose additional Azure capabilities unless explicitly requested or required by this contract.
+- Modules MUST add constraints and validation missing from native Bicep resource types, using strong types and template structure to prevent invalid configurations.
+- SKU names MUST use explicit allowlists unless valid names depend on deployment context and cannot be represented reliably by a fixed list.
+- Module interfaces MUST NOT expose arbitrary property bags, `additionalSettings`, or raw ARM passthrough that bypasses the contract.
 
 ## Security Baseline
 
-- **Authentication.** Data-plane access MUST use Microsoft Entra ID-based authorization where the service supports it. In those services, legacy authorization models such as Key Vault access policies and key, shared-secret, or password authentication MUST NOT be used.
-- **Transport.** TLS 1.3 MUST be enforced where supported; otherwise, the newest supported TLS version MUST be used.
-- **Network access.** Public access, firewall rules, and trusted-service exceptions MUST be explicit in the module interface.
-- **Encryption.** Platform-managed keys are the default. Customer-managed keys (CMK) MUST NOT be assumed to be supported unless explicitly implemented by the module.
-- **Outputs.** Outputs MUST NOT include secrets, passwords, or authentication keys, except generated Entra application password credentials that Microsoft Graph returns only when they are created. These secret values MUST be marked `@secure()`. This exception does not permit outputs in Azure resource or spec modules.
+- When supported by the selected service, SKU, and API version, Microsoft Entra ID data-plane authorization MUST be enabled and all non-Entra data-plane authorization methods MUST be disabled.
+- Modules MUST enforce the highest minimum TLS version configurable for the selected service, SKU, and API version.
+- Modules whose resources support `publicNetworkAccess` MUST expose it as a required consumer setting without a module-supplied default.
+- Firewall rules and trusted-service exceptions SHOULD be optional consumer settings.
+- Encryption MUST default to platform-managed keys.
+- Where outputs are otherwise permitted by the [Bicep Authoring Rules](bicep-authoring-rules.md#outputs), they MUST NOT include secrets, passwords, or authentication keys, except generated Entra application password credentials returned by Microsoft Graph only at creation.
+- Permitted secret outputs MUST be marked `@secure()`.
 
 ## Evolution and Compatibility
 
-New revisions MAY introduce breaking changes when Azure capabilities, security guidance, or engineering practices improve. Backward compatibility MUST NOT preserve obsolete properties, legacy mechanisms, or outdated interfaces.
-
-Projects requiring a stable dependency MAY pin a Git commit, tag, submodule revision, or immutable module artifact. Consumers are responsible for adapting their infrastructure code when adopting a newer foundation revision.
+- New revisions MAY introduce breaking changes when Azure capabilities, security guidance, or engineering practices improve.
+- Backward compatibility MUST NOT override this contract.
+- Projects requiring a stable dependency MAY pin a Git commit, tag, submodule revision, or immutable module artifact.
+- Consumers MUST adapt their infrastructure code when adopting a revision that changes the contracts they use.

@@ -23,7 +23,15 @@ type ResourceInput = {
 		principalId: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-04-01-preview'>.properties.principalId
 		@description('The name of the Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions resource.')
 		roleDefinitionName: string
-		@description('The scope string for which access is being granted through this Role Assignment. If omitted, the database account resource id is used.')
+		@description('The resource ID of the Microsoft.DocumentDB/databaseAccounts resource, a database, or a container for which access is being granted. If omitted, the database account resource ID is used.')
+		@validate(
+			value =>
+				value == null || sys.like(
+					value!,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.DocumentDB/databaseAccounts/*'
+				),
+			'The value must be a Microsoft.DocumentDB/databaseAccounts resource ID, optionally followed by a database or container path.'
+		)
 		scope: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-04-01-preview'>.properties.scope?
 	}
 }

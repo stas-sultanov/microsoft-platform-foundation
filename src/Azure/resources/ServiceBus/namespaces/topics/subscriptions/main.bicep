@@ -23,6 +23,7 @@ param parentTopicName resourceInput<'Microsoft.ServiceBus/namespaces/topics@2026
 @sealed()
 param resources {
 	rules: {
+		@sealed()
 		*: {
 			@description('The name.')
 			name: string

@@ -11,7 +11,20 @@ metadata description = 'Provisions a Microsoft.Maintenance/maintenanceConfigurat
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
+
 /* PARAMETERS */
+
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	@sealed()
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+	}?
+}
 
 @description('The resource settings.')
 @sealed()
@@ -57,3 +70,16 @@ resource Maintenance_maintenanceConfigurations_ 'Microsoft.Maintenance/maintenan
 	}
 	tags: settings.tags
 }
+
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for item in AuthorizationRoleAssignments.CreateArray(
+		Maintenance_maintenanceConfigurations_.id,
+		extensions.?Authorization.roleAssignments ?? []
+	): {
+		name: item.name
+		properties: item.properties
+		scope: Maintenance_maintenanceConfigurations_
+	}
+]

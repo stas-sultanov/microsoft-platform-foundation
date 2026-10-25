@@ -51,6 +51,7 @@ param resources {
 		}
 	}
 	resourceAssociations: {
+		@sealed()
 		*: {
 			@description('The name.')
 			name: string
@@ -58,6 +59,15 @@ param resources {
 			@sealed()
 			properties: {
 				accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01'>.properties.accessMode
+				@description('The reference to the PaaS resource to be associated.')
+				@validate(
+					value =>
+						sys.like(
+							value.?id ?? '',
+							'/subscriptions/*/resourceGroups/*/providers/*'
+						),
+					'The value must be an Azure resource ID.'
+				)
 				privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01'>.properties.privateLinkResource
 			}
 		}

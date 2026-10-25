@@ -38,7 +38,15 @@ type PrivateFrontendIPConfiguration = {
 	properties: {
 		@description('The private IP address of the IP configuration.')
 		privateIPAddress: string
-		@description('The reference to the subnet resource.')
+		@description('The reference to the Microsoft.Network/virtualNetworks/subnets resource.')
+		@validate(
+			value =>
+				sys.like(
+					value.?id ?? '',
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworks/*/subnets/*'
+				),
+			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
+		)
 		subnet: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2026-01-01'>.properties.subnet
 	}
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
@@ -60,7 +68,15 @@ type PublicFrontendIPConfiguration = {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The private IP address of the IP configuration.')
+		@description('The reference to the Microsoft.Network/publicIPAddresses resource.')
+		@validate(
+			value =>
+				sys.like(
+					value.?id ?? '',
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/publicIPAddresses/*'
+				),
+			'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
+		)
 		publicIPAddress: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2026-01-01'>.properties.publicIPAddress
 	}
 }
