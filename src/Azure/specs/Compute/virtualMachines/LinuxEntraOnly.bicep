@@ -40,9 +40,9 @@ This is a standalone VM, not a high-availability deployment:
 - Data disks over 4095 GiB: caching must be None
 - Azure Monitor Agent: always installed with automatic upgrades
 - Azure Monitor data collection: requires a DCR
-- Additional extension order: array order, after the required agents
+- Additional extension order: ascending alias order, after the required agents
 - Extension uniqueness: names and publisher/type pairs must be unique
-- Required extensions: callers cannot supply or replace them
+- Required extensions: declared by alias with fixed names and empty properties; callers cannot replace them
 - Extension failures: not suppressed
 - Extension inputs: secure; keep secrets out of names and public settings
 */
@@ -93,10 +93,20 @@ type DataDiskPropertiesInput = {
 	}
 }
 
-@description('An additional Linux VM extension. Extensions run sequentially in array order after Microsoft Entra login and Azure Monitor Agent are installed.')
+@description('The Microsoft Entra login extension installed by this spec. It is declared to indicate its presence.')
+@sealed()
+type EntraLoginExtensionResource = {
+	@description('The fixed extension name.')
+	name: 'AADSSHLoginForLinux'
+	@description('The properties are managed by this spec.')
+	@sealed()
+	properties: {}
+}
+
+@description('An additional Linux VM extension. Extensions run sequentially in ascending alias order after Microsoft Entra login and Azure Monitor Agent are installed.')
 @sealed()
 type ExtensionResource = {
-	@description('The extension name. The Microsoft Entra login and Azure Monitor Agent extension names are reserved.')
+	@description('The extension name. It must be unique among all extensions; the Microsoft Entra login and Azure Monitor Agent names are reserved.')
 	@minLength(1)
 	@maxLength(64)
 	name: string
@@ -178,6 +188,16 @@ type ImageReference = {
 	version: string?
 }
 
+@description('The Azure Monitor Agent extension installed by this spec. It is declared to indicate its presence.')
+@sealed()
+type MonitorAgentExtensionResource = {
+	@description('The fixed extension name.')
+	name: 'AzureMonitorLinuxAgent'
+	@description('The properties are managed by this spec.')
+	@sealed()
+	properties: {}
+}
+
 @description('An existing network interface retained when the virtual machine is deleted.')
 @sealed()
 type NetworkInterfaceReference = {
@@ -224,55 +244,80 @@ param extensions {
 	}
 }
 
-@description('The optional VM child extensions. This object is secure to protect handler secrets in deployment history. Never use secrets in names or public settings.')
+@description('The VM child resources. This object is secure to protect handler secrets in deployment history. Never use secrets in names or public settings.')
 @secure()
 @sealed()
 param resources {
-	@description('The ordered additional VM extensions. Names and publisher/type pairs must be unique; Microsoft Entra login handlers are managed by this spec.')
+	@description('The VM extensions by alias. EntraLogin and MonitorAgent are installed by this spec and must be declared with their fixed names and empty properties. Additional extensions deploy sequentially in ascending alias order. All names must be unique, and additional publisher/type pairs must be unique.')
 	@validate(
 		value =>
 			sys.length(sys.union(
 				sys.map(
-					value ?? [],
+					sys.items(value),
 					item =>
-						sys.toLower(item.name)
+						sys.toLower(item.value.name)
 				),
 				[]
-			)) == sys.length(value ?? []) && sys.length(sys.union(
+			)) == sys.length(sys.items(value)) && sys.length(sys.union(
 				sys.map(
-					value ?? [],
+					sys.filter(
+						sys.items(value),
+						item =>
+							!sys.contains(
+								[
+									'EntraLogin'
+									'MonitorAgent'
+								],
+								item.key
+							)
+					),
 					item =>
-						sys.toLower('${item.properties.publisher}/${item.properties.type}')
+						sys.toLower('${item.value.properties.publisher}/${item.value.properties.type}')
 				),
 				[]
-			)) == sys.length(value ?? []) && sys.length(sys.filter(
-				value ?? [],
+			)) == sys.length(sys.items(value)) - 2 && sys.length(sys.filter(
+				sys.items(value),
 				item =>
-					sys.contains(
+					!sys.contains(
 						[
-							'aadsshloginforlinux'
-							'azuremonitorlinuxagent'
+							'EntraLogin'
+							'MonitorAgent'
 						],
-						sys.toLower(item.name)
-					) || sys.contains(
+						item.key
+					) && sys.contains(
 						[
 							'aadsshloginforlinux'
 							'aadloginforlinux'
 							'azuremonitorlinuxagent'
 						],
-						sys.toLower(item.properties.type)
+						sys.toLower(item.value.properties.type)
 					)
 			)) == 0,
-		'Extension names and publisher/type pairs must be unique. Microsoft Entra login and Azure Monitor Agent extensions cannot be supplied or replaced.'
+		'Extension names must be unique, additional extension publisher/type pairs must be unique, and Microsoft Entra login and Azure Monitor Agent extensions cannot be supplied as additional extensions.'
 	)
-	extensions: ExtensionResource[]?
-} = {}
+	extensions: {
+		EntraLogin: EntraLoginExtensionResource
+		MonitorAgent: MonitorAgentExtensionResource
+		*: ExtensionResource
+	}
+}
 
 @description('The Linux VM settings. Authentication, operating system type, and Trusted Launch security are controlled by this spec.')
 @sealed()
 param settings {
-	@description('The optional identity.')
-	identity: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.identity?
+	@description('The identity. The system-assigned identity is required by the AADSSHLoginForLinux extension.')
+	@validate(
+		value =>
+			sys.contains(
+				[
+					'SystemAssigned'
+					'SystemAssigned, UserAssigned'
+				],
+				value.?type ?? ''
+			),
+		'The identity type must be SystemAssigned or SystemAssigned, UserAssigned.'
+	)
+	identity: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.identity
 	@description('The geo-location. The existing NIC must be in the same region.')
 	location: string
 	@description('The virtual machine name.')
@@ -422,7 +467,7 @@ param settings {
 /* RESOURCES */
 
 resource Compute_virtualMachines_ 'Microsoft.Compute/virtualMachines@2026-04-01' = {
-	identity: settings.?identity
+	identity: settings.identity
 	location: settings.location
 	name: settings.name
 	properties: {
@@ -497,59 +542,71 @@ resource Compute_virtualMachines_ 'Microsoft.Compute/virtualMachines@2026-04-01'
 	}
 	tags: settings.tags
 	zones: settings.?zones ?? []
-
-	resource extensions_entraLogin 'extensions' = {
-		location: settings.location
-		name: 'AADSSHLoginForLinux'
-		properties: {
-			autoUpgradeMinorVersion: true
-			publisher: 'Microsoft.Azure.ActiveDirectory'
-			suppressFailures: false
-			type: 'AADSSHLoginForLinux'
-			typeHandlerVersion: '1.0'
-		}
-		tags: settings.tags
-	}
-
-	resource extensions_monitorAgent 'extensions' = {
-		location: settings.location
-		name: 'AzureMonitorLinuxAgent'
-		properties: {
-			autoUpgradeMinorVersion: true
-			enableAutomaticUpgrade: true
-			publisher: 'Microsoft.Azure.Monitor'
-			suppressFailures: false
-			type: 'AzureMonitorLinuxAgent'
-			typeHandlerVersion: '1.0'
-		}
-		tags: settings.tags
-	}
 }
 
 @batchSize(1)
 resource Compute_virtualMachines_extensions_ 'Microsoft.Compute/virtualMachines/extensions@2026-04-01' = [
-	for item in resources.?extensions ?? []: {
+	for item in sys.filter(
+		sys.items(resources.extensions),
+		item =>
+			!sys.contains(
+				[
+					'EntraLogin'
+					'MonitorAgent'
+				],
+				item.key
+			)
+	): {
 		location: settings.location
-		name: item.name
+		name: item.value.name
 		parent: Compute_virtualMachines_
 		properties: {
-			autoUpgradeMinorVersion: item.properties.?autoUpgradeMinorVersion ?? true
-			enableAutomaticUpgrade: item.properties.?enableAutomaticUpgrade ?? false
-			forceUpdateTag: item.properties.?forceUpdateTag
-			protectedSettings: item.properties.?protectedSettings
-			publisher: item.properties.publisher
-			settings: item.properties.?settings
+			autoUpgradeMinorVersion: item.value.properties.?autoUpgradeMinorVersion ?? true
+			enableAutomaticUpgrade: item.value.properties.?enableAutomaticUpgrade ?? false
+			forceUpdateTag: item.value.properties.?forceUpdateTag
+			protectedSettings: item.value.properties.?protectedSettings
+			publisher: item.value.properties.publisher
+			settings: item.value.properties.?settings
 			suppressFailures: false
-			type: item.properties.type
-			typeHandlerVersion: item.properties.typeHandlerVersion
+			type: item.value.properties.type
+			typeHandlerVersion: item.value.properties.typeHandlerVersion
 		}
 		tags: settings.tags
 		dependsOn: [
-			Compute_virtualMachines_::extensions_entraLogin
-			Compute_virtualMachines_::extensions_monitorAgent
+			Compute_virtualMachines_extensions__EntraLogin
+			Compute_virtualMachines_extensions__MonitorAgent
 		]
 	}
 ]
+
+resource Compute_virtualMachines_extensions__EntraLogin 'Microsoft.Compute/virtualMachines/extensions@2026-04-01' = {
+	location: settings.location
+	name: resources.extensions.EntraLogin.name
+	parent: Compute_virtualMachines_
+	properties: {
+		autoUpgradeMinorVersion: true
+		publisher: 'Microsoft.Azure.ActiveDirectory'
+		suppressFailures: false
+		type: 'AADSSHLoginForLinux'
+		typeHandlerVersion: '1.0'
+	}
+	tags: settings.tags
+}
+
+resource Compute_virtualMachines_extensions__MonitorAgent 'Microsoft.Compute/virtualMachines/extensions@2026-04-01' = {
+	location: settings.location
+	name: resources.extensions.MonitorAgent.name
+	parent: Compute_virtualMachines_
+	properties: {
+		autoUpgradeMinorVersion: true
+		enableAutomaticUpgrade: true
+		publisher: 'Microsoft.Azure.Monitor'
+		suppressFailures: false
+		type: 'AzureMonitorLinuxAgent'
+		typeHandlerVersion: '1.0'
+	}
+	tags: settings.tags
+}
 
 /* EXTENSIONS */
 

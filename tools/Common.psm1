@@ -150,6 +150,13 @@ function Invoke-StepForEach
 			$null -ne $_ -and ($null -ne $_.PSObject.Properties['Skipped'] -or $null -ne $_.PSObject.Properties['ExitCode'] -or $null -ne $_.PSObject.Properties['Details'])
 		} | Select-Object -Last 1;
 
+		if ($null -eq $result)
+		{
+			Write-Step $true $message;
+
+			continue;
+		}
+
 		if ($null -ne $result.PSObject.Properties['Skipped'] -and $result.Skipped)
 		{
 			continue;
@@ -191,7 +198,9 @@ function Get-BicepFile
 
 	$separator = [System.IO.Path]::DirectorySeparatorChar;
 
-	$rootPrefix = $sourceRootPath.TrimEnd('\', '/') + $separator;
+	$rootPrefix = $sourceRootPath.TrimEnd($separator) + $separator;
+
+	$pathComparison = $IsWindows ? [System.StringComparison]::OrdinalIgnoreCase : [System.StringComparison]::Ordinal;
 
 	if ($files.Count -gt 0)
 	{
@@ -200,7 +209,7 @@ function Get-BicepFile
 			{
 				$file = Get-Item -LiteralPath (Join-Path -Path $sourceRootPath -ChildPath $relativePath) -ErrorAction Stop;
 
-				if (-not $file.FullName.StartsWith($rootPrefix, [System.StringComparison]::OrdinalIgnoreCase))
+				if (-not $file.FullName.StartsWith($rootPrefix, $pathComparison))
 				{
 					throw "File must be under sourceRoot: '$relativePath'.";
 				}
