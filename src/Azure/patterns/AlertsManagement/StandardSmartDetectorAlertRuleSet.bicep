@@ -17,9 +17,9 @@ targetScope = 'resourceGroup'
 @sealed()
 type ResourceInput = {
 	@description('The name.')
-	name: resourceInput<'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01'>.name
+	name: resourceInput<'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01'>.name
 	@description('The tags.')
-	tags: resourceInput<'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01'>.tags
+	tags: resourceInput<'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01'>.tags
 }
 
 /* PARAMETERS */
@@ -54,7 +54,7 @@ param alertRules {
 		)) == 0,
 	'Each value must be a Microsoft.Insights/actionGroups resource ID.'
 )
-param commonActionGroups resourceInput<'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01'>.properties.actionGroups
+param commonActionGroups resourceInput<'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01'>.properties.actionGroups
 
 @description('The Microsoft.Insights/components resource name.')
 param componentName string
@@ -68,7 +68,7 @@ resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' existin
 /* RESOURCES */
 
 @description('Failure Anomalies')
-resource alertsManagement_smartDetectorAlertRules__Anomalies 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource AlertsManagement_smartDetectorAlertRules__Anomalies 'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
 	name: alertRules.failureAnomalies.name
 	properties: {
@@ -88,7 +88,7 @@ resource alertsManagement_smartDetectorAlertRules__Anomalies 'microsoft.alertsMa
 }
 
 @description('Dependency Performance Degradation')
-resource alertsManagement_smartDetectorAlertRules__DependencyPerformanceDegradation 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource AlertsManagement_smartDetectorAlertRules__DependencyPerformanceDegradation 'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
 	name: alertRules.dependencyPerformanceDegradation.name
 	properties: {
@@ -108,7 +108,7 @@ resource alertsManagement_smartDetectorAlertRules__DependencyPerformanceDegradat
 }
 
 @description('Exception Volume Changed')
-resource alertsManagement_smartDetectorAlertRules__ExceptionVolumeChangedDetector 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource AlertsManagement_smartDetectorAlertRules__ExceptionVolumeChangedDetector 'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
 	name: alertRules.exceptionVolumeChanged.name
 	properties: {
@@ -128,7 +128,7 @@ resource alertsManagement_smartDetectorAlertRules__ExceptionVolumeChangedDetecto
 }
 
 @description('Memory Leak')
-resource alertsManagement_smartDetectorAlertRules__MemoryLeakDetector 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource AlertsManagement_smartDetectorAlertRules__MemoryLeakDetector 'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
 	name: alertRules.memoryLeak.name
 	properties: {
@@ -148,7 +148,7 @@ resource alertsManagement_smartDetectorAlertRules__MemoryLeakDetector 'microsoft
 }
 
 @description('Request Performance Degradation')
-resource alertsManagement_smartDetectorAlertRules__RequestPerformanceDegradation 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource AlertsManagement_smartDetectorAlertRules__RequestPerformanceDegradation 'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
 	name: alertRules.requestPerformanceDegradation.name
 	properties: {
@@ -168,7 +168,7 @@ resource alertsManagement_smartDetectorAlertRules__RequestPerformanceDegradation
 }
 
 @description('Trace Severity')
-resource alertsManagement_smartDetectorAlertRules__TraceSeverityDetector 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource AlertsManagement_smartDetectorAlertRules__TraceSeverityDetector 'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01' = {
 	location: 'global'
 	name: alertRules.traceSeverity.name
 	properties: {

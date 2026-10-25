@@ -113,10 +113,20 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-05-15' existing = {
 	)
 }
 
-/* MODULES */
+resource Network_connections_ 'Microsoft.Network/connections@2026-01-01' existing = {
+	dependsOn: [
+		Network_connections_Module_
+	]
+	name: settings.name
+}
+
+/* RESOURCES */
 
 // TEMPORARY SOLUTION: getSecret() is allowed only when assigning to a module parameter with @secure() decorator (BCP180).
 // The Microsoft.Network/connections resource type also defines a sharedKeyKeyVaultId property, but it is not available for either general availability or preview use.
+// EXCEPTION: the helper module 'IPSecWithKey/connection.bicep' deviates from the module structure rules.
+// - Its path does not follow the 'specs' path conventions, because it must be a separate file to receive the secret as a @secure() parameter.
+// - It exposes the 'sharedKey' parameter outside the standard module interface, because that is how the secret is passed in.
 module Network_connections_Module_ 'IPSecWithKey/connection.bicep' = {
 	name: '${deployment().name}-connection'
 	params: {
@@ -149,12 +159,6 @@ module Network_connections_Module_ 'IPSecWithKey/connection.bicep' = {
 	}
 }
 
-/* RESOURCES */
-
-resource Network_connections_ 'Microsoft.Network/connections@2026-01-01' existing = {
-	name: settings.name
-}
-
 /* EXTENSIONS */
 
 resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
@@ -162,9 +166,6 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		Network_connections_.id,
 		extensions.?Authorization.roleAssignments ?? []
 	): {
-		dependsOn: [
-			Network_connections_Module_
-		]
 		name: item.name
 		properties: item.properties
 		scope: Network_connections_
@@ -174,9 +175,6 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
-		dependsOn: [
-			Network_connections_Module_
-		]
 		name: item.name
 		properties: item.properties
 		scope: Network_connections_

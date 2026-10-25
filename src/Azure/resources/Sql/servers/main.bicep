@@ -70,6 +70,7 @@ param resources {
 		}
 	}
 	firewallRules: {
+		@sealed()
 		*: {
 			@description('The name.')
 			name: string
@@ -103,7 +104,7 @@ param settings {
 			@description('The id of the Entra tenant.')
 			tenantId: string?
 		}
-		@description('Specifies whether or not public endpoint access is allowed for this server.')
+		@description('Specifies whether IPv6 is enabled for this server.')
 		isIPv6Enabled: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.isIPv6Enabled
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.publicNetworkAccess
@@ -117,7 +118,7 @@ param settings {
 			'The value must be a Microsoft.ManagedIdentity/userAssignedIdentities resource ID.'
 		)
 		primaryUserAssignedIdentityId: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.primaryUserAssignedIdentityId
-		@description('Specifies whether or not outbound network access is restricted for this server.')
+		@description('Specifies whether outbound network access is restricted for this server.')
 		restrictOutboundNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.restrictOutboundNetworkAccess
 		@description('The number of days this server will stay soft-deleted.')
 		retentionDays: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.retentionDays

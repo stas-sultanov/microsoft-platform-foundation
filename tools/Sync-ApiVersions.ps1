@@ -1,165 +1,178 @@
 <#
 .SYNOPSIS
 	Verifies or replaces Azure resource API versions used across Bicep files.
-
 .DESCRIPTION
 	Scans every Bicep file under the source root, derives one API version per
 	first-level resource type, and verifies or replaces all resource type
 	literals against those derived versions. Preview versions are preferred when
 	available; within the selected release type, the most recent date wins.
-
-.PARAMETER SourceRoot
+.PARAMETER sourceRoot
 	Root folder containing Bicep sources. Defaults to the repository's src folder.
-
-.PARAMETER RunMode
+.PARAMETER runMode
 	Verify reports API-version mismatches. Replace updates mismatched versions.
+.NOTES
+	Author: Stas Sultanov
 #>
 
-param(
-	[string]$SourceRoot = (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'src'),
+#Requires -Version 7.0
+
+param
+(
+	[ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+	[String] $sourceRoot = (Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'src'),
 
 	[ValidateSet('Verify', 'Replace')]
-	[string]$RunMode = 'Verify'
+	[String] $runMode = 'Verify'
 )
 
-$ErrorActionPreference = 'Continue'
+begin
+{
+	$ErrorActionPreference = 'Stop';
 
-$SourceRoot = (Resolve-Path -Path $SourceRoot -ErrorAction Stop).Path
-$bicepFiles = Get-ChildItem -Path $SourceRoot -Recurse -Filter '*.bicep' -File |
-Sort-Object -Property FullName
+	Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath 'Common.psm1') -Force;
 
-if (-not $bicepFiles) {
-	throw "No Bicep templates found under '$SourceRoot'."
-}
+	# Group 'type' is the full type path; the first two segments identify the resource API.
+	$typeVersionRegex = [Regex]'(?<type>[A-Za-z0-9]+\.[A-Za-z0-9]+(?:/[A-Za-z0-9]+)+)@(?<version>[0-9]{4}-[0-9]{2}-[0-9]{2}(?:-preview)?)';
 
-# Group 1 is the full type path; the first two segments identify the resource API.
-$typeVersionRegex = [regex]'(?<type>[A-Za-z0-9]+\.[A-Za-z0-9]+(?:/[A-Za-z0-9]+)+)@(?<version>\d{4}-\d{2}-\d{2}(?:-preview)?)'
-
-function Get-ApiVersionUsage {
-	param(
-		[Parameter(Mandatory)]
-		[System.IO.FileInfo[]]$BicepFiles,
-
-		[Parameter(Mandatory)]
-		[string]$SourceRoot,
-
-		[Parameter(Mandatory)]
-		[regex]$TypeVersionRegex
+	function Get-ApiVersionUsage
+	(
+		[Parameter(Mandatory = $true)] [System.IO.FileInfo[]] $bicepFiles,
+		[Parameter(Mandatory = $true)] [Regex] $typeVersionRegex
 	)
+	{
+		$usages = [System.Collections.Generic.List[PSCustomObject]]::new();
+		$failures = [System.Collections.Generic.List[String]]::new();
 
-	$usages = [System.Collections.Generic.List[pscustomobject]]::new()
-	$processingFailures = [System.Collections.Generic.List[pscustomobject]]::new()
+		foreach ($file in $bicepFiles)
+		{
+			try
+			{
+				$content = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8;
 
-	foreach ($file in $BicepFiles) {
-		try {
-			$content = Get-Content -Path $file.FullName -Raw
+				foreach ($match in $typeVersionRegex.Matches($content))
+				{
+					$fullType = $match.Groups['type'].Value;
+					$typeSegments = $fullType -split '/';
+					$version = $match.Groups['version'].Value;
 
-			foreach ($match in $TypeVersionRegex.Matches($content)) {
-				$fullType = $match.Groups['type'].Value
-				$typeSegments = $fullType -split '/'
-				$version = $match.Groups['version'].Value
-
-				$usages.Add([pscustomobject]@{
-						File          = $file.FullName.Substring($SourceRoot.Length).TrimStart('\', '/')
-						FullPath      = $file.FullName
-						Line          = ([regex]::Matches($content.Substring(0, $match.Index), "`n").Count + 1)
-						Type          = $fullType
-						Level1Type    = "$($typeSegments[0])/$($typeSegments[1])"
-						Version       = $version
-						VersionDate   = [datetime]::ParseExact($version.Substring(0, 10), 'yyyy-MM-dd', $null)
-						IsPreview     = $version.EndsWith('-preview')
-						VersionIndex  = $match.Groups['version'].Index
-						VersionLength = $match.Groups['version'].Length
-					})
+					$usages.Add([PSCustomObject]@{
+							File          = $file.RelativePath;
+							FullPath      = $file.FullName;
+							Line          = ([Regex]::Matches($content.Substring(0, $match.Index), "`n").Count + 1);
+							Type          = $fullType;
+							Level1Type    = "$($typeSegments[0])/$($typeSegments[1])";
+							Version       = $version;
+							VersionDate   = [DateTime]::ParseExact($version.Substring(0, 10), 'yyyy-MM-dd', $null);
+							IsPreview     = $version.EndsWith('-preview');
+							VersionIndex  = $match.Groups['version'].Index;
+							VersionLength = $match.Groups['version'].Length;
+						});
+				}
+			}
+			catch
+			{
+				$failures.Add("$($file.FullName): $($_.Exception.Message)");
 			}
 		}
-		catch {
-			$processingFailures.Add([pscustomobject]@{
-					File    = $file.FullName
-					Message = $_.Exception.Message
-				})
-		}
+
+		return [PSCustomObject]@{
+			Usages   = $usages;
+			Failures = $failures;
+		};
 	}
 
-	return [pscustomobject]@{
-		FilesChecked       = $BicepFiles.Count
-		Usages             = $usages
-		ProcessingFailures = $processingFailures
-	}
-}
-
-function Get-PreferredVersions {
-	param(
-		[Parameter(Mandatory)]
-		[object[]]$Usages
+	function Get-PreferredVersion
+	(
+		[Parameter(Mandatory = $true)] [AllowEmptyCollection()] [Object[]] $usages
 	)
+	{
+		$preferredVersions = [System.Collections.Generic.Dictionary[String, String]]::new([System.StringComparer]::OrdinalIgnoreCase);
 
-	$preferredVersions = [System.Collections.Generic.Dictionary[string, string]]::new([System.StringComparer]::OrdinalIgnoreCase)
-
-	foreach ($typeGroup in ($Usages | Group-Object -Property Level1Type)) {
-		$previewVersions = @($typeGroup.Group | Where-Object IsPreview)
-		$candidates = if ($previewVersions.Count -gt 0) { $previewVersions } else { @($typeGroup.Group | Where-Object { -not $_.IsPreview }) }
-		$preferred = $candidates | Sort-Object -Property VersionDate -Descending | Select-Object -First 1
-		$preferredVersions[$typeGroup.Name] = $preferred.Version
-	}
-
-	return $preferredVersions
-}
-
-$scanResult = Get-ApiVersionUsage -BicepFiles $bicepFiles -SourceRoot $SourceRoot -TypeVersionRegex $typeVersionRegex
-$preferredVersions = Get-PreferredVersions -Usages $scanResult.Usages
-$mismatches = [System.Collections.Generic.List[pscustomobject]]::new()
-
-foreach ($usage in $scanResult.Usages) {
-	$expectedVersion = $preferredVersions[$usage.Level1Type]
-
-	if ($usage.Version -ne $expectedVersion) {
-		$usage | Add-Member -NotePropertyName ExpectedVersion -NotePropertyValue $expectedVersion
-		$mismatches.Add($usage)
-	}
-}
-
-Write-Host "Checked $($scanResult.FilesChecked) Bicep file(s); found $($mismatches.Count) API version error(s)."
-
-foreach ($failure in $scanResult.ProcessingFailures) {
-	Write-Warning "Failed to process file '$($failure.File)': $($failure.Message)"
-}
-
-if ($RunMode -eq 'Verify') {
-	foreach ($mismatch in $mismatches) {
-		Write-Host "  $($mismatch.File):$($mismatch.Line) -> $($mismatch.Type)@$($mismatch.Version) (expected @$($mismatch.ExpectedVersion))"
-	}
-
-	if ($mismatches.Count -eq 0) {
-		Write-Host 'All Bicep resource API versions match the versions inferred from the repository.'
-		exit 0
-	}
-
-	exit 1
-}
-
-$replacements = [System.Collections.Generic.List[pscustomobject]]::new()
-
-foreach ($fileGroup in ($mismatches | Group-Object -Property FullPath)) {
-	try {
-		$content = Get-Content -Path $fileGroup.Name -Raw
-
-		foreach ($mismatch in ($fileGroup.Group | Sort-Object -Property VersionIndex -Descending)) {
-			$content = $content.Remove($mismatch.VersionIndex, $mismatch.VersionLength).Insert($mismatch.VersionIndex, $mismatch.ExpectedVersion)
-			$replacements.Add($mismatch)
+		foreach ($typeGroup in ($usages | Group-Object -Property Level1Type))
+		{
+			$previewVersions = @($typeGroup.Group | Where-Object IsPreview);
+			$candidates = if ($previewVersions.Count -gt 0) { $previewVersions } else { @($typeGroup.Group | Where-Object { -not $_.IsPreview }) };
+			$preferred = $candidates | Sort-Object -Property VersionDate -Descending | Select-Object -First 1;
+			$preferredVersions[$typeGroup.Name] = $preferred.Version;
 		}
 
-		[System.IO.File]::WriteAllText($fileGroup.Name, $content, [System.Text.UTF8Encoding]::new($false))
-	}
- catch {
-		Write-Warning "Failed to replace versions in '$($fileGroup.Name)': $($_.Exception.Message)"
+		return $preferredVersions;
 	}
 }
 
-Write-Host "Replaced $($replacements.Count) API version(s):"
+process
+{
+	trap
+	{
+		Write-Step $false $_.Exception.Message;
+		exit 1;
+	}
 
-foreach ($replacement in $replacements) {
-	Write-Host "  $($replacement.File):$($replacement.Line) -> $($replacement.Type)@$($replacement.Version) replaced with @$($replacement.ExpectedVersion)"
+	$bicepFiles = Invoke-Step 'Find Bicep files' { Get-BicepFile -sourceRoot $sourceRoot } { param($result) "$($result.Count) file(s)" };
+
+	$usages = Invoke-Step 'Scan resource API versions' {
+		$scanResult = Get-ApiVersionUsage -bicepFiles $bicepFiles -typeVersionRegex $typeVersionRegex;
+
+		if ($scanResult.Failures.Count -gt 0)
+		{
+			throw "Failed to process $($scanResult.Failures.Count) file(s)$([System.Environment]::NewLine)$($scanResult.Failures -join [System.Environment]::NewLine)";
+		}
+
+		$scanResult.Usages;
+	} { param($result) "$($result.Count) usage(s)" };
+
+	$preferredVersions = Get-PreferredVersion -usages $usages;
+	$mismatches = [System.Collections.Generic.List[PSCustomObject]]::new();
+
+	foreach ($usage in $usages)
+	{
+		$expectedVersion = $preferredVersions[$usage.Level1Type];
+
+		if ($usage.Version -ne $expectedVersion)
+		{
+			$usage | Add-Member -NotePropertyName ExpectedVersion -NotePropertyValue $expectedVersion;
+			$mismatches.Add($usage);
+		}
+	}
+
+	if ($runMode -eq 'Verify')
+	{
+		if ($mismatches.Count -gt 0)
+		{
+			$details = $mismatches | ForEach-Object { "  $($_.File):$($_.Line) -> $($_.Type)@$($_.Version) (expected @$($_.ExpectedVersion))" };
+
+			Write-Step $false "Verify resource API versions - $($mismatches.Count) API version error(s)" ($details -join [System.Environment]::NewLine);
+			exit 1;
+		}
+
+		Write-Step $true 'Verify resource API versions';
+
+		exit 0;
+	}
+
+	$fileGroups = @($mismatches | Group-Object -Property FullPath);
+
+	$failureCount = Invoke-StepForEach $fileGroups { param($fileGroup) "Replace API versions in .$([System.IO.Path]::DirectorySeparatorChar)$($fileGroup.Group[0].File) - $($fileGroup.Count) replacement(s)" } {
+		param($fileGroup)
+
+		$content = Get-Content -LiteralPath $fileGroup.Name -Raw -Encoding UTF8;
+
+		foreach ($mismatch in ($fileGroup.Group | Sort-Object -Property VersionIndex -Descending))
+		{
+			$content = $content.Remove($mismatch.VersionIndex, $mismatch.VersionLength).Insert($mismatch.VersionIndex, $mismatch.ExpectedVersion);
+		}
+
+		[System.IO.File]::WriteAllText($fileGroup.Name, $content, [System.Text.UTF8Encoding]::new($false));
+
+		$details = $fileGroup.Group | ForEach-Object { "  line $($_.Line): $($_.Type)@$($_.Version) replaced with @$($_.ExpectedVersion)" };
+
+		[PSCustomObject]@{ Details = $details -join [System.Environment]::NewLine };
+	};
+
+	if ($fileGroups.Count -eq 0)
+	{
+		Write-Step $true 'Replace API versions - nothing to replace';
+	}
+
+	exit ($failureCount -gt 0 ? 1 : 0);
 }
-
-exit 0

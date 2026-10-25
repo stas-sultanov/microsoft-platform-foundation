@@ -135,6 +135,7 @@ resource Graph_servicePrincipals_ 'Microsoft.Graph/servicePrincipals@beta' = {
 /* OUTPUTS */
 
 @description('The result.')
+@sealed()
 output result {
 	appId: string
 	applicationObjectId: string

@@ -41,7 +41,7 @@ type StorageAccountPropertiesInput = {
 	@description('The network access control list for the storage account.')
 	networkAcls: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.networkAcls?
 	@description('The network access mode.')
-	publicNetworkAccess: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.publicNetworkAccess?
+	publicNetworkAccess: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.publicNetworkAccess
 	@description('Maintains information about the network routing choice opted by the user for data transfer.')
 	routingPreference: resourceInput<'Microsoft.Storage/storageAccounts@2026-06-01'>.properties.routingPreference?
 }

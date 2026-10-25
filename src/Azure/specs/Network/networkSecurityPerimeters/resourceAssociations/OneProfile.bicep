@@ -24,7 +24,15 @@ type ResourceAssociationResourceInput = {
 	properties: {
 		@description('Access mode on the association.')
 		accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01'>.properties.accessMode
-		@description('The PaaS resource to be associated.')
+		@description('The reference to the PaaS resource to be associated.')
+		@validate(
+			value =>
+				sys.like(
+					value.?id ?? '',
+					'/subscriptions/*/resourceGroups/*/providers/*'
+				),
+			'The value must be an Azure resource ID.'
+		)
 		privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01'>.properties.privateLinkResource
 	}
 }
