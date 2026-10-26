@@ -21,7 +21,10 @@ import * as AppConfigurationConfigurationStores from '../../../library/AppConfig
 param parentName resourceInput<'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview'>.name
 
 @description('The child resources.')
-param resources AppConfigurationConfigurationStores.KeyValueResource[]
+@sealed()
+param resources {
+	keyValues: AppConfigurationConfigurationStores.KeyValueResource[]
+}
 
 /* EXISTING RESOURCES */
 
@@ -34,7 +37,7 @@ resource AppConfiguration_configurationStores_ 'Microsoft.AppConfiguration/confi
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource AppConfiguration_configurationStores_keyValues_ 'Microsoft.AppConfiguration/configurationStores/keyValues@2025-08-01-preview' = [
-	for item in resources: {
+	for item in resources.keyValues: {
 		name: item.name
 		parent: AppConfiguration_configurationStores_
 		properties: item.properties

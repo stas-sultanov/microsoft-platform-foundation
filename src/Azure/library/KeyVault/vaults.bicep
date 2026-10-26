@@ -20,3 +20,15 @@ type KeyResource = {
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.KeyVault/vaults/keys@2026-05-15'>.tags?
 }
+
+@description('The configuration of a Microsoft.KeyVault/vaults/secrets resource.')
+@export()
+@sealed()
+type SecretResource = {
+	@description('The name.')
+	name: resourceInput<'Microsoft.KeyVault/vaults/secrets@2026-05-15'>.name
+	@description('The properties.')
+	properties: resourceInput<'Microsoft.KeyVault/vaults/secrets@2026-05-15'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.KeyVault/vaults/secrets@2026-05-15'>.tags?
+}

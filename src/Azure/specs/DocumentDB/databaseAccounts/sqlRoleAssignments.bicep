@@ -15,24 +15,27 @@ targetScope = 'resourceGroup'
 
 @description('RoleAssignment resource input configuration.')
 @sealed()
-type ResourceInput = {
+type RoleAssignmentResourceInput = {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The object ID for the identity within Entra.')
+		@description('The principal id.')
 		principalId: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-04-01-preview'>.properties.principalId
 		@description('The name of the Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions resource.')
 		roleDefinitionName: string
-		@description('The resource ID of the Microsoft.DocumentDB/databaseAccounts resource, a database, or a container for which access is being granted. If omitted, the database account resource ID is used.')
+		@description('The Cosmos DB data-plane scope: "/" for the account, "/dbs/{databaseName}" for a database, or "/dbs/{databaseName}/colls/{containerName}" for a container.')
 		@validate(
 			value =>
-				value == null || sys.like(
-					value!,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.DocumentDB/databaseAccounts/*'
+				(value == '/') || sys.like(
+					value,
+					'/dbs/*'
+				) || sys.like(
+					value,
+					'/dbs/*/colls/*'
 				),
-			'The value must be a Microsoft.DocumentDB/databaseAccounts resource ID, optionally followed by a database or container path.'
+			'The value must be "/", "/dbs/{databaseName}", or "/dbs/{databaseName}/colls/{containerName}".'
 		)
-		scope: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-04-01-preview'>.properties.scope?
+		scope: string
 	}
 }
 
@@ -42,7 +45,10 @@ type ResourceInput = {
 param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
 
 @description('Collection of role assignments.')
-param roleAssignments ResourceInput[]
+@sealed()
+param resources {
+	sqlRoleAssignments: RoleAssignmentResourceInput[]
+}
 
 /* EXISTING RESOURCES */
 
@@ -53,7 +59,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview' existing = [
-	for item in roleAssignments: {
+	for item in resources.sqlRoleAssignments: {
 		name: item.properties.roleDefinitionName
 		parent: DocumentDB_databaseAccounts_
 	}
@@ -64,9 +70,10 @@ resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/d
 @batchSize(1)
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource DocumentDB_databaseAccounts_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-04-01-preview' = [
-	for (item, index) in roleAssignments: {
+	for (item, index) in resources.sqlRoleAssignments: {
 		name: sys.guid(
-			item.properties.?scope ?? DocumentDB_databaseAccounts_.id,
+			DocumentDB_databaseAccounts_.id,
+			item.properties.scope,
 			item.properties.principalId,
 			item.properties.roleDefinitionName
 		)
@@ -74,7 +81,7 @@ resource DocumentDB_databaseAccounts_sqlRoleAssignments_ 'Microsoft.DocumentDB/d
 		properties: {
 			principalId: item.properties.principalId
 			roleDefinitionId: DocumentDB_databaseAccounts_sqlRoleDefinitions_[index].id
-			scope: item.properties.?scope ?? DocumentDB_databaseAccounts_.id
+			scope: '${DocumentDB_databaseAccounts_.id}${item.properties.scope}'
 		}
 	}
 ]
