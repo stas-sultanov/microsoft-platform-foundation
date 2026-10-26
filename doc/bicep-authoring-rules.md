@@ -59,7 +59,9 @@ The Foundation Contract owns architectural and security policy; this file owns B
 - Single-primary-resource modules MUST expose `resources` if and only if they create child resources.
 - Child resource modules MUST expose immediate parent names as top-level parameters: `parentName`, or explicit names such as `parentNamespaceName` and `parentTopicName` when multiple are required.
 - `extensions` MUST group scoped non-child resources by provider/concern, such as `Authorization`, `Insights`, or `Maintenance`.
-- `resources` MUST group child resources by child resource type.
+- `resources` MUST be an object that groups child resource collections by child resource type, including when the module creates only one child resource type.
+- Each property in `resources` MUST use the child resource type segment as its name and contain an array of the corresponding `<ChildResourceType>Resource` type.
+- `resources` objects MUST be inline parameter object types so sensitive collections can be marked `@secure()` when needed; `@secure()` MUST be applied to the entire `resources` parameter when any child resource value is sensitive.
 - `settings` MUST contain primary-resource configuration, including applicable `identity`, `location`, `name`, `properties`, `sku`, `tags`, and `zones`.
 - `settings.properties` MUST represent Azure resource `properties`, using either its native resource-derived type or an intentionally curated subset.
 

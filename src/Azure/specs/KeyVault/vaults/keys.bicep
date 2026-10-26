@@ -21,7 +21,10 @@ import * as KeyVaultVaults from '../../../library/KeyVault/vaults.bicep'
 param parentName resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.name
 
 @description('The child key resources.')
-param resources KeyVaultVaults.KeyResource[]
+@sealed()
+param resources {
+	keys: KeyVaultVaults.KeyResource[]
+}
 
 /* EXISTING RESOURCES */
 
@@ -32,7 +35,7 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-05-15' existing = {
 /* RESOURCES */
 
 resource KeyVault_vaults_keys_ 'Microsoft.KeyVault/vaults/keys@2026-05-15' = [
-	for item in resources: {
+	for item in resources.keys: {
 		name: item.name
 		parent: KeyVault_vaults_
 		properties: item.properties

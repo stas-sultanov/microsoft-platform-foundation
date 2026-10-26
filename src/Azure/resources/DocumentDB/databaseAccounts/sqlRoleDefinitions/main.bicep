@@ -22,7 +22,36 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('A set of fully qualified Scopes at or below which Role Assignments may be created using this Role Definition. This will allow application of this Role Definition on the entire database account or any underlying Database / Collection. Must have at least one element. Scopes higher than Database account are not enforceable as assignable Scopes. Note that resources referenced in assignable Scopes need not exist.')
+		@description('A set of Scopes at or below which Role Assignments may be created using this Role Definition: "/", "/dbs/{databaseName}", or "/dbs/{databaseName}/colls/{containerName}".')
+		@minLength(1)
+		@validate(
+			value =>
+				sys.empty(sys.filter(
+					value,
+					scope =>
+						!(scope == '/' || sys.length(sys.filter(
+							sys.split(
+								scope,
+								'/'
+							),
+							segment =>
+								sys.empty(segment)
+						)) == 1 && (sys.length(sys.split(
+							scope,
+							'/'
+						)) == 3 && sys.like(
+							scope,
+							'/dbs/*'
+						) || sys.length(sys.split(
+							scope,
+							'/'
+						)) == 5 && sys.like(
+							scope,
+							'/dbs/*/colls/*'
+						)))
+				)),
+			'Each scope must be "/", "/dbs/{databaseName}", or "/dbs/{databaseName}/colls/{containerName}".'
+		)
 		assignableScopes: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview'>.properties.assignableScopes
 		@description('The set of operations allowed through this Role Definition.')
 		permissions: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview'>.properties.permissions
@@ -48,7 +77,13 @@ resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/d
 	)
 	parent: DocumentDB_databaseAccounts_
 	properties: {
-		assignableScopes: settings.properties.assignableScopes
+		assignableScopes: sys.map(
+			settings.properties.assignableScopes,
+			scope =>
+				scope == '/'
+					? DocumentDB_databaseAccounts_.id
+					: '${DocumentDB_databaseAccounts_.id}${scope}'
+		)
 		permissions: settings.properties.permissions
 		roleName: settings.properties.roleName
 		type: 'CustomRole'

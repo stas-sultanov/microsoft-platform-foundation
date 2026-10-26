@@ -89,7 +89,7 @@ param settings {
 resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' existing = {
 	name: parentDatabaseAccountName
 	#disable-next-line use-recent-api-versions // to use new features, preview version is required
-	resource sqlDatabases_ 'sqlDatabases@2026-04-01-preview' existing = {
+	resource sqlDatabases_ 'sqlDatabases' existing = {
 		name: parentSqlDatabaseName
 	}
 }
@@ -103,16 +103,33 @@ resource DocumentDB_databaseAccounts_sqlDatabases_containers_ 'Microsoft.Documen
 	properties: {
 		options: settings.properties.?options
 		resource: {
-			analyticalStorageTtl: settings.properties.resource.?analyticalStorageTtl
 			computedProperties: settings.properties.resource.?computedProperties
 			conflictResolutionPolicy: settings.properties.resource.?conflictResolutionPolicy
-			defaultTtl: settings.properties.resource.?defaultTtl
-			fullTextPolicy: settings.properties.resource.?fullTextPolicy
 			id: settings.name
 			indexingPolicy: settings.properties.resource.?indexingPolicy
 			partitionKey: settings.properties.resource.partitionKey
 			uniqueKeyPolicy: settings.properties.resource.?uniqueKeyPolicy
-			vectorEmbeddingPolicy: settings.properties.resource.?vectorEmbeddingPolicy
+			// Cosmos DB rejects these properties when sent as null or empty, so they are omitted unless specified.
+			...(settings.properties.resource.?analyticalStorageTtl != null
+				? {
+						analyticalStorageTtl: settings.properties.resource.?analyticalStorageTtl
+					}
+				: {})
+			...(settings.properties.resource.?defaultTtl != null
+				? {
+						defaultTtl: settings.properties.resource.?defaultTtl
+					}
+				: {})
+			...(settings.properties.resource.?fullTextPolicy != null
+				? {
+						fullTextPolicy: settings.properties.resource.?fullTextPolicy
+					}
+				: {})
+			...(settings.properties.resource.?vectorEmbeddingPolicy != null
+				? {
+						vectorEmbeddingPolicy: settings.properties.resource.?vectorEmbeddingPolicy
+					}
+				: {})
 		}
 	}
 }

@@ -47,7 +47,7 @@ param settings {
 			timeZone: string
 		}
 		@description('The visibility of the configuration.')
-		visibility: resourceInput<'Microsoft.Maintenance/maintenanceConfigurations@2023-04-01'>.properties.visibility?
+		visibility: resourceInput<'Microsoft.Maintenance/maintenanceConfigurations@2023-04-01'>.properties.visibility
 	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Maintenance/maintenanceConfigurations@2023-04-01'>.tags
@@ -64,7 +64,7 @@ resource Maintenance_maintenanceConfigurations_ 'Microsoft.Maintenance/maintenan
 			...settings.properties.maintenanceWindow
 			duration: '05:00' // This is the hard requirement on the date of writing this
 		}
-		visibility: settings.properties.?visibility ?? 'Custom'
+		visibility: settings.properties.visibility
 	}
 	tags: settings.tags
 }
