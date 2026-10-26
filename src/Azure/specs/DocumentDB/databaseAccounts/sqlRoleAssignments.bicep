@@ -26,13 +26,26 @@ type RoleAssignmentResourceInput = {
 		@description('The Cosmos DB data-plane scope: "/" for the account, "/dbs/{databaseName}" for a database, or "/dbs/{databaseName}/colls/{containerName}" for a container.')
 		@validate(
 			value =>
-				(value == '/') || sys.like(
+				value == '/' || sys.length(sys.filter(
+					sys.split(
+						value,
+						'/'
+					),
+					segment =>
+						sys.empty(segment)
+				)) == 1 && (sys.length(sys.split(
+					value,
+					'/'
+				)) == 3 && sys.like(
 					value,
 					'/dbs/*'
-				) || sys.like(
+				) || sys.length(sys.split(
+					value,
+					'/'
+				)) == 5 && sys.like(
 					value,
 					'/dbs/*/colls/*'
-				),
+				)),
 			'The value must be "/", "/dbs/{databaseName}", or "/dbs/{databaseName}/colls/{containerName}".'
 		)
 		scope: string

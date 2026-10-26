@@ -23,18 +23,32 @@ param settings {
 	@sealed()
 	properties: {
 		@description('A set of Scopes at or below which Role Assignments may be created using this Role Definition: "/", "/dbs/{databaseName}", or "/dbs/{databaseName}/colls/{containerName}".')
+		@minLength(1)
 		@validate(
 			value =>
-				sys.length(value) > 0 && sys.empty(sys.filter(
+				sys.empty(sys.filter(
 					value,
 					scope =>
-						!(scope == '/' || sys.like(
+						!(scope == '/' || sys.length(sys.filter(
+							sys.split(
+								scope,
+								'/'
+							),
+							segment =>
+								sys.empty(segment)
+						)) == 1 && (sys.length(sys.split(
+							scope,
+							'/'
+						)) == 3 && sys.like(
 							scope,
 							'/dbs/*'
-						) || sys.like(
+						) || sys.length(sys.split(
+							scope,
+							'/'
+						)) == 5 && sys.like(
 							scope,
 							'/dbs/*/colls/*'
-						))
+						)))
 				)),
 			'Each scope must be "/", "/dbs/{databaseName}", or "/dbs/{databaseName}/colls/{containerName}".'
 		)
