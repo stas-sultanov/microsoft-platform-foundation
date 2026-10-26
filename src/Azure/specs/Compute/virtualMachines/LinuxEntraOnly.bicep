@@ -19,11 +19,13 @@ This is a standalone VM, not a high-availability deployment:
 - Network and public IP resources: not created
 - NIC deletion: detached when the VM is deleted
 - Password authentication: disabled
-- Local password and SSH key: not configured
+- Local password: not configured
+- Local SSH key: one required public key for the provisioning account, because Azure requires it to create a Linux VM
 - Microsoft Entra login extension: always installed
 - Trusted Launch: required
 - Secure Boot: enabled
 - vTPM: enabled
+- Metadata Security Protocol: enabled in Enforce mode for IMDS and WireServer, with the Guest Proxy Agent extension installed implicitly; incompatible with Azure Backup, ephemeral OS disks, and ARM64
 - Boot diagnostics: enabled
 - Managed disk encryption: platform-managed keys
 - VM agent: provisioned
@@ -39,10 +41,11 @@ This is a standalone VM, not a high-availability deployment:
 - Data disk LUNs: unique
 - Data disks over 4095 GiB: caching must be None
 - Azure Monitor Agent: always installed with automatic upgrades
+- Boot integrity monitoring: enabled by the Guest Attestation extension, which is always installed with automatic upgrades; it requires the enforced Secure Boot and vTPM and outbound access to Azure Attestation
 - Azure Monitor data collection: requires a DCR
 - Additional extension order: ascending alias order, after the required agents
-- Extension uniqueness: names and publisher/type pairs must be unique
-- Required extensions: declared by alias with fixed names and empty properties; callers cannot replace them
+- Extension uniqueness: names must be unique; the name of an additional extension must equal its type, which also makes types unique
+- Required extensions: declared by alias with fixed names; callers cannot replace them
 - Extension failures: not suppressed
 - Extension inputs: secure; keep secrets out of names and public settings
 */
@@ -93,49 +96,7 @@ type DataDiskPropertiesInput = {
 	}
 }
 
-@description('The Microsoft Entra login extension installed by this spec. It is declared to indicate its presence.')
-@sealed()
-type EntraLoginExtensionResource = {
-	@description('The fixed extension name.')
-	name: 'AADSSHLoginForLinux'
-	@description('The properties are managed by this spec.')
-	@sealed()
-	properties: {}
-}
-
-@description('An additional Linux VM extension. Extensions run sequentially in ascending alias order after Microsoft Entra login and Azure Monitor Agent are installed.')
-@sealed()
-type ExtensionResource = {
-	@description('The extension name. It must be unique among all extensions; the Microsoft Entra login and Azure Monitor Agent names are reserved.')
-	@minLength(1)
-	@maxLength(64)
-	name: string
-	@description('The configurable extension properties. Failure suppression and custom dependency graphs are not exposed.')
-	@sealed()
-	properties: {
-		@description('Specifies whether a newer minor handler version is selected during deployment. Defaults to true.')
-		autoUpgradeMinorVersion: bool?
-		@description('Specifies whether the platform automatically upgrades the extension when supported by its handler. Defaults to false.')
-		enableAutomaticUpgrade: bool?
-		@description('A value changed by the consumer to force the extension handler to run again.')
-		forceUpdateTag: string?
-		@description('The protected, handler-specific configuration. The resources parameter is secure.')
-		protectedSettings: resourceInput<'Microsoft.Compute/virtualMachines/extensions@2026-04-01'>.properties.protectedSettings?
-		@description('The extension publisher.')
-		@minLength(1)
-		publisher: string
-		@description('The public, handler-specific configuration. Secrets must be supplied through protectedSettings.')
-		settings: resourceInput<'Microsoft.Compute/virtualMachines/extensions@2026-04-01'>.properties.settings?
-		@description('The extension handler type.')
-		@minLength(1)
-		type: string
-		@description('The extension handler version.')
-		@minLength(1)
-		typeHandlerVersion: string
-	}
-}
-
-@description('A standard Microsoft-provided generalized Linux image compatible with the selected VM size, Trusted Launch, Microsoft Entra SSH login, and Azure Monitor Agent. Images requiring a purchase plan are out of scope. Supply exactly one image source.')
+@description('A standard Microsoft-provided generalized Linux image compatible with the selected VM size, Trusted Launch, Microsoft Entra SSH login, Azure Monitor Agent, and Guest Attestation. Images requiring a purchase plan are out of scope. Supply exactly one image source.')
 @sealed()
 type ImageReference = {
 	@description('The community gallery image version ID, including an explicit version rather than latest.')
@@ -188,16 +149,6 @@ type ImageReference = {
 	version: string?
 }
 
-@description('The Azure Monitor Agent extension installed by this spec. It is declared to indicate its presence.')
-@sealed()
-type MonitorAgentExtensionResource = {
-	@description('The fixed extension name.')
-	name: 'AzureMonitorLinuxAgent'
-	@description('The properties are managed by this spec.')
-	@sealed()
-	properties: {}
-}
-
 @description('An existing network interface retained when the virtual machine is deleted.')
 @sealed()
 type NetworkInterfaceReference = {
@@ -244,11 +195,11 @@ param extensions {
 	}
 }
 
-@description('The VM child resources. This object is secure to protect handler secrets in deployment history. Never use secrets in names or public settings.')
+@description('The child resources.')
 @secure()
 @sealed()
 param resources {
-	@description('The VM extensions by alias. EntraLogin and MonitorAgent are installed by this spec and must be declared with their fixed names and empty properties. Additional extensions deploy sequentially in ascending alias order. All names must be unique, and additional publisher/type pairs must be unique.')
+	@description('The VM extensions by alias. EntraLogin, GuestAttestation, and MonitorAgent are installed by this spec and must be declared with their fixed names. Additional extensions deploy sequentially in ascending alias order. All names must be unique, and the name of each additional extension must equal its type.')
 	@validate(
 		value =>
 			sys.length(sys.union(
@@ -258,47 +209,63 @@ param resources {
 						sys.toLower(item.value.name)
 				),
 				[]
-			)) == sys.length(sys.items(value)) && sys.length(sys.union(
-				sys.map(
-					sys.filter(
-						sys.items(value),
-						item =>
-							!sys.contains(
-								[
-									'EntraLogin'
-									'MonitorAgent'
-								],
-								item.key
-							)
-					),
-					item =>
-						sys.toLower('${item.value.properties.publisher}/${item.value.properties.type}')
-				),
-				[]
-			)) == sys.length(sys.items(value)) - 2 && sys.length(sys.filter(
+			)) == sys.length(sys.items(value)) && sys.empty(sys.filter(
 				sys.items(value),
 				item =>
-					!sys.contains(
-						[
-							'EntraLogin'
-							'MonitorAgent'
-						],
-						item.key
-					) && sys.contains(
-						[
-							'aadsshloginforlinux'
-							'aadloginforlinux'
-							'azuremonitorlinuxagent'
-						],
-						sys.toLower(item.value.properties.type)
-					)
-			)) == 0,
-		'Extension names must be unique, additional extension publisher/type pairs must be unique, and Microsoft Entra login and Azure Monitor Agent extensions cannot be supplied as additional extensions.'
+					sys.toLower(item.value.name) != sys.toLower(item.value.?properties.?type ?? item.value.name)
+			)),
+		'Extension names must be unique, and the name of each additional extension must equal its type.'
 	)
 	extensions: {
-		EntraLogin: EntraLoginExtensionResource
-		MonitorAgent: MonitorAgentExtensionResource
-		*: ExtensionResource
+		@description('The Microsoft Entra login extension installed by this spec. It is declared to indicate its presence.')
+		@sealed()
+		EntraLogin: {
+			@description('The name.')
+			name: 'AADSSHLoginForLinux'
+		}
+		@description('The Guest Attestation extension, which provides boot integrity monitoring, installed by this spec. It is declared to indicate its presence.')
+		@sealed()
+		GuestAttestation: {
+			@description('The name.')
+			name: 'GuestAttestation'
+		}
+		@description('The Azure Monitor Agent extension installed by this spec. It is declared to indicate its presence.')
+		@sealed()
+		MonitorAgent: {
+			@description('The name.')
+			name: 'AzureMonitorLinuxAgent'
+		}
+		@description('An additional Linux VM extension. Extensions run sequentially in ascending alias order after Microsoft Entra login, Azure Monitor Agent, and Guest Attestation are installed.')
+		@sealed()
+		*: {
+			@description('The extension name. It must equal the extension type and be unique among all extensions; the Microsoft Entra login, Azure Monitor Agent, and Guest Attestation names are reserved.')
+			@minLength(1)
+			@maxLength(64)
+			name: string
+			@description('The configurable extension properties. Failure suppression and custom dependency graphs are not exposed.')
+			@sealed()
+			properties: {
+				@description('Specifies whether a newer minor handler version is selected during deployment. Defaults to true.')
+				autoUpgradeMinorVersion: bool?
+				@description('Specifies whether the platform automatically upgrades the extension when supported by its handler. Defaults to true.')
+				enableAutomaticUpgrade: bool?
+				@description('A value changed by the consumer to force the extension handler to run again.')
+				forceUpdateTag: string?
+				@description('The protected, handler-specific configuration. The resources parameter is secure.')
+				protectedSettings: resourceInput<'Microsoft.Compute/virtualMachines/extensions@2026-04-01'>.properties.protectedSettings?
+				@description('The extension publisher.')
+				@minLength(1)
+				publisher: string
+				@description('The public, handler-specific configuration. Secrets must be supplied through protectedSettings.')
+				settings: resourceInput<'Microsoft.Compute/virtualMachines/extensions@2026-04-01'>.properties.settings?
+				@description('The extension handler type.')
+				@minLength(1)
+				type: string
+				@description('The extension handler version.')
+				@minLength(1)
+				typeHandlerVersion: string
+			}
+		}
 	}
 }
 
@@ -360,11 +327,22 @@ param settings {
 			@minLength(1)
 			networkInterfaces: NetworkInterfaceReference[]
 		}
-		@description('The provisioning account, host name, custom data, and secrets. No password or local SSH keys are accepted.')
+		@description('The provisioning account, SSH public key, host name, custom data, and secrets. No password is accepted.')
 		@sealed()
 		osProfile: {
 			@description('The custom data.')
 			customData: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.osProfile.customData?
+			@description('The SSH public key of the provisioning account, required by Azure to create a Linux VM. The matching private key is held by the consumer.')
+			@minLength(1)
+			@validate(
+				value =>
+					sys.startsWith(
+						value,
+						'ssh-'
+					),
+				'The value must be an OpenSSH public key.'
+			)
+			adminSshPublicKey: string
 			@description('The provisioning account name. This account receives no password or authorized SSH key.')
 			@minLength(1)
 			@maxLength(32)
@@ -507,11 +485,29 @@ resource Compute_virtualMachines_ 'Microsoft.Compute/virtualMachines@2026-04-01'
 					patchMode: 'AutomaticByPlatform'
 				}
 				provisionVMAgent: true
+				ssh: {
+					publicKeys: [
+						{
+							keyData: settings.properties.osProfile.adminSshPublicKey
+							path: '/home/${settings.properties.osProfile.adminUsername}/.ssh/authorized_keys'
+						}
+					]
+				}
 			}
 			secrets: settings.properties.osProfile.?secrets
 		}
 		priority: 'Regular'
 		securityProfile: {
+			proxyAgentSettings: {
+				addProxyAgentExtension: true
+				enabled: true
+				imds: {
+					mode: 'Enforce'
+				}
+				wireServer: {
+					mode: 'Enforce'
+				}
+			}
 			securityType: 'TrustedLaunch'
 			uefiSettings: {
 				secureBootEnabled: true
@@ -552,6 +548,7 @@ resource Compute_virtualMachines_extensions_ 'Microsoft.Compute/virtualMachines/
 			!sys.contains(
 				[
 					'EntraLogin'
+					'GuestAttestation'
 					'MonitorAgent'
 				],
 				item.key
@@ -562,7 +559,7 @@ resource Compute_virtualMachines_extensions_ 'Microsoft.Compute/virtualMachines/
 		parent: Compute_virtualMachines_
 		properties: {
 			autoUpgradeMinorVersion: item.value.properties.?autoUpgradeMinorVersion ?? true
-			enableAutomaticUpgrade: item.value.properties.?enableAutomaticUpgrade ?? false
+			enableAutomaticUpgrade: item.value.properties.?enableAutomaticUpgrade ?? true
 			forceUpdateTag: item.value.properties.?forceUpdateTag
 			protectedSettings: item.value.properties.?protectedSettings
 			publisher: item.value.properties.publisher
@@ -574,6 +571,7 @@ resource Compute_virtualMachines_extensions_ 'Microsoft.Compute/virtualMachines/
 		tags: settings.tags
 		dependsOn: [
 			Compute_virtualMachines_extensions__EntraLogin
+			Compute_virtualMachines_extensions__GuestAttestation
 			Compute_virtualMachines_extensions__MonitorAgent
 		]
 	}
@@ -588,6 +586,35 @@ resource Compute_virtualMachines_extensions__EntraLogin 'Microsoft.Compute/virtu
 		publisher: 'Microsoft.Azure.ActiveDirectory'
 		suppressFailures: false
 		type: 'AADSSHLoginForLinux'
+		typeHandlerVersion: '1.0'
+	}
+	tags: settings.tags
+}
+
+resource Compute_virtualMachines_extensions__GuestAttestation 'Microsoft.Compute/virtualMachines/extensions@2026-04-01' = {
+	location: settings.location
+	name: resources.extensions.GuestAttestation.name
+	parent: Compute_virtualMachines_
+	properties: {
+		autoUpgradeMinorVersion: true
+		enableAutomaticUpgrade: true
+		publisher: 'Microsoft.Azure.Security.LinuxAttestation'
+		settings: {
+			AttestationConfig: {
+				AscSettings: {
+					ascReportingEndpoint: ''
+					ascReportingFrequency: ''
+				}
+				MaaSettings: {
+					maaEndpoint: ''
+					maaTenantName: 'GuestAttestation'
+				}
+				disableAlerts: 'false'
+				useCustomToken: 'false'
+			}
+		}
+		suppressFailures: false
+		type: 'GuestAttestation'
 		typeHandlerVersion: '1.0'
 	}
 	tags: settings.tags
