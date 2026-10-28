@@ -37,7 +37,7 @@ param extensions {
 @validate(
 	value =>
 		value.sku.name == 'Premium' || (value.properties.?geoDataReplication == null && value.properties.?premiumMessagingPartitions == null && value.properties.?privateEndpointConnections == null),
-	'SKU Premium is required for geoDataReplication, premiumMessagingPartitions, and privateEndpointConnections.'
+	'sku.name must be "Premium" when geoDataReplication, premiumMessagingPartitions, or privateEndpointConnections is specified.'
 )
 param settings {
 	@description('The identity.')

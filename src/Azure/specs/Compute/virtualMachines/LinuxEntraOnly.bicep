@@ -282,7 +282,7 @@ param settings {
 				],
 				value.?type ?? ''
 			),
-		'The identity type must be SystemAssigned or SystemAssigned, UserAssigned.'
+		'The identity type must be "SystemAssigned" or "SystemAssigned, UserAssigned".'
 	)
 	identity: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.identity
 	@description('The geo-location. The existing NIC must be in the same region.')
@@ -373,7 +373,7 @@ param settings {
 						item =>
 							item.diskSizeGB > 4095 && (item.?caching ?? 'ReadOnly') != 'None'
 					)) == 0,
-				'Data disk logical unit numbers must be unique, and disks larger than 4095 GiB require caching None.'
+				'Data disk logical unit numbers must be unique. caching must be "None" for disks larger than 4095 GiB.'
 			)
 			dataDisks: DataDiskPropertiesInput[]?
 			@description('The Linux image reference. Marketplace and gallery versions must be pinned. Linux and required agent compatibility must be verified by the consumer.')
@@ -407,7 +407,7 @@ param settings {
 						sys.toLower(value.?communityGalleryImageId ?? ''),
 						'/latest'
 					)),
-				'Supply exactly one source: complete pinned marketplace reference, managed image ID, or pinned gallery image version ID.'
+				'Exactly one of a complete pinned marketplace reference, a managed image ID, or a pinned gallery image version ID must be specified.'
 			)
 			imageReference: ImageReference
 			@description('The managed OS disk, created from the image and deleted with the VM.')

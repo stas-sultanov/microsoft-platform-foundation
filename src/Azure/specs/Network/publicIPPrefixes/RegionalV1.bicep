@@ -49,7 +49,7 @@ type PublicIPPrefixPropertiesIPv6 = {
 				tag =>
 					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
 			)),
-		'Internet routing preference requires an IPv4 public IP prefix.'
+		'publicIPAddressVersion must be "IPv4" when Internet routing preference is specified.'
 	)
 	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
 	@description('The CIDR prefix length.')

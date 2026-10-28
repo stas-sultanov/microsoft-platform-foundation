@@ -47,7 +47,32 @@ The Foundation Contract owns architectural and security policy; this file owns B
 - Optional ARM resource IDs MUST accept null: `value == null || sys.like(value!, pattern)`.
 - ARM resource reference objects MUST validate `id`: `sys.like(value.?id ?? '', pattern)`.
 - ARM resource ID arrays MUST validate every element using `sys.filter()`.
-- ID validation errors SHOULD follow `The value must be a <provider/type> resource ID.`, adapted for collections or additional constraints.
+
+### Validation Messages
+
+- All `@validate()` messages MUST state the required valid configuration in declarative English, start with a capital letter (unless starting with a case-sensitive identifier), and end with a period.
+- Messages MUST use `<subject> must <constraint>.` or `<subject> must not <constraint>.`, except for the `At most one ... may ...` templates below; MUST NOT use imperative wording (`Supply`, `Provide`), `requires`, `is required`, `cannot`, or `does not support`.
+- Messages MUST use exact property names or unambiguous domain terms. String literals MUST be enclosed in double quotes when needed to distinguish values, especially values containing commas.
+- Equivalent constraints MUST use the same template, adapted only for subjects, values, conditions, and collection scope:
+
+  | Constraint              | Template                                                          |
+  | ----------------------- | ----------------------------------------------------------------- |
+  | Exactly one specified   | `Exactly one of x or y must be specified.`                        |
+  | At most one specified   | `At most one of x or y may be specified.`                         |
+  | At least one specified  | `At least one of x or y must be specified.`                       |
+  | At most one enabled     | `At most one of x or y may be true.` (use `enabled` for policies) |
+  | Required dependency     | `x must be specified when y is true.`                             |
+  | Conditional value       | `x must be <value> when <condition>.`                             |
+  | Conditional prohibition | `x must not be specified when <condition>.`                       |
+  | Allowed values          | `<subject> must be <value1> or <value2>.`                         |
+  | Uniqueness              | `<subject> must be unique <scope>.`                               |
+  | Format or range         | `<subject> must <format or range constraint>.`                    |
+  | Resource ID             | `The value must be a <provider/type> resource ID.`                |
+  | Resource ID collection  | `Each value must be a <provider/type> resource ID.`               |
+
+- Lists of three or more alternatives MUST use `x, y, or z`. Collection subjects MAY use `Each <item>` instead of `Each value` for clarity.
+- Messages for combined predicates MUST describe every constraint using the same templates, joined by `and` or separate sentences.
+- Messages MUST preserve the predicate's meaning: exactly one versus at most one, specified versus nonempty, and specified versus true/enabled are distinct. Additional qualifiers MUST state nonempty, pinned, complete, or other requirements where applicable.
 
 ## Module Interface
 

@@ -44,7 +44,7 @@ param settings {
 	@validate(
 		value =>
 			value.enableSoftDelete || (!value.enablePurgeProtection && value.?softDeleteRetentionInDays == null),
-		'enablePurgeProtection and softDeleteRetentionInDays cannot be specified when enableSoftDelete is false.'
+		'enableSoftDelete must be true when enablePurgeProtection is true or softDeleteRetentionInDays is specified.'
 	)
 	properties: {
 		@description('Specifies whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault.')

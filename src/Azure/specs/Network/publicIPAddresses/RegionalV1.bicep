@@ -75,7 +75,7 @@ type PublicIPAddressPropertiesIPv6 = {
 				tag =>
 					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
 			)),
-		'Internet routing preference requires an IPv4 public IP address.'
+		'publicIPAddressVersion must be "IPv4" when Internet routing preference is specified.'
 	)
 	ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipTags?
 	@description('The public IP address version.')
@@ -108,7 +108,7 @@ param extensions {
 			tag =>
 				tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
 		)) || sys.length(value.?zones ?? []) != 1,
-	'Internet routing preference does not support an explicitly single-zone configuration.'
+	'zones must not contain exactly one entry when Internet routing preference is specified.'
 )
 param settings {
 	@description('The geo-location.')

@@ -53,7 +53,7 @@ param settings {
 	@validate(
 		value =>
 			value.?enableNfsV3AllSquash != true || value.?enableNfsV3RootSquash != true,
-		'enableNfsV3AllSquash and enableNfsV3RootSquash cannot both be true.'
+		'At most one of enableNfsV3AllSquash or enableNfsV3RootSquash may be true.'
 	)
 	properties: {
 		defaultEncryptionScope: resourceInput<'Microsoft.Storage/storageAccounts/blobServices/containers@2026-06-01'>.properties.defaultEncryptionScope?
