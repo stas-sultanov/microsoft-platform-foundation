@@ -35,7 +35,7 @@ param settings {
 		@validate(
 			value =>
 				value.?throughput == null || value.?autoscaleSettings == null,
-			'throughput and autoscaleSettings cannot both be specified.'
+			'At most one of throughput or autoscaleSettings may be specified.'
 		)
 		options: DocumentDBDatabaseAccounts.ThroughputOptions?
 		@sealed()
@@ -59,7 +59,7 @@ param settings {
 					value.kind != 'MultiHash'
 						? sys.length(value.paths) == 1
 						: sys.length(value.paths) <= 3,
-				'Partition key must contain one path, or up to three paths for MultiHash.'
+				'The partition key must contain one path when kind is not "MultiHash" and between one and three paths when kind is "MultiHash".'
 			)
 			partitionKey: {
 				@description('Indicates the kind of algorithm used for partitioning. For MultiHash, multiple partition keys (upto three maximum) are supported for container create')

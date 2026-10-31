@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a standalone Linux virtual machine with Microsoft Entra SSH access, Azure Monitor Agent, and optional extensions.'
+metadata description = 'Provisions a Microsoft.Compute/virtualMachines resource for a security-hardened standalone Linux virtual machine with an existing managed OS disk, Microsoft Entra SSH access, Azure Monitor Agent, and optional extensions.'
 
 /*
 This spec provides a security-hardened Linux VM for always-on services.
@@ -18,9 +18,9 @@ This is a standalone VM, not a high-availability deployment:
 - Network interfaces: one or more existing NICs; the first is primary
 - Network and public IP resources: not created
 - NIC deletion: detached when the VM is deleted
-- Password authentication: disabled
-- Local password: not configured
-- Local SSH key: one required public key for the provisioning account, because Azure requires it to create a Linux VM
+- Password authentication: inherited from the attached OS disk; must be disabled in the guest
+- Local password: not provisioned by this spec
+- Local SSH keys: not provisioned by this spec; Microsoft Entra SSH login is provided by the required extension
 - Microsoft Entra login extension: always installed
 - Trusted Launch: required
 - Secure Boot: enabled
@@ -28,15 +28,16 @@ This is a standalone VM, not a high-availability deployment:
 - Metadata Security Protocol: enabled in Enforce mode for IMDS and WireServer, with the Guest Proxy Agent extension installed implicitly; incompatible with Azure Backup, ephemeral OS disks, and ARM64
 - Boot diagnostics: enabled
 - Managed disk encryption: platform-managed keys
-- VM agent: provisioned
-- VM agent platform updates: enabled
-- Guest OS updates: applied automatically within the required InGuestPatch maintenance window
+- VM agent: must already be present in the attached OS disk
+- VM agent platform updates: inherited from the attached disk; the platform provisioning flag is not set for Attach
+- Guest OS updates: AutomaticByPlatform within the required InGuestPatch maintenance assignment
+- Guest patch assessment: AutomaticByPlatform
 - Patching reboot: only when required
-- Image source: standard Microsoft-provided Linux images; purchase-plan images are out of scope
-- Image selection: exactly one source; marketplace and gallery versions must be pinned
-- Compatibility validation: consumer verifies Linux, agent, image, and VM-size compatibility
+- OS disk: existing managed Linux OS disk, attached to the VM
+- OS profile: configures patching without provisioning a local user, SSH key, or custom data
+- Compatibility validation: consumer verifies Linux, agent, disk, Trusted Launch, and VM-size compatibility
 - VM size allowlist: none
-- OS disk deletion: deleted with the VM
+- OS disk deletion: detached from the VM and retained when the VM is deleted
 - New data disk deletion: Detach by default when the VM is deleted
 - Data disk LUNs: unique
 - Data disks over 4095 GiB: caching must be None
@@ -45,7 +46,7 @@ This is a standalone VM, not a high-availability deployment:
 - Azure Monitor data collection: requires a DCR
 - Additional extension order: ascending alias order, after the required agents
 - Extension uniqueness: names must be unique; the name of an additional extension must equal its type, which also makes types unique
-- Required extensions: declared by alias with fixed names; callers cannot replace them
+- Required extensions: installed internally with fixed names; callers cannot supply their aliases, names, or types
 - Extension failures: not suppressed
 - Extension inputs: secure; keep secrets out of names and public settings
 */
@@ -64,94 +65,55 @@ import * as MaintenanceConfigurationAssignments from '../../../library/Maintenan
 
 /* TYPES */
 
-@description('A new managed data disk. Existing disks and disk images are not accepted.')
+@description('An existing managed data disk to attach to the virtual machine and retain when the virtual machine is deleted.')
 @sealed()
-type DataDiskPropertiesInput = {
+type DataDiskInput = {
 	@description('The disk caching mode.')
-	caching: (
-		| 'None'
-		| 'ReadOnly'
-		| 'ReadWrite')?
-	@description('The disk disposition when the virtual machine is deleted. Defaults to Detach.')
-	deleteOption: (
-		| 'Delete'
-		| 'Detach')?
-	@description('The size of the disk in GiB.')
-	@minValue(4)
-	@maxValue(32767)
-	diskSizeGB: int
+	caching: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.storageProfile.dataDisks[*].caching
 	@description('The logical unit number. It must be unique within the virtual machine.')
 	@minValue(0)
 	@maxValue(63)
 	lun: int
-	@description('The managed disk settings.')
+	@description('The managed disk to attach.')
 	@sealed()
 	managedDisk: {
-		@description('The storage account type.')
-		storageAccountType:
-			| 'Premium_LRS'
-			| 'Premium_ZRS'
-			| 'StandardSSD_LRS'
-			| 'StandardSSD_ZRS'
+		@description('The ID of the Microsoft.Compute/disks resource.')
+		@validate(
+			value =>
+				sys.like(
+					value,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/disks/*'
+				),
+			'The value must be a Microsoft.Compute/disks resource ID.'
+		)
+		id: string
 	}
 }
 
-@description('A standard Microsoft-provided generalized Linux image compatible with the selected VM size, Trusted Launch, Microsoft Entra SSH login, Azure Monitor Agent, and Guest Attestation. Images requiring a purchase plan are out of scope. Supply exactly one image source.')
+@description('An existing bootable managed Linux OS disk with the Azure VM agent, created separately from an image. The VM deployment does not provision a local user or SSH key.')
 @sealed()
-type ImageReference = {
-	@description('The community gallery image version ID, including an explicit version rather than latest.')
-	@minLength(1)
-	@validate(
-		value =>
-			value == null || sys.like(
-				value!,
-				'/CommunityGalleries/*/Images/*/Versions/*'
-			),
-		'The value must be a community gallery image version ID.'
-	)
-	communityGalleryImageId: string?
-	@description('The ID of the Microsoft.Compute/images or Microsoft.Compute/galleries/images/versions resource.')
-	@minLength(1)
-	@validate(
-		value =>
-			value == null || sys.like(
-				value ?? '',
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/images/*'
-			) || sys.like(
-				value ?? '',
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/galleries/*/images/*/versions/*'
-			),
-		'The value must be a Microsoft.Compute/images or Microsoft.Compute/galleries/images/versions resource ID.'
-	)
-	id: string?
-	@description('The Microsoft marketplace image offer, supplied together with publisher, sku, and version.')
-	@minLength(1)
-	offer: string?
-	@description('The Microsoft marketplace image publisher.')
-	@minLength(1)
-	publisher: string?
-	@description('The direct shared gallery image version ID, including an explicit version rather than latest.')
-	@minLength(1)
-	@validate(
-		value =>
-			value == null || sys.like(
-				value!,
-				'/SharedGalleries/*/Images/*/Versions/*'
-			),
-		'The value must be a direct shared gallery image version ID.'
-	)
-	sharedGalleryImageId: string?
-	@description('The Microsoft marketplace image SKU.')
-	@minLength(1)
-	sku: string?
-	@description('The explicit Microsoft marketplace image version. The latest alias is not accepted.')
-	@minLength(1)
-	version: string?
+type OsDiskInput = {
+	@description('The disk caching mode.')
+	caching: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.storageProfile.osDisk.caching
+	@description('The managed OS disk to attach.')
+	@sealed()
+	managedDisk: {
+		@description('The ID of the Microsoft.Compute/disks resource.')
+		@validate(
+			value =>
+				sys.like(
+					value,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/disks/*'
+				),
+			'The value must be a Microsoft.Compute/disks resource ID.'
+		)
+		id: string
+	}
 }
 
 @description('An existing network interface retained when the virtual machine is deleted.')
 @sealed()
-type NetworkInterfaceReference = {
+type NetworkInterfaceReferenceInput = {
 	@description('The ID of the Microsoft.Network/networkInterfaces resource.')
 	@validate(
 		value =>
@@ -198,8 +160,38 @@ param extensions {
 @description('The child resources.')
 @secure()
 @sealed()
+@validate(
+	value =>
+		sys.empty(sys.filter(
+			sys.items(value.extensions),
+			item =>
+				sys.contains(
+					[
+						'entralogin'
+						'guestattestation'
+						'monitoragent'
+					],
+					sys.toLower(item.key)
+				) || sys.contains(
+					[
+						'aadsshloginforlinux'
+						'guestattestation'
+						'azuremonitorlinuxagent'
+					],
+					sys.toLower(item.value.name)
+				) || sys.contains(
+					[
+						'aadsshloginforlinux'
+						'guestattestation'
+						'azuremonitorlinuxagent'
+					],
+					sys.toLower(item.value.properties.type)
+				)
+		)),
+	'EntraLogin, GuestAttestation, and MonitorAgent are already installed by this spec and must not be supplied.'
+)
 param resources {
-	@description('The VM extensions by alias. EntraLogin, GuestAttestation, and MonitorAgent are installed by this spec and must be declared with their fixed names. Additional extensions deploy sequentially in ascending alias order. All names must be unique, and the name of each additional extension must equal its type.')
+	@description('The additional VM extensions by alias. Microsoft Entra login, Azure Monitor Agent, and Guest Attestation are installed internally and must not be supplied. Additional extensions deploy sequentially in ascending alias order.')
 	@validate(
 		value =>
 			sys.length(sys.union(
@@ -212,29 +204,11 @@ param resources {
 			)) == sys.length(sys.items(value)) && sys.empty(sys.filter(
 				sys.items(value),
 				item =>
-					sys.toLower(item.value.name) != sys.toLower(item.value.?properties.?type ?? item.value.name)
+					sys.toLower(item.value.name) != sys.toLower(item.value.properties.type)
 			)),
 		'Extension names must be unique, and the name of each additional extension must equal its type.'
 	)
 	extensions: {
-		@description('The Microsoft Entra login extension installed by this spec. It is declared to indicate its presence.')
-		@sealed()
-		EntraLogin: {
-			@description('The name.')
-			name: 'AADSSHLoginForLinux'
-		}
-		@description('The Guest Attestation extension, which provides boot integrity monitoring, installed by this spec. It is declared to indicate its presence.')
-		@sealed()
-		GuestAttestation: {
-			@description('The name.')
-			name: 'GuestAttestation'
-		}
-		@description('The Azure Monitor Agent extension installed by this spec. It is declared to indicate its presence.')
-		@sealed()
-		MonitorAgent: {
-			@description('The name.')
-			name: 'AzureMonitorLinuxAgent'
-		}
 		@description('An additional Linux VM extension. Extensions run sequentially in ascending alias order after Microsoft Entra login, Azure Monitor Agent, and Guest Attestation are installed.')
 		@sealed()
 		*: {
@@ -269,10 +243,10 @@ param resources {
 	}
 }
 
-@description('The Linux VM settings. Authentication, operating system type, and Trusted Launch security are controlled by this spec.')
+@description('The resource settings.')
 @sealed()
 param settings {
-	@description('The identity. The system-assigned identity is required by the AADSSHLoginForLinux extension.')
+	@description('The identity.')
 	@validate(
 		value =>
 			sys.contains(
@@ -282,16 +256,16 @@ param settings {
 				],
 				value.?type ?? ''
 			),
-		'The identity type must be SystemAssigned or SystemAssigned, UserAssigned.'
+		'The identity type must be "SystemAssigned" or "SystemAssigned, UserAssigned".'
 	)
 	identity: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.identity
-	@description('The geo-location. The existing NIC must be in the same region.')
+	@description('The geo-location.')
 	location: string
-	@description('The virtual machine name.')
+	@description('The name.')
 	@minLength(1)
 	@maxLength(64)
 	name: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.name
-	@description('The configurable virtual machine properties.')
+	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('The native VM application profile for Azure Compute Gallery applications.')
@@ -325,39 +299,12 @@ param settings {
 		networkProfile: {
 			@description('One or more existing NICs, retained when the VM is deleted. The first NIC is primary; network configuration is owned by the consumer.')
 			@minLength(1)
-			networkInterfaces: NetworkInterfaceReference[]
+			networkInterfaces: NetworkInterfaceReferenceInput[]
 		}
-		@description('The provisioning account, SSH public key, host name, custom data, and secrets. No password is accepted.')
-		@sealed()
-		osProfile: {
-			@description('The custom data.')
-			customData: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.osProfile.customData?
-			@description('The SSH public key of the provisioning account, required by Azure to create a Linux VM. The matching private key is held by the consumer.')
-			@minLength(1)
-			@validate(
-				value =>
-					sys.startsWith(
-						value,
-						'ssh-'
-					),
-				'The value must be an OpenSSH public key.'
-			)
-			adminSshPublicKey: string
-			@description('The provisioning account name. This account receives no password or authorized SSH key.')
-			@minLength(1)
-			@maxLength(32)
-			adminUsername: string
-			@description('The Linux host name.')
-			@minLength(1)
-			@maxLength(64)
-			computerName: string
-			@description('The OS profile secrets.')
-			secrets: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.osProfile.secrets?
-		}
-		@description('The generalized Linux image and managed disks.')
+		@description('The existing Linux OS disk and any existing managed data disks to attach.')
 		@sealed()
 		storageProfile: {
-			@description('The new managed data disks. Logical unit numbers must be unique. Disks larger than 4095 GiB require caching None.')
+			@description('The existing managed data disks to attach. Logical unit numbers must be unique.')
 			@maxLength(64)
 			@validate(
 				value =>
@@ -368,66 +315,12 @@ param settings {
 								item.lun
 						),
 						[]
-					)) == sys.length(value ?? []) && sys.length(sys.filter(
-						value ?? [],
-						item =>
-							item.diskSizeGB > 4095 && (item.?caching ?? 'ReadOnly') != 'None'
-					)) == 0,
-				'Data disk logical unit numbers must be unique, and disks larger than 4095 GiB require caching None.'
+					)) == sys.length(value ?? []),
+				'Data disk logical unit numbers must be unique.'
 			)
-			dataDisks: DataDiskPropertiesInput[]?
-			@description('The Linux image reference. Marketplace and gallery versions must be pinned. Linux and required agent compatibility must be verified by the consumer.')
-			@validate(
-				value =>
-					sys.length(sys.filter(
-						[
-							!sys.empty(value.?id)
-							!sys.empty(value.?sharedGalleryImageId)
-							!sys.empty(value.?communityGalleryImageId)
-							!sys.empty(value.?publisher) || !sys.empty(value.?offer) || !sys.empty(value.?sku) || !sys.empty(value.?version)
-						],
-						item =>
-							item
-					)) == 1 && (sys.empty(value.?publisher) && sys.empty(value.?offer) && sys.empty(value.?sku) && sys.empty(value.?version) || !sys.empty(value.?publisher) && !sys.empty(value.?offer) && !sys.empty(value.?sku) && sys.like(
-						value.?version ?? '',
-						'*.*.*'
-					) && sys.toLower(value.?version ?? '') != 'latest') && !sys.endsWith(
-						sys.toLower(value.?id ?? ''),
-						'/latest'
-					) && (sys.empty(value.?sharedGalleryImageId) || sys.like(
-						value.?sharedGalleryImageId ?? '',
-						'/sharedGalleries/*/images/*/versions/*'
-					) && !sys.endsWith(
-						sys.toLower(value.?sharedGalleryImageId ?? ''),
-						'/latest'
-					)) && (sys.empty(value.?communityGalleryImageId) || sys.like(
-						value.?communityGalleryImageId ?? '',
-						'/communityGalleries/*/images/*/versions/*'
-					) && !sys.endsWith(
-						sys.toLower(value.?communityGalleryImageId ?? ''),
-						'/latest'
-					)),
-				'Supply exactly one source: complete pinned marketplace reference, managed image ID, or pinned gallery image version ID.'
-			)
-			imageReference: ImageReference
-			@description('The managed OS disk, created from the image and deleted with the VM.')
-			@sealed()
-			osDisk: {
-				@description('The OS disk size in GiB. It must be at least the image size. Omit to use the image default.')
-				@minValue(30)
-				@maxValue(4095)
-				diskSizeGB: int?
-				@description('The managed disk settings.')
-				@sealed()
-				managedDisk: {
-					@description('The storage account type.')
-					storageAccountType:
-						| 'Premium_LRS'
-						| 'Premium_ZRS'
-						| 'StandardSSD_LRS'
-						| 'StandardSSD_ZRS'
-				}
-			}
+			dataDisks: DataDiskInput[]?
+			@description('The existing bootable managed Linux OS disk with the Azure VM agent.')
+			osDisk: OsDiskInput
 		}
 	}
 	@description('The tags.')
@@ -469,13 +362,7 @@ resource Compute_virtualMachines_ 'Microsoft.Compute/virtualMachines@2026-04-01'
 			]
 		}
 		osProfile: {
-			adminUsername: settings.properties.osProfile.adminUsername
-			allowExtensionOperations: true
-			computerName: settings.properties.osProfile.computerName
-			customData: settings.properties.osProfile.?customData
 			linuxConfiguration: {
-				disablePasswordAuthentication: true
-				enableVMAgentPlatformUpdates: true
 				patchSettings: {
 					assessmentMode: 'AutomaticByPlatform'
 					automaticByPlatformSettings: {
@@ -484,17 +371,7 @@ resource Compute_virtualMachines_ 'Microsoft.Compute/virtualMachines@2026-04-01'
 					}
 					patchMode: 'AutomaticByPlatform'
 				}
-				provisionVMAgent: true
-				ssh: {
-					publicKeys: [
-						{
-							keyData: settings.properties.osProfile.adminSshPublicKey
-							path: '/home/${settings.properties.osProfile.adminUsername}/.ssh/authorized_keys'
-						}
-					]
-				}
 			}
-			secrets: settings.properties.osProfile.?secrets
 		}
 		priority: 'Regular'
 		securityProfile: {
@@ -517,20 +394,17 @@ resource Compute_virtualMachines_ 'Microsoft.Compute/virtualMachines@2026-04-01'
 		storageProfile: {
 			dataDisks: [
 				for item in settings.properties.storageProfile.?dataDisks ?? []: {
-					caching: item.?caching ?? 'ReadOnly'
-					createOption: 'Empty'
-					deleteOption: item.?deleteOption ?? 'Detach'
-					diskSizeGB: item.diskSizeGB
+					caching: item.caching
+					createOption: 'Attach'
+					deleteOption: 'Detach'
 					lun: item.lun
 					managedDisk: item.managedDisk
 				}
 			]
-			imageReference: settings.properties.storageProfile.imageReference
 			osDisk: {
-				caching: 'ReadWrite'
-				createOption: 'FromImage'
-				deleteOption: 'Delete'
-				diskSizeGB: settings.properties.storageProfile.osDisk.?diskSizeGB
+				caching: settings.properties.storageProfile.osDisk.caching
+				createOption: 'Attach'
+				deleteOption: 'Detach'
 				managedDisk: settings.properties.storageProfile.osDisk.managedDisk
 				osType: 'Linux'
 			}
@@ -542,18 +416,7 @@ resource Compute_virtualMachines_ 'Microsoft.Compute/virtualMachines@2026-04-01'
 
 @batchSize(1)
 resource Compute_virtualMachines_extensions_ 'Microsoft.Compute/virtualMachines/extensions@2026-04-01' = [
-	for item in sys.filter(
-		sys.items(resources.extensions),
-		item =>
-			!sys.contains(
-				[
-					'EntraLogin'
-					'GuestAttestation'
-					'MonitorAgent'
-				],
-				item.key
-			)
-	): {
+	for item in sys.items(resources.extensions): {
 		location: settings.location
 		name: item.value.name
 		parent: Compute_virtualMachines_
@@ -579,7 +442,7 @@ resource Compute_virtualMachines_extensions_ 'Microsoft.Compute/virtualMachines/
 
 resource Compute_virtualMachines_extensions__EntraLogin 'Microsoft.Compute/virtualMachines/extensions@2026-04-01' = {
 	location: settings.location
-	name: resources.extensions.EntraLogin.name
+	name: 'AADSSHLoginForLinux'
 	parent: Compute_virtualMachines_
 	properties: {
 		autoUpgradeMinorVersion: true
@@ -593,7 +456,7 @@ resource Compute_virtualMachines_extensions__EntraLogin 'Microsoft.Compute/virtu
 
 resource Compute_virtualMachines_extensions__GuestAttestation 'Microsoft.Compute/virtualMachines/extensions@2026-04-01' = {
 	location: settings.location
-	name: resources.extensions.GuestAttestation.name
+	name: 'GuestAttestation'
 	parent: Compute_virtualMachines_
 	properties: {
 		autoUpgradeMinorVersion: true
@@ -622,7 +485,7 @@ resource Compute_virtualMachines_extensions__GuestAttestation 'Microsoft.Compute
 
 resource Compute_virtualMachines_extensions__MonitorAgent 'Microsoft.Compute/virtualMachines/extensions@2026-04-01' = {
 	location: settings.location
-	name: resources.extensions.MonitorAgent.name
+	name: 'AzureMonitorLinuxAgent'
 	parent: Compute_virtualMachines_
 	properties: {
 		autoUpgradeMinorVersion: true

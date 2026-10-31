@@ -44,7 +44,7 @@ param settings {
 	@validate(
 		value =>
 			value.?enableDdosProtection != true || value.?ddosProtectionPlan != null,
-		'enableDdosProtection requires ddosProtectionPlan.'
+		'ddosProtectionPlan must be specified when enableDdosProtection is true.'
 	)
 	properties: {
 		@description('Address space contains an array of IP address ranges that can be used by subnets in the virtual network.')

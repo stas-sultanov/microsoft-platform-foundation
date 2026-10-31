@@ -36,14 +36,20 @@ param settings {
 	name: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-01-01'>.name
 	@description('The configurable properties.')
 	@sealed()
+	@validate(
+		value =>
+			sys.empty(value.?addressPrefixes) != sys.empty(value.?ipamPoolPrefixAllocations),
+		'Exactly one of addressPrefixes or ipamPoolPrefixAllocations must be specified and nonempty.'
+	)
 	properties: {
-		@description('The subnet address prefixes in CIDR notation.')
-		@minLength(1)
-		addressPrefixes: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-01-01'>.properties.addressPrefixes
+		@description('The subnet address prefixes in CIDR notation. Mutually exclusive with ipamPoolPrefixAllocations.')
+		addressPrefixes: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-01-01'>.properties.addressPrefixes?
 		@description('The service delegations for the subnet.')
 		delegations: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-01-01'>.properties.delegations?
 		@description('The array of IpAllocation which reference this subnet.')
 		ipAllocations: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-01-01'>.properties.ipAllocations?
+		@description('The IPAM pools allocating the subnet address prefixes. Mutually exclusive with addressPrefixes.')
+		ipamPoolPrefixAllocations: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-01-01'>.properties.ipamPoolPrefixAllocations?
 		@description('The NAT gateway associated with the subnet.')
 		natGateway: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-01-01'>.properties.natGateway?
 		@description('The network security group associated with the subnet.')

@@ -37,7 +37,7 @@ param extensions {
 @validate(
 	value =>
 		(value.sku.name == 'Premium' || value.sku.name == 'Standard') || (value.properties.?enablePurgeProtection == null && value.properties.?softDeleteRetentionInDays == null),
-	'SKUs Free and Developer do not support enablePurgeProtection and softDeleteRetentionInDays.'
+	'sku.name must be "Premium" or "Standard" when enablePurgeProtection or softDeleteRetentionInDays is specified.'
 )
 param settings {
 	@description('The identity.')

@@ -69,7 +69,7 @@ param settings {
 	@validate(
 		value =>
 			value.capacityMode == 'Provisioned' || value.?capacity == null,
-		'capacity can only be specified when capacityMode is Provisioned.'
+		'capacityMode must be "Provisioned" when capacity is specified.'
 	)
 	properties: {
 		@description('The policy for taking backups on an account.')
@@ -96,7 +96,7 @@ param settings {
 							item.locationName
 					)
 				)) == sys.length(value),
-			'locations must be unique.'
+			'Location names must be unique within locations.'
 		)
 		locations: Location[]
 		@description('The network access mode.')

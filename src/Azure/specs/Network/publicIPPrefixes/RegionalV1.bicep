@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a regional Standard v1 Microsoft.Network/publicIPPrefixes resource with extensions.'
+metadata description = 'Provisions a Microsoft.Network/publicIPPrefixes resource for regional Standard v1 static IP address allocation with extensions.'
 
 /* SCOPE */
 
@@ -49,7 +49,7 @@ type PublicIPPrefixPropertiesIPv6 = {
 				tag =>
 					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
 			)),
-		'Internet routing preference requires an IPv4 public IP prefix.'
+		'publicIPAddressVersion must be "IPv4" when Internet routing preference is specified.'
 	)
 	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
 	@description('The CIDR prefix length.')

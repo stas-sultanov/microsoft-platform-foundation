@@ -36,7 +36,7 @@ param settings {
 		@validate(
 			value =>
 				value.?throughput == null || value.?autoscaleSettings == null,
-			'throughput and autoscaleSettings cannot both be specified.'
+			'At most one of throughput or autoscaleSettings may be specified.'
 		)
 		options: DocumentDBDatabaseAccounts.ThroughputOptions?
 	}

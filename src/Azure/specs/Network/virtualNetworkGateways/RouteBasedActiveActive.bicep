@@ -54,7 +54,7 @@ param settings {
 	@validate(
 		value =>
 			sys.empty(value.?natRules ?? []) || value.sku.name != 'VpnGw1AZ',
-		'VPN gateway NAT rules require VpnGw2AZ, VpnGw3AZ, VpnGw4AZ, or VpnGw5AZ.'
+		'sku.name must be "VpnGw2AZ", "VpnGw3AZ", "VpnGw4AZ", or "VpnGw5AZ" when natRules is nonempty.'
 	)
 	properties: {
 		@description('The custom BGP settings.')

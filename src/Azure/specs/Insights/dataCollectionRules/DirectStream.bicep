@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Insights/dataCollectionRules resource.'
+metadata description = 'Provisions a Microsoft.Insights/dataCollectionRules resource for direct-stream data collection.'
 
 /* SCOPE */
 
@@ -84,11 +84,18 @@ param settings {
 		}
 	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags?
+	tags: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags
 }
 
 /* RESOURCES */
 
+// The output tables may not be ready when this rule is deployed.
+@retryOn(
+	[
+		'InvalidOutputTable'
+	],
+	10
+)
 resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2024-03-11' = {
 	kind: 'Direct' // mandatory setting, but not specified in the api spec
 	location: settings.location
@@ -113,7 +120,7 @@ resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2
 			}
 		}
 	}
-	tags: (settings.?tags ?? {})
+	tags: settings.tags
 }
 
 /* EXTENSIONS */
