@@ -65,56 +65,55 @@ import * as MaintenanceConfigurationAssignments from '../../../library/Maintenan
 
 /* TYPES */
 
-@description('A new managed data disk. Existing disks and disk images are not accepted.')
+@description('An existing managed data disk to attach to the virtual machine and retain when the virtual machine is deleted.')
 @sealed()
-type DataDiskPropertiesInput = {
+type DataDiskInput = {
 	@description('The disk caching mode.')
-	caching: (
-		| 'None'
-		| 'ReadOnly'
-		| 'ReadWrite')?
-	@description('The disk disposition when the virtual machine is deleted. Defaults to Detach.')
-	deleteOption: (
-		| 'Delete'
-		| 'Detach')?
-	@description('The size of the disk in GiB.')
-	@minValue(4)
-	@maxValue(32767)
-	diskSizeGB: int
+	caching: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.storageProfile.dataDisks[*].caching
 	@description('The logical unit number. It must be unique within the virtual machine.')
 	@minValue(0)
 	@maxValue(63)
 	lun: int
-	@description('The managed disk settings.')
+	@description('The managed disk to attach.')
 	@sealed()
 	managedDisk: {
-		@description('The storage account type.')
-		storageAccountType:
-			| 'Premium_LRS'
-			| 'Premium_ZRS'
-			| 'StandardSSD_LRS'
-			| 'StandardSSD_ZRS'
+		@description('The ID of the Microsoft.Compute/disks resource.')
+		@validate(
+			value =>
+				sys.like(
+					value,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/disks/*'
+				),
+			'The value must be a Microsoft.Compute/disks resource ID.'
+		)
+		id: string
 	}
 }
 
 @description('An existing bootable managed Linux OS disk with the Azure VM agent, created separately from an image. The VM deployment does not provision a local user or SSH key.')
 @sealed()
-type OsDiskReference = {
-	@description('The ID of the Microsoft.Compute/disks resource.')
-	@validate(
-		value =>
-			sys.like(
-				value,
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/disks/*'
-			),
-		'The value must be a Microsoft.Compute/disks resource ID.'
-	)
-	id: string
+type OsDiskInput = {
+	@description('The disk caching mode.')
+	caching: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.storageProfile.osDisk.caching
+	@description('The managed OS disk to attach.')
+	@sealed()
+	managedDisk: {
+		@description('The ID of the Microsoft.Compute/disks resource.')
+		@validate(
+			value =>
+				sys.like(
+					value,
+					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/disks/*'
+				),
+			'The value must be a Microsoft.Compute/disks resource ID.'
+		)
+		id: string
+	}
 }
 
 @description('An existing network interface retained when the virtual machine is deleted.')
 @sealed()
-type NetworkInterfaceReference = {
+type NetworkInterfaceReferenceInput = {
 	@description('The ID of the Microsoft.Network/networkInterfaces resource.')
 	@validate(
 		value =>
@@ -244,10 +243,10 @@ param resources {
 	}
 }
 
-@description('The Linux VM settings. The attached OS disk provides the operating system; Trusted Launch security is controlled by this spec.')
+@description('The resource settings.')
 @sealed()
 param settings {
-	@description('The identity. The system-assigned identity is required by the AADSSHLoginForLinux extension.')
+	@description('The identity.')
 	@validate(
 		value =>
 			sys.contains(
@@ -260,13 +259,13 @@ param settings {
 		'The identity type must be "SystemAssigned" or "SystemAssigned, UserAssigned".'
 	)
 	identity: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.identity
-	@description('The geo-location. The existing NIC must be in the same region.')
+	@description('The geo-location.')
 	location: string
-	@description('The virtual machine name.')
+	@description('The name.')
 	@minLength(1)
 	@maxLength(64)
 	name: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.name
-	@description('The configurable virtual machine properties.')
+	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('The native VM application profile for Azure Compute Gallery applications.')
@@ -300,12 +299,12 @@ param settings {
 		networkProfile: {
 			@description('One or more existing NICs, retained when the VM is deleted. The first NIC is primary; network configuration is owned by the consumer.')
 			@minLength(1)
-			networkInterfaces: NetworkInterfaceReference[]
+			networkInterfaces: NetworkInterfaceReferenceInput[]
 		}
-		@description('The existing Linux OS disk to attach and any new managed data disks.')
+		@description('The existing Linux OS disk and any existing managed data disks to attach.')
 		@sealed()
 		storageProfile: {
-			@description('The new managed data disks. Logical unit numbers must be unique. Disks larger than 4095 GiB require caching None.')
+			@description('The existing managed data disks to attach. Logical unit numbers must be unique.')
 			@maxLength(64)
 			@validate(
 				value =>
@@ -316,16 +315,12 @@ param settings {
 								item.lun
 						),
 						[]
-					)) == sys.length(value ?? []) && sys.length(sys.filter(
-						value ?? [],
-						item =>
-							item.diskSizeGB > 4095 && (item.?caching ?? 'ReadOnly') != 'None'
-					)) == 0,
-				'Data disk logical unit numbers must be unique. caching must be "None" for disks larger than 4095 GiB.'
+					)) == sys.length(value ?? []),
+				'Data disk logical unit numbers must be unique.'
 			)
-			dataDisks: DataDiskPropertiesInput[]?
+			dataDisks: DataDiskInput[]?
 			@description('The existing bootable managed Linux OS disk with the Azure VM agent.')
-			osDisk: OsDiskReference
+			osDisk: OsDiskInput
 		}
 	}
 	@description('The tags.')
@@ -399,21 +394,18 @@ resource Compute_virtualMachines_ 'Microsoft.Compute/virtualMachines@2026-04-01'
 		storageProfile: {
 			dataDisks: [
 				for item in settings.properties.storageProfile.?dataDisks ?? []: {
-					caching: item.?caching ?? 'ReadOnly'
-					createOption: 'Empty'
-					deleteOption: item.?deleteOption ?? 'Detach'
-					diskSizeGB: item.diskSizeGB
+					caching: item.caching
+					createOption: 'Attach'
+					deleteOption: 'Detach'
 					lun: item.lun
 					managedDisk: item.managedDisk
 				}
 			]
 			osDisk: {
-				caching: 'ReadWrite'
+				caching: settings.properties.storageProfile.osDisk.caching
 				createOption: 'Attach'
 				deleteOption: 'Detach'
-				managedDisk: {
-					id: settings.properties.storageProfile.osDisk.id
-				}
+				managedDisk: settings.properties.storageProfile.osDisk.managedDisk
 				osType: 'Linux'
 			}
 		}

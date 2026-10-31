@@ -39,9 +39,12 @@ param settings {
 	@sealed()
 	properties: {
 		@description('The specification of destinations.')
+		@sealed()
 		destinations: {
 			@description('Log Analytics destinations.')
+			@sealed()
 			logAnalytics: {
+				@sealed()
 				Default: {
 					@validate(
 						value =>

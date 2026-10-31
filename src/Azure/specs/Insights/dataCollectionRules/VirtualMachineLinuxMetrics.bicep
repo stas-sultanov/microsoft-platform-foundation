@@ -39,9 +39,12 @@ param settings {
 	@sealed()
 	properties: {
 		@description('The specification of destinations.')
+		@sealed()
 		destinations: {
 			@description('Azure Monitor workspace destinations.')
+			@sealed()
 			monitoringAccounts: {
+				@sealed()
 				Default: {
 					@validate(
 						value =>
