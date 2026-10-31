@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Maintenance/maintenanceConfigurations resource.'
+metadata description = 'Provisions a Microsoft.Maintenance/maintenanceConfigurations resource for network gateway maintenance.'
 
 /* SCOPE */
 

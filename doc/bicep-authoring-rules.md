@@ -11,6 +11,7 @@ The Foundation Contract owns architectural and security policy; this file owns B
 - Unused sections MAY be omitted.
 - Metadata MUST NOT have a section header.
 - Metadata MUST include the author block and module description.
+- Spec metadata descriptions MUST start with `Provisions <resource or resource set> for <scenario or purpose>.`; use the deployed resource type or a clear resource name, and retain additional detail after this sentence only when useful.
 - Subsequent section headers MUST use block comments, such as `/* PARAMETERS */`.
 - `extension` statements MUST appear under `/* BICEP EXTENSIONS */`.
 - Azure extension resources MUST appear under `/* EXTENSIONS */`.

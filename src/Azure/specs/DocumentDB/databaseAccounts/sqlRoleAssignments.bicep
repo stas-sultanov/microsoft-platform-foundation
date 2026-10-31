@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments resource.'
+metadata description = 'Provisions Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments resources for Cosmos DB data-plane role assignments.'
 
 /* SCOPE */
 

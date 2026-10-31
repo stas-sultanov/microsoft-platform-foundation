@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions multiple Microsoft.KeyVault/vaults/secrets resources.'
+metadata description = 'Provisions multiple Microsoft.KeyVault/vaults/secrets resources for secret management in a Key Vault.'
 
 /* SCOPE */
 

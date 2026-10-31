@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Insights/dataCollectionRules resource.'
+metadata description = 'Provisions a Microsoft.Insights/dataCollectionRules resource for Linux virtual machine logs-based Insights.'
 
 /* SCOPE */
 
@@ -38,16 +38,24 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The ID of the Microsoft.OperationalInsights/workspaces resource.')
-		@validate(
-			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*'
-				),
-			'The value must be a Microsoft.OperationalInsights/workspaces resource ID.'
-		)
-		workspaceId: string
+		@description('The specification of destinations.')
+		destinations: {
+			@description('Log Analytics destinations.')
+			logAnalytics: {
+				Default: {
+					@validate(
+						value =>
+							sys.like(
+								value,
+								'/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*'
+							),
+						'The value must be a Microsoft.OperationalInsights/workspaces resource ID.'
+					)
+					@description('The ID of the Microsoft.OperationalInsights/workspaces resource.')
+					workspaceResourceId: string
+				}
+			}
+		}
 	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags
@@ -55,6 +63,13 @@ param settings {
 
 /* RESOURCES */
 
+// The output tables may not be ready when this rule is deployed.
+@retryOn(
+	[
+		'InvalidOutputTable'
+	],
+	10
+)
 resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2024-03-11' = {
 	identity: settings.?identity ?? {
 		type: 'None'
@@ -66,7 +81,7 @@ resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2
 		dataFlows: [
 			{
 				destinations: [
-					'VMInsightsPerf-Logs-Dest'
+					'Default'
 				]
 				streams: [
 					'Microsoft-InsightsMetrics'
@@ -80,20 +95,19 @@ resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2
 						'\\VmInsights\\DetailedMetrics'
 					]
 					name: 'VMInsightsPerfCounters'
-					// for this type 60 is the only option allowed
-					samplingFrequencyInSeconds: 60
+					samplingFrequencyInSeconds: 60 // for this type 60 is the only option allowed
 					streams: [
 						'Microsoft-InsightsMetrics'
 					]
 				}
 			]
 		}
-		description: 'Data collection rule for VM Insights.'
+		description: 'Data collection rule for Linux virtual machine log-based Insights.'
 		destinations: {
 			logAnalytics: [
 				{
-					name: 'VMInsightsPerf-Logs-Dest'
-					workspaceResourceId: settings.properties.workspaceId
+					name: 'Default'
+					workspaceResourceId: settings.properties.destinations.logAnalytics.Default.workspaceResourceId
 				}
 			]
 		}

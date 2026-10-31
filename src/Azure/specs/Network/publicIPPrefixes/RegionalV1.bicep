@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a regional Standard v1 Microsoft.Network/publicIPPrefixes resource with extensions.'
+metadata description = 'Provisions a Microsoft.Network/publicIPPrefixes resource for regional Standard v1 static IP address allocation with extensions.'
 
 /* SCOPE */
 
