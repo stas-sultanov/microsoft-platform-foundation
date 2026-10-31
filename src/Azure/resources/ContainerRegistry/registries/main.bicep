@@ -37,7 +37,7 @@ param extensions {
 @validate(
 	value =>
 		value.sku.name == 'Premium' || (value.properties.?dataEndpointEnabled != true && value.properties.?networkRuleSet == null && value.properties.policies.exportPolicy.?status != 'disabled' && value.properties.policies.retentionPolicy.?status != 'enabled' && value.properties.regionalEndpoints != 'Enabled' && value.properties.endpointProtocol != 'IPv4AndIPv6'),
-	'SKU Premium is required for dataEndpointEnabled, networkRuleSet, exportPolicy, retentionPolicy, regionalEndpoints, and endpointProtocol == IPv4AndIPv6.'
+	'sku.name must be "Premium" when dataEndpointEnabled is true, networkRuleSet is specified, policies.exportPolicy.status is "disabled", policies.retentionPolicy.status is "enabled", regionalEndpoints is "Enabled", or endpointProtocol is "IPv4AndIPv6".'
 )
 param settings {
 	@description('The identity.')
@@ -51,7 +51,7 @@ param settings {
 	@validate(
 		value =>
 			(value.endpointProtocol != 'IPv4AndIPv6' || value.?dataEndpointEnabled == true) && (value.policies.exportPolicy.?status != 'disabled' || value.publicNetworkAccess == 'Disabled'),
-		'IPv6 dual-stack requires dataEndpointEnabled to be true; disabling exports requires publicNetworkAccess to be Disabled.'
+		'dataEndpointEnabled must be true when endpointProtocol is "IPv4AndIPv6". publicNetworkAccess must be "Disabled" when policies.exportPolicy.status is "disabled".'
 	)
 	properties: {
 		@description('The auto-generated domain name label scope.')
@@ -73,7 +73,7 @@ param settings {
 		@validate(
 			value =>
 				value.retentionPolicy.?status != 'enabled' || value.softDeletePolicy.?status != 'enabled',
-			'Retention and soft delete policies cannot both be enabled.'
+			'At most one of retentionPolicy or softDeletePolicy may be enabled.'
 		)
 		policies: {
 			@description('The export policy. Disabling exports requires the Premium SKU and disabled public network access.')

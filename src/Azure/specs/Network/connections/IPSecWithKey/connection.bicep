@@ -6,11 +6,10 @@ metadata author = {
 	}
 }
 metadata description = '''
-TEMPORARY SOLUTION. Internal module of IPSecWithKey.bicep, not intended for direct use.
-Provisions a Microsoft.Network/connections resource with a shared key provided as a secure parameter.
-Exists only because Bicep allows getSecret() solely when assigning to a module parameter with @secure() decorator (BCP180).
-The Microsoft.Network/connections resource type also defines a sharedKeyKeyVaultId property, but it is not available for either general availability or preview use.
-Remove once getSecret() can be used directly in the resource body of IPSecWithKey.bicep, or once the sharedKeyKeyVaultId property becomes available.
+Provisions a Microsoft.Network/connections resource for an IPsec connection using a shared key passed securely from its parent module.
+This temporary internal module is used by IPSecWithKey.bicep because Bicep allows getSecret() only when assigning to a module parameter with the @secure() decorator (BCP180).
+The Microsoft.Network/connections resource type defines a sharedKeyKeyVaultId property, but it is not available in a generally available or preview API.
+Remove this module once getSecret() can be used directly in the resource body of IPSecWithKey.bicep or the sharedKeyKeyVaultId property becomes available.
 '''
 
 /* SCOPE */

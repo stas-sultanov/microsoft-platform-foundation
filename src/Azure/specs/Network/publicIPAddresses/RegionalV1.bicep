@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a regional Standard v1 Microsoft.Network/publicIPAddresses resource with an Azure-assigned static IP address and extensions.'
+metadata description = 'Provisions a Microsoft.Network/publicIPAddresses resource for a regional Standard v1 static IP address with extensions.'
 
 /* SCOPE */
 
@@ -75,7 +75,7 @@ type PublicIPAddressPropertiesIPv6 = {
 				tag =>
 					tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
 			)),
-		'Internet routing preference requires an IPv4 public IP address.'
+		'publicIPAddressVersion must be "IPv4" when Internet routing preference is specified.'
 	)
 	ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipTags?
 	@description('The public IP address version.')
@@ -108,7 +108,7 @@ param extensions {
 			tag =>
 				tag.?ipTagType == 'RoutingPreference' && tag.?tag == 'Internet'
 		)) || sys.length(value.?zones ?? []) != 1,
-	'Internet routing preference does not support an explicitly single-zone configuration.'
+	'zones must not contain exactly one entry when Internet routing preference is specified.'
 )
 param settings {
 	@description('The geo-location.')

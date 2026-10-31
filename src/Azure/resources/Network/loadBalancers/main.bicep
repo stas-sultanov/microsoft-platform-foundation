@@ -46,7 +46,7 @@ param settings {
 	@validate(
 		value =>
 			value.?tier != 'Global' || value.name == 'Standard',
-		'Tier Global requires the Standard SKU.'
+		'name must be "Standard" when tier is "Global".'
 	)
 	sku: {
 		@description('The name of the SKU.')

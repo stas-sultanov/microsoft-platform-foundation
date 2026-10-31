@@ -46,7 +46,7 @@ param settings {
 	@validate(
 		value =>
 			value.features.?immediatePurgeDataOn30Days != true || value.retentionInDays == 30,
-		'immediatePurgeDataOn30Days requires retentionInDays to be 30.'
+		'retentionInDays must be 30 when features.immediatePurgeDataOn30Days is true.'
 	)
 	properties: {
 		@description('The ID of the Microsoft.Insights/dataCollectionRules resource.')

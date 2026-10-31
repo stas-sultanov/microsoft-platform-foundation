@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Compute/galleries/images resource.'
+metadata description = 'Provisions a Microsoft.Compute/galleries/images resource for a private generalized gallery image.'
 
 /* SCOPE */
 

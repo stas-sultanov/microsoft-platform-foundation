@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Insights/dataCollectionRules resource.'
+metadata description = 'Provisions a Microsoft.Insights/dataCollectionRules resource for Linux virtual machine OpenTelemetry metrics-based Insights.'
 
 /* SCOPE */
 
@@ -38,16 +38,24 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The ID of the Microsoft.OperationalInsights/workspaces resource.')
-		@validate(
-			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*'
-				),
-			'The value must be a Microsoft.OperationalInsights/workspaces resource ID.'
-		)
-		workspaceId: string
+		@description('The specification of destinations.')
+		destinations: {
+			@description('Azure Monitor workspace destinations.')
+			monitoringAccounts: {
+				Default: {
+					@validate(
+						value =>
+							sys.like(
+								value,
+								'/subscriptions/*/resourceGroups/*/providers/Microsoft.Monitor/accounts/*'
+							),
+						'The value must be a Microsoft.Monitor/accounts resource ID.'
+					)
+					@description('The resource ID of the Microsoft.Monitor/accounts resource.')
+					accountResourceId: string
+				}
+			}
+		}
 	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Insights/dataCollectionRules@2024-03-11'>.tags
@@ -59,41 +67,48 @@ resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2
 	identity: settings.?identity ?? {
 		type: 'None'
 	}
-	kind: 'Linux'
 	location: settings.location
 	name: settings.name
 	properties: {
 		dataFlows: [
 			{
 				destinations: [
-					'VMInsightsPerf-Logs-Dest'
+					'Default'
 				]
 				streams: [
-					'Microsoft-InsightsMetrics'
+					'Microsoft-OtelPerfMetrics'
 				]
 			}
 		]
 		dataSources: {
-			performanceCounters: [
+			performanceCountersOTel: [
 				{
 					counterSpecifiers: [
-						'\\VmInsights\\DetailedMetrics'
+						'system.cpu.time'
+						'system.memory.usage'
+						'system.disk.io'
+						'system.disk.operations'
+						'system.disk.operation_time'
+						'system.filesystem.usage'
+						'system.network.io'
+						'system.network.dropped'
+						'system.network.errors'
+						'system.uptime'
 					]
-					name: 'VMInsightsPerfCounters'
-					// for this type 60 is the only option allowed
-					samplingFrequencyInSeconds: 60
+					name: 'vmOtelSystemMetrics'
+					samplingFrequencyInSeconds: 60 // for this type 60 is the only option allowed
 					streams: [
-						'Microsoft-InsightsMetrics'
+						'Microsoft-OtelPerfMetrics'
 					]
 				}
 			]
 		}
-		description: 'Data collection rule for VM Insights.'
+		description: 'Data collection rule for Linux virtual machine OpenTelemetry metrics-based Insights.'
 		destinations: {
-			logAnalytics: [
+			monitoringAccounts: [
 				{
-					name: 'VMInsightsPerf-Logs-Dest'
-					workspaceResourceId: settings.properties.workspaceId
+					accountResourceId: settings.properties.destinations.monitoringAccounts.Default.accountResourceId
+					name: 'Default'
 				}
 			]
 		}
