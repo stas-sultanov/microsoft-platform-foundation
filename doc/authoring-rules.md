@@ -1,4 +1,4 @@
-# Bicep Authoring Rules
+# Authoring Rules
 
 All Bicep modules MUST follow the [Foundation Contract](foundation-contract.md) and these rules.
 

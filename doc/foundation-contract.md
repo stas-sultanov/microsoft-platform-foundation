@@ -11,6 +11,7 @@ All foundation modules MUST follow these architectural, security, and compatibil
 - Modules MUST add constraints and validation missing from native Bicep resource types, using strong types and template structure to prevent invalid configurations.
 - SKU names MUST use explicit allowlists unless valid names depend on deployment context and cannot be represented reliably by a fixed list.
 - Module interfaces MUST NOT expose arbitrary property bags, `additionalSettings`, or raw ARM passthrough that bypasses the contract.
+- Resource and spec module contracts MUST prioritize predictable, enforceable configuration that is difficult to misuse over configuration breadth.
 
 ## Security Baseline
 
@@ -19,7 +20,7 @@ All foundation modules MUST follow these architectural, security, and compatibil
 - Modules whose resources support `publicNetworkAccess` MUST expose it as a required consumer setting without a module-supplied default.
 - Firewall rules and trusted-service exceptions SHOULD be optional consumer settings.
 - Encryption MUST default to platform-managed keys.
-- Where outputs are otherwise permitted by the [Bicep Authoring Rules](bicep-authoring-rules.md#outputs), they MUST NOT include secrets, passwords, or authentication keys, except generated Entra application password credentials returned by Microsoft Graph only at creation.
+- Where outputs are otherwise permitted by the [Authoring Rules](authoring-rules.md#outputs), they MUST NOT include secrets, passwords, or authentication keys, except generated Entra application password credentials returned by Microsoft Graph only at creation.
 - Permitted secret outputs MUST be marked `@secure()`.
 
 ## Evolution and Compatibility
