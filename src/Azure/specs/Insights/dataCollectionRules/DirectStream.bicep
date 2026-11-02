@@ -93,8 +93,7 @@ param settings {
 @retryOn(
 	[
 		'InvalidOutputTable'
-	],
-	10
+	]
 )
 resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2024-03-11' = {
 	kind: 'Direct' // mandatory setting, but not specified in the api spec
