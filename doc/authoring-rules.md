@@ -1,4 +1,4 @@
-# Bicep Authoring Rules
+# Authoring Rules
 
 All Bicep modules MUST follow the [Foundation Contract](foundation-contract.md) and these rules.
 
@@ -124,7 +124,7 @@ The Foundation Contract owns architectural and security policy; this file owns B
 
 - Modules MUST pass all configured [bicepconfig.json](../src/bicepconfig.json) checks.
 - Affected consumers are Bicep files that directly or transitively import a changed exported type/function/variable or reference a changed module interface.
-- Compile changed/new files and affected consumers with [Bicep-Build.ps1](../tools/Bicep-Build.ps1) `-Files` (PowerShell string array, paths relative to `SourceRoot`, which defaults to `src`).
+- Compile changed/new files and affected consumers with [Build.ps1](../tools/Build.ps1) `-Files` (PowerShell string array, paths relative to `SourceRoot`, which defaults to `src`).
 - Omit `-Files` only for a full build.
 - Rule suppressions MUST target the smallest possible line.
 - Rule suppressions MUST include a clear reason in a comment.

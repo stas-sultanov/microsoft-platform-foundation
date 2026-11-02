@@ -10,7 +10,7 @@ on:
       - "src/**"
       - "tools/Common.psm1"
       - "tools/Sync-ApiVersions.ps1"
-      - "tools/Bicep-Build.ps1"
+      - "tools/Build.ps1"
 
 jobs:
 
@@ -37,4 +37,4 @@ jobs:
 
     - name: Build Bicep Templates
       shell: pwsh
-      run: ./tools/Bicep-Build.ps1 ./src
+      run: ./tools/Build.ps1 ./src

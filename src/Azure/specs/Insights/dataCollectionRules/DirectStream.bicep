@@ -90,12 +90,9 @@ param settings {
 /* RESOURCES */
 
 // The output tables may not be ready when this rule is deployed.
-@retryOn(
-	[
-		'InvalidOutputTable'
-	],
-	10
-)
+@retryOn([
+	'InvalidOutputTable'
+])
 resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2024-03-11' = {
 	kind: 'Direct' // mandatory setting, but not specified in the api spec
 	location: settings.location
