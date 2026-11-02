@@ -6,7 +6,7 @@
 .PARAMETER files
 	Optional list of Bicep file paths relative to sourceRoot. When omitted, builds every Bicep file.
 .EXAMPLE
-	.\tools\Bicep-Build.ps1 -files 'Azure\library\common.bicep', 'Entra\applications\Password.bicep'
+	.\tools\Build.ps1 -files 'Azure\library\common.bicep', 'Entra\applications\Password.bicep'
 .NOTES
 	Author: Stas Sultanov
 #>

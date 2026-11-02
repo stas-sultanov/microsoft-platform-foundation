@@ -12,27 +12,27 @@ PowerShell scripts for formatting, validating, and publishing the Bicep modules 
 
 | Script                                       | Purpose                                    | Side effects                            |
 | -------------------------------------------- | ------------------------------------------ | --------------------------------------- |
-| [Bicep-Format.ps1](Bicep-Format.ps1)         | Format Bicep files.                        | Rewrites files.                         |
+| [Format.ps1](Format.ps1)                     | Format Bicep files.                        | Rewrites files.                         |
 | [Sync-ApiVersions.ps1](Sync-ApiVersions.ps1) | Verify or align resource API versions.     | Rewrites files with `-RunMode Replace`. |
-| [Bicep-Build.ps1](Bicep-Build.ps1)           | Compile Bicep files and run linter checks. | None.                                   |
-| [Bicep-Publish.ps1](Bicep-Publish.ps1)       | Publish modules to an OCI registry.        | Pushes artifacts to a registry.         |
+| [Build.ps1](Build.ps1)                       | Compile Bicep files and run linter checks. | None.                                   |
+| [Publish.ps1](Publish.ps1)                   | Publish modules to an OCI registry.        | Pushes artifacts to a registry.         |
 
 Do not use [Common.psm1](Common.psm1) directly; it contains helpers shared by the scripts.
 
 ## Common Behavior
 
 - `-SourceRoot` is optional and defaults to `src`.
-- `-Files` is supported only by `Bicep-Format.ps1` and `Bicep-Build.ps1`. It accepts one or more `.bicep` paths relative to `-SourceRoot`, such as `'Azure/library/common.bicep'`. Absolute paths and paths outside `-SourceRoot` are rejected. If `-Files` is omitted, all `.bicep` files under `-SourceRoot` are processed.
+- `-Files` is supported only by `Format.ps1` and `Build.ps1`. It accepts one or more `.bicep` paths relative to `-SourceRoot`, such as `'Azure/library/common.bicep'`. Absolute paths and paths outside `-SourceRoot` are rejected. If `-Files` is omitted, all `.bicep` files under `-SourceRoot` are processed.
 - Processing continues after a file fails.
 - Each step prints `[NNNN] SUCCESS <message>` or `[NNNN] FAIL <message>`. Bicep CLI output is printed only after `FAIL` lines.
 - Exit code `0` means all steps succeeded; `1` means at least one step failed.
 
-## Bicep-Format.ps1
+## Format.ps1
 
 Formats files in place with `az bicep format` and the settings in [bicepconfig.json](../src/bicepconfig.json).
 
 ```powershell
-./tools/Bicep-Format.ps1 -Files 'Azure/resources/KeyVault/vaults/main.bicep'
+./tools/Format.ps1 -Files 'Azure/resources/KeyVault/vaults/main.bicep'
 ```
 
 ## Sync-ApiVersions.ps1
@@ -51,17 +51,17 @@ Rules:
 - The expected version of a family is its newest preview version if it has any; otherwise, its newest stable version. Only versions already present under `-SourceRoot` are considered.
 - To change a family's version, set one reference to the target version and run `-RunMode Replace`. This works only if the target becomes the expected version. Otherwise, such as when moving from preview to stable, update every reference in the family manually.
 
-## Bicep-Build.ps1
+## Build.ps1
 
 Compiles files with `az bicep build --stdout` to detect compiler errors and linter errors configured in [bicepconfig.json](../src/bicepconfig.json). Writes no files.
 
 ```powershell
-./tools/Bicep-Build.ps1 -Files 'Azure/library/common.bicep', 'Entra/applications/Password.bicep'
+./tools/Build.ps1 -Files 'Azure/library/common.bicep', 'Entra/applications/Password.bicep'
 ```
 
 Build changed files, files changed by `Sync-ApiVersions.ps1`, and their affected consumers, as defined in [Verification](../doc/authoring-rules.md#verification). Omit `-Files` only for a full build.
 
-## Bicep-Publish.ps1
+## Publish.ps1
 
 Publishes every `.bicep` file under `-SourceRoot` as a separate module with `az bicep publish --with-source`. Run only when a release is explicitly requested.
 
@@ -72,13 +72,13 @@ Publishes every `.bicep` file under `-SourceRoot` as a separate module with `az 
 - Requires push access to the registry. Use `-WhatIf` to validate artifact names without publishing.
 
 ```powershell
-./tools/Bicep-Publish.ps1 -Registry 'ghcr.io/owner/repo' -Version '1.2.3' -WhatIf
+./tools/Publish.ps1 -Registry 'ghcr.io/owner/repo' -Version '1.2.3' -WhatIf
 ```
 
 ## Change Workflow
 
 After creating or changing Bicep files, run:
 
-1. `./tools/Bicep-Format.ps1 -Files <changed files>`
+1. `./tools/Format.ps1 -Files <changed files>`
 2. `./tools/Sync-ApiVersions.ps1 -RunMode Replace`
-3. `./tools/Bicep-Build.ps1 -Files <changed files, files changed in step 2, and affected consumers>`
+3. `./tools/Build.ps1 -Files <changed files, files changed in step 2, and affected consumers>`

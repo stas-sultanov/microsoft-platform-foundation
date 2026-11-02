@@ -39,7 +39,7 @@ jobs:
 
     - name: Build Bicep Templates
       shell: pwsh
-      run: ./tools/Bicep-Build.ps1 ./src
+      run: ./tools/Build.ps1 ./src
 
     - name: Publish Bicep Modules
       shell: pwsh
@@ -49,4 +49,4 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         REPOSITORY: ${{ github.repository }}
         VERSION: ${{ inputs.version }}
-      run: ./tools/Bicep-Publish.ps1 -Registry "ghcr.io/$($env:REPOSITORY.ToLowerInvariant())" -Version $env:VERSION -SourceRoot ./src
+      run: ./tools/Publish.ps1 -Registry "ghcr.io/$($env:REPOSITORY.ToLowerInvariant())" -Version $env:VERSION -SourceRoot ./src
