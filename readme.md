@@ -32,7 +32,7 @@ The greatest challenge is not the implementation itself, but **the vision and or
 
 Curious what it would take to build an equivalent foundation from scratch?
 
-**[Ask ChatGPT to independently estimate the development effort and cost][chatgpt_prompt_cost_estimate]**
+**[Prompt paid ChatGPT to independently estimate the development effort and cost][chatgpt_prompt_cost_estimate]**
 
 ## Support the Author
 

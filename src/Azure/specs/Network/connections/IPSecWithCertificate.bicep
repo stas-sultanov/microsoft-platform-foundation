@@ -19,6 +19,10 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 
 import * as NetworkConnections from '../../../library/Network/connections.bicep'
 
+import * as NetworkLocalNetworkGateways from '../../../library/Network/localNetworkGateways.bicep'
+
+import * as NetworkVirtualNetworkGateways from '../../../library/Network/virtualNetworkGateways.bicep'
+
 /* TYPES */
 
 @description('The settings for an IPsec connection using certificate authentication.')
@@ -50,13 +54,13 @@ type ConnectionPropertiesInput = {
 	)
 	ipsecPolicies: NetworkConnections.IPSecPolicy[]
 	@description('The reference to the Microsoft.Network/localNetworkGateways resource.')
-	localNetworkGateway2: NetworkConnections.LocalNetworkGatewayReference
+	localNetworkGateway2: NetworkLocalNetworkGateways.Reference
 	@description('The custom traffic selector policies, configured independently of usePolicyBasedTrafficSelectors.')
 	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.trafficSelectorPolicies?
 	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
 	usePolicyBasedTrafficSelectors: bool?
 	@description('The reference to the primary Microsoft.Network/virtualNetworkGateways resource.')
-	virtualNetworkGateway1: NetworkConnections.VirtualNetworkGatewayReference
+	virtualNetworkGateway1: NetworkVirtualNetworkGateways.Reference
 }
 
 /* PARAMETERS */

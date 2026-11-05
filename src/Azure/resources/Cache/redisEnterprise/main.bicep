@@ -74,7 +74,7 @@ resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-06-01-prev
 	}
 	sku: settings.sku
 	tags: settings.tags
-	zones: settings.?zones ?? []
+	zones: settings.?zones
 }
 
 /* EXTENSIONS */
