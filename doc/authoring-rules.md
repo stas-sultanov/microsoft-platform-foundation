@@ -16,38 +16,36 @@ The Foundation Contract owns architectural and security policy; this file owns B
 - `extension` statements MUST appear under `/* BICEP EXTENSIONS */`.
 - Azure extension resources MUST appear under `/* EXTENSIONS */`.
 - Declarations within each section MUST be sorted alphabetically by declared name.
-- Standard function calls MUST be namespace-qualified, such as `sys.map` or `az.resourceId`.
+- Built-in function calls MUST be namespace-qualified, such as `sys.map` or `az.resourceId`.
 - Imports MUST use `import * as <Namespace> from '<path>'`.
 - Imported symbols MUST be accessed through their import namespace, such as `Common.ResourceReference` or `AuthorizationRoleAssignments.CreateArray`.
 
 ## Types
 
-- Type names MUST describe their values.
+- User-defined data type names MUST describe the values they represent.
 - `Resource` MUST represent Azure-shaped resource settings requiring no translation or completion.
 - Consumers of `Resource` types MAY supply deployment context such as `parent` or `scope`.
 - Types representing complete Azure-shaped child resource settings MUST use `<ChildResourceType>Resource`, such as `KeyValueResource`.
-- `Input` MUST suffix only `Resource` or `Properties`, optionally prefixed by a resource/scenario name.
-- `Input` MUST indicate required translation or completion in a helper or resource declaration.
+- When used, `Input` MUST be the final suffix after `Resource` or `Properties`, optionally preceded by a resource or scenario name; such a type MUST represent a value requiring translation or completion in a helper or resource declaration.
 - Types representing only Azure-shaped properties MAY use `Properties` or `<Kind>Properties`, such as `KeyValueProperties`.
 - Nested configuration, domain values, references, and union variants MUST NOT use the `Input` suffix.
-- Native resource-derived types, such as `resourceInput` and `resourceOutput`, SHOULD be preferred.
-- Explicit object types declaring only named properties MUST use `@sealed()` at every nesting level, including empty objects, array items, union variants, dictionary values, and permitted outputs.
+- Native resource-derived types, such as `resourceInput` and `resourceOutput`, SHOULD be preferred and MUST NOT be decorated with `@sealed()`.
+- Explicit object types declaring only named properties MUST use `@sealed()` at every nesting level, including empty object types and object types used for properties, array items, union variants, additional-property values, and permitted outputs.
 - Array items MUST use named sealed types where inline decoration is unsupported.
-- Dictionary types using `*:` MUST remain open; their explicitly declared object value types MUST follow the same sealing rules.
-- Resource-derived types MUST remain unchanged by sealing.
+- Object types using `*:` to declare additional properties MUST remain open; any explicitly declared object type used as an additional-property value MUST follow the same sealing rule.
 
 ## Descriptions and Constraints
 
 - Boolean descriptions MUST use `Specifies whether <subject> <condition>.`.
 - Boolean descriptions MUST NOT use `whether or not`, `flag`, or imperative wording.
-- ARM resource ID property descriptions MUST use `The ID of the <provider/type> resource.` with canonical resource types; non-resource identifiers such as Entra object, subscription, tenant, and application IDs are excluded.
+- Resource ID property descriptions MUST use `The ID of the <provider/type> resource.` with canonical resource types; non-resource identifiers such as Entra object, subscription, tenant, and application IDs are excluded.
 - `@validate()` MUST target the narrowest supported parameter/property owning each semantic invariant group.
 - Conditions within the same semantic invariant group MUST be combined in one predicate.
-- Validation required by reusable types MUST be applied at usage sites; type declarations do not support `@validate()`.
-- ARM resource ID parameters/properties MUST use `@validate()` with case-insensitive `sys.like()` and a canonical pattern, such as `/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*` (shape check only: `*` also matches `/` and empty text).
-- Optional ARM resource IDs MUST accept null: `value == null || sys.like(value!, pattern)`.
-- ARM resource reference objects MUST validate `id`: `sys.like(value.?id ?? '', pattern)`.
-- ARM resource ID arrays MUST validate every element using `sys.filter()`.
+- `@validate()` constraints intrinsic to properties of user-defined data types MUST be declared on those properties; type declarations MUST NOT be decorated with `@validate()`.
+- Resource ID parameters/properties MUST use `@validate()` with case-insensitive `sys.like()` and a canonical pattern, such as `/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*` (shape check only: `*` also matches `/` and empty text).
+- Optional resource ID values MUST accept null: `value == null || sys.like(value!, pattern)`.
+- Resource reference objects MUST validate `id`: `sys.like(value.?id ?? '', pattern)`.
+- Resource ID arrays MUST validate every element using `sys.filter()`.
 
 ### Validation Messages
 
@@ -77,35 +75,32 @@ The Foundation Contract owns architectural and security policy; this file owns B
 
 ## Module Interface
 
-- The following standard-interface rules apply only to modules creating one primary resource, excluding extension-only and multi-independent-resource modules.
-- Extension-only and multi-independent-resource modules MAY use domain-specific parameters.
+- The following standard-interface rules apply only to modules creating one primary resource; extension-only and multi-independent-resource modules MAY use domain-specific parameters instead.
 - Single-primary-resource modules MUST expose `settings`.
 - Level-1 resource modules MUST expose `extensions`.
 - Child resource modules MUST expose `extensions` if and only if they provision extension resources.
 - Single-primary-resource modules MUST expose `resources` if and only if they create child resources.
 - Child resource modules MUST expose immediate parent names as top-level parameters: `parentName`, or explicit names such as `parentNamespaceName` and `parentTopicName` when multiple are required.
 - `extensions` MUST group scoped non-child resources by provider/concern, such as `Authorization`, `Insights`, or `Maintenance`.
-- `resources` MUST be an object that groups child resource collections by child resource type, including when the module creates only one child resource type.
+- `resources` MUST be an object grouping child resource collections by child resource type, including when the module creates only one child resource type.
 - Each property in `resources` MUST use the child resource type segment as its name and contain an array of the corresponding `<ChildResourceType>Resource` type.
-- `resources` objects MUST be inline parameter object types so sensitive collections can be marked `@secure()` when needed; `@secure()` MUST be applied to the entire `resources` parameter when any child resource value is sensitive.
+- The `resources` parameter MUST use an inline object type expression so sensitive collections can be marked `@secure()` when needed; `@secure()` MUST be applied to the entire `resources` parameter when any child resource value is sensitive.
 - `settings` MUST contain primary-resource configuration, including applicable `identity`, `location`, `name`, `properties`, `sku`, `tags`, and `zones`.
 - `settings.properties` MUST represent Azure resource `properties`, using either its native resource-derived type or an intentionally curated subset.
 
 ## Parameter Defaults and Exceptions
 
 - Default values MUST satisfy the Foundation Contract and the parameter's declared constraints.
-- Single-primary-resource modules under `src/Azure/resources` and `src/Azure/specs` SHOULD avoid parameters outside the standard interface and required parent names.
-- Additional domain-specific parameters in those modules MUST NOT replace standard resource fields, child/extension collections, or parent names.
+- Single-primary-resource modules under `src/Azure/resources` and `src/Azure/specs` SHOULD avoid additional domain-specific parameters; any such parameters MUST NOT replace standard resource fields, child/extension collections, or required parent names.
 
 ## Resources and API Versions
 
 - Resource symbolic names MUST be deterministic.
 - Top-level resource symbolic names MUST follow `<Provider>_<resourceType>_<childResourceType>_`, including all applicable child segments.
 - `<Provider>` MUST be the Azure provider namespace without `Microsoft.`, such as `Network` for `Microsoft.Network`.
-- Resource type segments in symbolic names MUST preserve their API spelling, such as `virtualNetworks` and `subnets`.
+- Resource type segments in symbolic names MUST preserve the casing used in the Azure resource type, such as `virtualNetworks` and `subnets`.
 - A declaration MAY append `__<Qualifier>` after the type-path name to distinguish declarations of the same type or to name a fixed singleton, such as `Sql_servers_databases__Master`; the qualifier MUST be deterministic and describe the instance.
-- Nested child declarations, including nested `existing` resources, MAY use only the child segment plus `_`, such as `containers_`.
-- Nested child declarations not using the short form MUST use the full type-path naming convention.
+- Nested child resource declarations, including `existing` declarations, MAY use the child segment plus `_` as the symbolic name, such as `containers_`; otherwise, they MUST use the full type-path naming convention.
 - An API-version family consists of one provider's top-level resource type and its descendants, such as `Microsoft.Network/virtualNetworks` and `Microsoft.Network/virtualNetworks/subnets`.
 - Each API-version family MUST use one API version across all declarations and references, including children, existing resources, extensions, libraries, patterns, and specs.
 - [Sync-ApiVersions.ps1](../tools/Sync-ApiVersions.ps1) selects that version from `src`: newest preview if present; otherwise newest stable.
@@ -116,9 +111,7 @@ The Foundation Contract owns architectural and security policy; this file owns B
 - Modules under `src/Azure/resources` and `src/Azure/specs` MUST NOT declare outputs.
 - Consumers MUST access these modules' deployed resources through `existing` declarations with deployed names/scopes, not module outputs.
 - Each `existing` declaration referencing a resource deployed by a module MUST explicitly depend on that module through `dependsOn`.
-- Where outputs are permitted, names SHOULD follow standard resource fields.
-- Where outputs are permitted, Azure `properties` values SHOULD be grouped under `properties`.
-- Where outputs are permitted, they SHOULD return precise values rather than broad resource objects.
+- Where outputs are permitted, they SHOULD return precise values rather than broad resource objects; names SHOULD follow standard resource fields, and Azure `properties` values SHOULD be grouped under `properties`.
 
 ## Verification
 
