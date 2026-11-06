@@ -44,7 +44,7 @@ This is a standalone VM, not a high-availability deployment:
 - Azure Monitor Agent: always installed with automatic upgrades
 - Boot integrity monitoring: enabled by the Guest Attestation extension, which is always installed with automatic upgrades; it requires the enforced Secure Boot and vTPM and outbound access to Azure Attestation
 - Azure Monitor data collection: requires a DCR
-- Extension handler versions: not pinned for required extensions; optional for additional extensions; omitted versions use the latest available
+- Extension handler versions: required; built-in extensions use the latest available Major.Minor, and minor versions upgrade automatically
 - Additional extension order: ascending alias order, after the required agents
 - Extension uniqueness: names must be unique; the name of an additional extension must equal its type, which also makes types unique
 - Required extensions: installed internally with fixed names; callers cannot supply their aliases, names, or types
@@ -223,9 +223,9 @@ param resources {
 				@description('The extension handler type.')
 				@minLength(1)
 				type: string
-				@description('The Major.Minor extension handler version. Omit to use the latest available version.')
+				@description('The Major.Minor extension handler version. Use the latest available version.')
 				@minLength(1)
-				typeHandlerVersion: string?
+				typeHandlerVersion: string
 			}
 		}
 	}
@@ -423,7 +423,7 @@ resource Compute_virtualMachines_extensions_ 'Microsoft.Compute/virtualMachines/
 			settings: item.value.properties.?settings
 			suppressFailures: false
 			type: item.value.properties.type
-			typeHandlerVersion: item.value.properties.?typeHandlerVersion
+			typeHandlerVersion: item.value.properties.typeHandlerVersion
 		}
 		tags: settings.tags
 		dependsOn: [
@@ -443,6 +443,7 @@ resource Compute_virtualMachines_extensions__EntraLogin 'Microsoft.Compute/virtu
 		publisher: 'Microsoft.Azure.ActiveDirectory'
 		suppressFailures: false
 		type: 'AADSSHLoginForLinux'
+		typeHandlerVersion: '1.0'
 	}
 	tags: settings.tags
 }
@@ -471,6 +472,7 @@ resource Compute_virtualMachines_extensions__GuestAttestation 'Microsoft.Compute
 		}
 		suppressFailures: false
 		type: 'GuestAttestation'
+		typeHandlerVersion: '1.0'
 	}
 	tags: settings.tags
 }
@@ -485,6 +487,7 @@ resource Compute_virtualMachines_extensions__MonitorAgent 'Microsoft.Compute/vir
 		publisher: 'Microsoft.Azure.Monitor'
 		suppressFailures: false
 		type: 'AzureMonitorLinuxAgent'
+		typeHandlerVersion: '1.45'
 	}
 	tags: settings.tags
 }
