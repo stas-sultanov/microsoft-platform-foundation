@@ -77,6 +77,22 @@ type PropertiesInput =
 	| StaticWithFqdn
 	| StaticWithIp
 
+@description('A reference to a local network gateway.')
+@export()
+@sealed()
+type Reference = {
+	@description('The ID of the Microsoft.Network/localNetworkGateways resource.')
+	@validate(
+		value =>
+			sys.like(
+				value,
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/localNetworkGateways/*'
+			),
+		'The value must be a Microsoft.Network/localNetworkGateways resource ID.'
+	)
+	id: string
+}
+
 @description('A local network gateway using static routing and an FQDN endpoint.')
 @sealed()
 type StaticWithFqdn = {

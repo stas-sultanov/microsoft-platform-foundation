@@ -7,7 +7,27 @@ metadata author = {
 }
 metadata description = 'Provides reusable types for Microsoft.Network/loadBalancers resources.'
 
+/* IMPORTS */
+
+import * as NetworkPublicIPAddresses from './publicIPAddresses.bicep'
+
 /* TYPES */
+
+@description('A reference to a load balancer backend address pool.')
+@export()
+@sealed()
+type BackendAddressPoolReference = {
+	@description('The ID of the Microsoft.Network/loadBalancers/backendAddressPools resource.')
+	@validate(
+		value =>
+			sys.like(
+				value,
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/loadBalancers/*/backendAddressPools/*'
+			),
+		'The value must be a Microsoft.Network/loadBalancers/backendAddressPools resource ID.'
+	)
+	id: string
+}
 
 @description('The load balancing rule child resource.')
 @export()
@@ -69,14 +89,6 @@ type PublicFrontendIPConfiguration = {
 	@sealed()
 	properties: {
 		@description('The reference to the Microsoft.Network/publicIPAddresses resource.')
-		@validate(
-			value =>
-				sys.like(
-					value.?id ?? '',
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/publicIPAddresses/*'
-				),
-			'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
-		)
-		publicIPAddress: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2026-01-01'>.properties.publicIPAddress
+		publicIPAddress: NetworkPublicIPAddresses.Reference
 	}
 }

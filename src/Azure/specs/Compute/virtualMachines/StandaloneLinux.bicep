@@ -44,6 +44,7 @@ This is a standalone VM, not a high-availability deployment:
 - Azure Monitor Agent: always installed with automatic upgrades
 - Boot integrity monitoring: enabled by the Guest Attestation extension, which is always installed with automatic upgrades; it requires the enforced Secure Boot and vTPM and outbound access to Azure Attestation
 - Azure Monitor data collection: requires a DCR
+- Extension handler versions: not pinned for required extensions; optional for additional extensions; omitted versions use the latest available
 - Additional extension order: ascending alias order, after the required agents
 - Extension uniqueness: names must be unique; the name of an additional extension must equal its type, which also makes types unique
 - Required extensions: installed internally with fixed names; callers cannot supply their aliases, names, or types
@@ -63,11 +64,13 @@ import * as InsightsDataCollectionRuleAssociations from '../../../library/Insigh
 
 import * as MaintenanceConfigurationAssignments from '../../../library/Maintenance/configurationAssignments.bicep'
 
+import * as NetworkNetworkInterfaces from '../../../library/Network/networkInterfaces.bicep'
+
 /* TYPES */
 
 @description('An existing managed data disk to attach to the virtual machine and retain when the virtual machine is deleted.')
 @sealed()
-type DataDiskInput = {
+type DataDisk = {
 	@description('The disk caching mode.')
 	caching: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.storageProfile.dataDisks[*].caching
 	@description('The logical unit number. It must be unique within the virtual machine.')
@@ -92,7 +95,7 @@ type DataDiskInput = {
 
 @description('An existing bootable managed Linux OS disk with the Azure VM agent, created separately from an image. The VM deployment does not provision a local user or SSH key.')
 @sealed()
-type OsDiskInput = {
+type OsDisk = {
 	@description('The disk caching mode.')
 	caching: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.storageProfile.osDisk.caching
 	@description('The managed OS disk to attach.')
@@ -109,21 +112,6 @@ type OsDiskInput = {
 		)
 		id: string
 	}
-}
-
-@description('An existing network interface retained when the virtual machine is deleted.')
-@sealed()
-type NetworkInterfaceReferenceInput = {
-	@description('The ID of the Microsoft.Network/networkInterfaces resource.')
-	@validate(
-		value =>
-			sys.like(
-				value,
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/networkInterfaces/*'
-			),
-		'The value must be a Microsoft.Network/networkInterfaces resource ID.'
-	)
-	id: string
 }
 
 /* PARAMETERS */
@@ -235,9 +223,9 @@ param resources {
 				@description('The extension handler type.')
 				@minLength(1)
 				type: string
-				@description('The extension handler version.')
+				@description('The Major.Minor extension handler version. Omit to use the latest available version.')
 				@minLength(1)
-				typeHandlerVersion: string
+				typeHandlerVersion: string?
 			}
 		}
 	}
@@ -294,12 +282,12 @@ param settings {
 			@description('The virtual machine size.')
 			vmSize: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.hardwareProfile.vmSize
 		}
-		@description('The network interfaces ')
+		@description('The network profile.')
 		@sealed()
 		networkProfile: {
 			@description('One or more existing NICs, retained when the VM is deleted. The first NIC is primary; network configuration is owned by the consumer.')
 			@minLength(1)
-			networkInterfaces: NetworkInterfaceReferenceInput[]
+			networkInterfaces: NetworkNetworkInterfaces.Reference[]
 		}
 		@description('The existing Linux OS disk and any existing managed data disks to attach.')
 		@sealed()
@@ -318,19 +306,25 @@ param settings {
 					)) == sys.length(value ?? []),
 				'Data disk logical unit numbers must be unique.'
 			)
-			dataDisks: DataDiskInput[]?
+			dataDisks: DataDisk[]?
 			@description('The existing bootable managed Linux OS disk with the Azure VM agent.')
-			osDisk: OsDiskInput
+			osDisk: OsDisk
 		}
 	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.tags
-	@description('The availability zone.')
-	@maxLength(1)
-	zones: (
-		| '1'
-		| '2'
-		| '3')[]?
+	@description('The availability zone of a zonal virtual machine, or null for a regional virtual machine. A zonal virtual machine requires disks in the same zone or zone-redundant disks; a regional virtual machine requires regional or zone-redundant disks.')
+	zones:
+		| [
+			'1'
+		]
+		| [
+			'2'
+		]
+		| [
+			'3'
+		]
+		| null
 }
 
 /* VARIABLES */
@@ -411,7 +405,7 @@ resource Compute_virtualMachines_ 'Microsoft.Compute/virtualMachines@2026-04-01'
 		}
 	}
 	tags: settings.tags
-	zones: settings.?zones ?? []
+	zones: settings.?zones
 }
 
 @batchSize(1)
@@ -429,7 +423,7 @@ resource Compute_virtualMachines_extensions_ 'Microsoft.Compute/virtualMachines/
 			settings: item.value.properties.?settings
 			suppressFailures: false
 			type: item.value.properties.type
-			typeHandlerVersion: item.value.properties.typeHandlerVersion
+			typeHandlerVersion: item.value.properties.?typeHandlerVersion
 		}
 		tags: settings.tags
 		dependsOn: [
@@ -449,7 +443,6 @@ resource Compute_virtualMachines_extensions__EntraLogin 'Microsoft.Compute/virtu
 		publisher: 'Microsoft.Azure.ActiveDirectory'
 		suppressFailures: false
 		type: 'AADSSHLoginForLinux'
-		typeHandlerVersion: '1.0'
 	}
 	tags: settings.tags
 }
@@ -478,7 +471,6 @@ resource Compute_virtualMachines_extensions__GuestAttestation 'Microsoft.Compute
 		}
 		suppressFailures: false
 		type: 'GuestAttestation'
-		typeHandlerVersion: '1.0'
 	}
 	tags: settings.tags
 }
@@ -493,7 +485,6 @@ resource Compute_virtualMachines_extensions__MonitorAgent 'Microsoft.Compute/vir
 		publisher: 'Microsoft.Azure.Monitor'
 		suppressFailures: false
 		type: 'AzureMonitorLinuxAgent'
-		typeHandlerVersion: '1.0'
 	}
 	tags: settings.tags
 }

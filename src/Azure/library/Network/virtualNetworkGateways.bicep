@@ -7,6 +7,10 @@ metadata author = {
 }
 metadata description = 'Provides reusable types and functions for Microsoft.Network/virtualNetworkGateways resources.'
 
+/* IMPORTS */
+
+import * as NetworkPublicIPAddresses from './publicIPAddresses.bicep'
+
 /* TYPES */
 
 @description('The BGP settings.')
@@ -104,19 +108,7 @@ type BgpSettings = {
 @sealed()
 type IpConfiguration = {
 	@description('The reference to a Standard, Static public IP address resource.')
-	@sealed()
-	publicIPAddress: {
-		@description('The ID of the Microsoft.Network/publicIPAddresses resource.')
-		@validate(
-			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/publicIPAddresses/*'
-				),
-			'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
-		)
-		id: string
-	}
+	publicIPAddress: NetworkPublicIPAddresses.Reference
 	@description('The reference to the subnet resource named GatewaySubnet.')
 	@sealed()
 	subnet: {
@@ -141,6 +133,22 @@ type NatRuleResource = {
 	name: string
 	@description('Properties of the virtual network gateway NAT rule.')
 	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways/natRules@2026-01-01'>.properties
+}
+
+@description('A reference to a virtual network gateway.')
+@export()
+@sealed()
+type Reference = {
+	@description('The ID of the Microsoft.Network/virtualNetworkGateways resource.')
+	@validate(
+		value =>
+			sys.like(
+				value,
+				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworkGateways/*'
+			),
+		'The value must be a Microsoft.Network/virtualNetworkGateways resource ID.'
+	)
+	id: string
 }
 
 /* FUNCTIONS */
