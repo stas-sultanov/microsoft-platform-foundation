@@ -5,7 +5,7 @@ PowerShell scripts for formatting, validating, and publishing the Bicep modules 
 ## Requirements
 
 - PowerShell 7.0 or later.
-- Azure CLI with the Bicep CLI version listed in [Bicep Version](../readme.md#bicep-version). The scripts call `az bicep`, not a standalone `bicep` executable.
+- For formatting, building, or publishing: Azure CLI with the Bicep CLI version listed in [Bicep Version](../readme.md#bicep-version). These scripts call `az bicep`, not a standalone `bicep` executable.
 - Examples assume the repository root as the working directory.
 
 ## Scripts
@@ -25,7 +25,7 @@ Do not use [Common.psm1](Common.psm1) directly; it contains helpers shared by th
 - `-Files` is supported only by `Format.ps1` and `Build.ps1`. It accepts one or more `.bicep` paths relative to `-SourceRoot`, such as `'Azure/library/common.bicep'`. Absolute paths and paths outside `-SourceRoot` are rejected. If `-Files` is omitted, all `.bicep` files under `-SourceRoot` are processed.
 - Processing continues after a file fails.
 - Each step prints `[NNNN] SUCCESS <message>` or `[NNNN] FAIL <message>`. Bicep CLI output is printed only after `FAIL` lines.
-- Exit code `0` means all steps succeeded; `1` means at least one step failed.
+- Exit code `0` indicates success; `1` indicates failure.
 
 ## Format.ps1
 
@@ -46,7 +46,7 @@ Enforces one API version per API-version family, as defined in [Resources and AP
 
 Rules:
 
-- A reference is any text matching `<Namespace>/<type>[/<childType>...]@YYYY-MM-DD[-preview]`, including text in comments. Other version formats, such as `Microsoft.Graph/applications@beta`, are ignored.
+- A reference is any text matching `<Namespace>/<type>[/<childType>...]@YYYY-MM-DD[-preview]`, including text in comments. The match does not require the version to end there: `@2025-01-01-beta` is matched as `@2025-01-01`. Versions without a date, such as `Microsoft.Graph/applications@beta`, are ignored.
 - A family is the namespace and top-level type, such as `Microsoft.KeyVault/vaults` for `Microsoft.KeyVault/vaults/secrets@2026-05-15`.
 - The expected version of a family is its newest preview version if it has any; otherwise, its newest stable version. Only versions already present under `-SourceRoot` are considered.
 - To change a family's version, set one reference to the target version and run `-RunMode Replace`. This works only if the target becomes the expected version. Otherwise, such as when moving from preview to stable, update every reference in the family manually.
@@ -69,7 +69,7 @@ Publishes every `.bicep` file under `-SourceRoot` as a separate module with `az 
 - `-Version` (required): `MAJOR.MINOR.PATCH` with an optional prerelease suffix, such as `1.2.3-beta.1`. Build metadata is not allowed.
 - Target: `br:<Registry>/<artifact>:<Version>`, where `<artifact>` is the lowercase path relative to `-SourceRoot`, without `.bicep` and without a trailing `main` segment. For example, `Azure/resources/KeyVault/vaults/main.bicep` becomes `azure/resources/keyvault/vaults`.
 - If two files produce the same artifact, the script fails before publishing.
-- Requires push access to the registry. Use `-WhatIf` to validate artifact names without publishing.
+- Publishing requires push access to the registry. Use `-WhatIf` to check the generated targets and detect artifact-name collisions without publishing; it does not verify registry acceptance.
 
 ```powershell
 ./tools/Publish.ps1 -Registry 'ghcr.io/owner/repo' -Version '1.2.3' -WhatIf

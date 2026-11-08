@@ -18,7 +18,7 @@ Architectural and security decisions are made first. Modules expose only setting
 ## Security Baseline
 
 - When supported by the selected service, SKU, and API version, Microsoft Entra ID data-plane authorization MUST be enabled and all non-Entra data-plane authorization methods MUST be disabled.
-- Modules MUST enforce the highest minimum TLS version configurable for the selected service, SKU, and API version.
+- Modules MUST enforce the highest configurable minimum TLS version for the selected service, SKU, and API version.
 - Modules whose resources support `publicNetworkAccess` MUST expose it as a required consumer setting without a module-supplied default.
 - Firewall rules and trusted-service exceptions SHOULD be optional consumer settings.
 - Encryption MUST default to platform-managed keys.

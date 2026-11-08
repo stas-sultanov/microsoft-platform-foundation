@@ -13,7 +13,7 @@ Authored and maintained by [Stas Sultanov][linked_in_profile].
 
 ## Bicep Version
 
-The foundation depends on the Bicep CLI version and is updated to newer versions as soon as practical.
+The foundation depends on Bicep CLI features and Azure resource type definitions and is updated to newer Bicep versions as soon as practical.
 
 Bicep CLI version: [0.48.1](https://github.com/Azure/bicep/releases/tag/v0.48.1).
 
@@ -26,9 +26,9 @@ Bicep CLI version: [0.48.1](https://github.com/Azure/bicep/releases/tag/v0.48.1)
 
 ## What Would It Cost to Build This?
 
-This foundation has been developed and continuously refined by a single engineer over years.
+This foundation has been developed and continuously refined by a single engineer over the years.
 
-The greatest challenge is not the implementation itself, but **the vision and original ideas** behind it.
+The greatest challenge is not the implementation itself but **the vision and original ideas** behind it.
 
 Curious what it would take to build an equivalent foundation from scratch?
 

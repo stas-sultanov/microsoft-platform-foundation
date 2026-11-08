@@ -28,4 +28,4 @@ Modules are grouped by purpose using the categories and paths below.
 
 Child resource type path segments MAY continue as deeply as the Azure resource type requires.
 
-`Provider` and `resourceType` and `childResourceType` names MUST match the Azure resource type name.
+The `Provider` path segment MUST match the Azure provider namespace without `Microsoft.`. The `resourceType` and `childResourceType` path segments MUST match the corresponding Azure resource type segments.
