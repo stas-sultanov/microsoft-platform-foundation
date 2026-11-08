@@ -29,7 +29,7 @@ import * as NetworkVirtualNetworkGateways from '../../../library/Network/virtual
 @sealed()
 type ConnectionPropertiesInput = {
 	@description('Certificate authentication settings for the connection.')
-	certificateAuthentication: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.certificateAuthentication
+	certificateAuthentication: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.certificateAuthentication
 	@description('The dead peer detection timeout in seconds.')
 	@minValue(9)
 	@maxValue(3600)
@@ -37,9 +37,9 @@ type ConnectionPropertiesInput = {
 	@description('Specifies whether BGP is enabled for this connection.')
 	enableBgp: bool?
 	@description('The ingress NAT rules.')
-	ingressNatRules: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.ingressNatRules?
+	ingressNatRules: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.ingressNatRules?
 	@description('The egress NAT rules.')
-	egressNatRules: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.egressNatRules?
+	egressNatRules: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.egressNatRules?
 	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
 	@minLength(1)
 	@maxLength(1)
@@ -56,7 +56,7 @@ type ConnectionPropertiesInput = {
 	@description('The reference to the Microsoft.Network/localNetworkGateways resource.')
 	localNetworkGateway2: NetworkLocalNetworkGateways.Reference
 	@description('The custom traffic selector policies, configured independently of usePolicyBasedTrafficSelectors.')
-	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.trafficSelectorPolicies?
+	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.trafficSelectorPolicies?
 	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
 	usePolicyBasedTrafficSelectors: bool?
 	@description('The reference to the primary Microsoft.Network/virtualNetworkGateways resource.')
@@ -84,16 +84,16 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/connections@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/connections@2026-03-01'>.name
 	@description('The configurable properties.')
 	properties: ConnectionPropertiesInput
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/connections@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/connections@2026-03-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_connections_ 'Microsoft.Network/connections@2026-01-01' = {
+resource Network_connections_ 'Microsoft.Network/connections@2026-03-01' = {
 	location: settings.location
 	name: settings.name
 	properties: {

@@ -32,14 +32,14 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/networkWatchers@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/networkWatchers@2026-03-01'>.name
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/networkWatchers@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/networkWatchers@2026-03-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_networkWatchers_ 'Microsoft.Network/networkWatchers@2026-01-01' = {
+resource Network_networkWatchers_ 'Microsoft.Network/networkWatchers@2026-03-01' = {
 	location: settings.location
 	name: settings.name
 	properties: {}

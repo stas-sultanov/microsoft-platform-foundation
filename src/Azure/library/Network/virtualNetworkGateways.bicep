@@ -132,7 +132,7 @@ type NatRuleResource = {
 	@description('The resource name.')
 	name: string
 	@description('Properties of the virtual network gateway NAT rule.')
-	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways/natRules@2026-01-01'>.properties
+	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways/natRules@2026-03-01'>.properties
 }
 
 @description('A reference to a virtual network gateway.')
@@ -159,7 +159,7 @@ func CreateBgpPeeringAddress(
 	gatewayName string,
 	ipConfigurationName string,
 	customBgpIpAddresses string[]
-) resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.properties.bgpSettings.bgpPeeringAddresses[*] => {
+) resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-03-01'>.properties.bgpSettings.bgpPeeringAddresses[*] => {
 	customBgpIpAddresses: customBgpIpAddresses
 	ipconfigurationId: az.resourceId(
 		'Microsoft.Network/virtualNetworkGateways/ipConfigurations',
@@ -173,7 +173,7 @@ func CreateBgpPeeringAddress(
 func CreateIpConfiguration(
 	name string,
 	input IpConfiguration
-) resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.properties.ipConfigurations[*] => {
+) resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-03-01'>.properties.ipConfigurations[*] => {
 	name: name
 	properties: {
 		privateIPAllocationMethod: 'Dynamic'

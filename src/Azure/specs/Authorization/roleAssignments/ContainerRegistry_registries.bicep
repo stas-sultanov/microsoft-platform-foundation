@@ -18,7 +18,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 /* PARAMETERS */
 
 @description('Name of the Microsoft.ContainerRegistry/registries resource.')
-param name resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.name
+param name resourceInput<'Microsoft.ContainerRegistry/registries@2026-09-01-preview'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
@@ -26,7 +26,7 @@ param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 /* EXISTING RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2026-03-01-preview' existing = {
+resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2026-09-01-preview' existing = {
 	name: name
 }
 

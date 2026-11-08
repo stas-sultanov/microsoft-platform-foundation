@@ -29,7 +29,7 @@ type PublicIPPrefixPropertiesInput =
 @sealed()
 type PublicIPPrefixPropertiesIPv4 = {
 	@description('The list of tags associated with the public IP prefix.')
-	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
+	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-03-01'>.properties.ipTags?
 	@description('The CIDR prefix length.')
 	@minValue(28)
 	@maxValue(31)
@@ -51,7 +51,7 @@ type PublicIPPrefixPropertiesIPv6 = {
 			)),
 		'publicIPAddressVersion must be "IPv4" when Internet routing preference is specified.'
 	)
-	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.properties.ipTags?
+	ipTags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-03-01'>.properties.ipTags?
 	@description('The CIDR prefix length.')
 	@minValue(124)
 	@maxValue(127)
@@ -81,11 +81,11 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-03-01'>.name
 	@description('The configurable properties.')
 	properties: PublicIPPrefixPropertiesInput
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/publicIPPrefixes@2026-03-01'>.tags
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
 	zones:
 		| [
@@ -107,7 +107,7 @@ param settings {
 
 /* RESOURCES */
 
-resource Network_publicIPPrefixes_ 'Microsoft.Network/publicIPPrefixes@2026-01-01' = {
+resource Network_publicIPPrefixes_ 'Microsoft.Network/publicIPPrefixes@2026-03-01' = {
 	location: settings.location
 	name: settings.name
 	properties: settings.properties

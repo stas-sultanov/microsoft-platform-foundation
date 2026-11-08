@@ -45,7 +45,7 @@ type LoadBalancingRuleResourceInput = {
 		@minValue(0)
 		port: int
 		@description('The reference to the transport protocol used by the load balancing rule.')
-		protocol: resourceInput<'Microsoft.Network/loadBalancers/loadBalancingRules@2026-01-01'>.properties.protocol
+		protocol: resourceInput<'Microsoft.Network/loadBalancers/loadBalancingRules@2026-03-01'>.properties.protocol
 	}
 }
 
@@ -67,10 +67,10 @@ type PrivateFrontendIPConfiguration = {
 				),
 			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
 		)
-		subnet: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2026-01-01'>.properties.subnet
+		subnet: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2026-03-01'>.properties.subnet
 	}
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
-	zones: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2026-01-01'>.zones
+	zones: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2026-03-01'>.zones
 }
 
 @description('The probe child resource.')
@@ -78,7 +78,7 @@ type PrivateFrontendIPConfiguration = {
 @sealed()
 type Probe = {
 	@description('Properties of the probe.')
-	properties: resourceInput<'Microsoft.Network/loadBalancers/probes@2026-01-01'>.properties
+	properties: resourceInput<'Microsoft.Network/loadBalancers/probes@2026-03-01'>.properties
 }
 
 @description('The public frontend IP configuration child resource.')

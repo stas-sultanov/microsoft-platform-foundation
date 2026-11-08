@@ -29,7 +29,7 @@ type PublicIPAddressPropertiesInput =
 @sealed()
 type PublicIPAddressPropertiesIPv4 = {
 	@description('The DDoS protection custom policy associated with the public IP address.')
-	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ddosSettings?
+	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.ddosSettings?
 	@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')
 	@sealed()
 	dnsSettings: {
@@ -37,27 +37,27 @@ type PublicIPAddressPropertiesIPv4 = {
 		@minLength(1)
 		domainNameLabel: string
 		@description('The reuse scope for the generated domain name label. Can only be set at creation.')
-		domainNameLabelScope: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.domainNameLabelScope
+		domainNameLabelScope: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.dnsSettings.domainNameLabelScope
 		@description('The reverse FQDN used to create an IPv4 PTR record.')
-		reverseFqdn: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.reverseFqdn?
+		reverseFqdn: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.dnsSettings.reverseFqdn?
 	}?
 	@description('The inbound idle timeout in minutes.')
 	@minValue(4)
 	@maxValue(30)
 	idleTimeoutInMinutes: int?
 	@description('The list of tags associated with the public IP address.')
-	ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipTags?
+	ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.ipTags?
 	@description('The public IP address version.')
 	publicIPAddressVersion: 'IPv4'
 	@description('The public IP prefix this public IP address should be allocated from.')
-	publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.publicIPPrefix?
+	publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.publicIPPrefix?
 }
 
 @description('The configurable properties for an IPv6 regional public IP address.')
 @sealed()
 type PublicIPAddressPropertiesIPv6 = {
 	@description('The DDoS protection custom policy associated with the public IP address.')
-	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ddosSettings?
+	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.ddosSettings?
 	@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')
 	@sealed()
 	dnsSettings: {
@@ -65,7 +65,7 @@ type PublicIPAddressPropertiesIPv6 = {
 		@minLength(1)
 		domainNameLabel: string
 		@description('The reuse scope for the generated domain name label. Can only be set at creation.')
-		domainNameLabelScope: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.dnsSettings.domainNameLabelScope
+		domainNameLabelScope: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.dnsSettings.domainNameLabelScope
 	}?
 	@description('The list of tags associated with the public IP address. Internet routing preference is not supported for IPv6.')
 	@validate(
@@ -77,11 +77,11 @@ type PublicIPAddressPropertiesIPv6 = {
 			)),
 		'publicIPAddressVersion must be "IPv4" when Internet routing preference is specified.'
 	)
-	ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.ipTags?
+	ipTags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.ipTags?
 	@description('The public IP address version.')
 	publicIPAddressVersion: 'IPv6'
 	@description('The public IP prefix this public IP address should be allocated from.')
-	publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.properties.publicIPPrefix?
+	publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.publicIPPrefix?
 }
 
 /* PARAMETERS */
@@ -114,11 +114,11 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.name
 	@description('The configurable properties.')
 	properties: PublicIPAddressPropertiesInput?
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.tags
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from. Internet routing preference does not support an explicitly single-zone configuration.')
 	zones:
 		| [
@@ -140,7 +140,7 @@ param settings {
 
 /* RESOURCES */
 
-resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2026-01-01' = {
+resource Network_publicIPAddresses_ 'Microsoft.Network/publicIPAddresses@2026-03-01' = {
 	location: settings.location
 	name: settings.name
 	properties: {

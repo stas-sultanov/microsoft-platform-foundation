@@ -14,7 +14,7 @@ targetScope = 'resourceGroup'
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.ContainerRegistry/registries resource.')
-param parentName resourceInput<'Microsoft.ContainerRegistry/registries@2026-03-01-preview'>.name
+param parentName resourceInput<'Microsoft.ContainerRegistry/registries@2026-09-01-preview'>.name
 
 @description('The resource settings.')
 @sealed()
@@ -22,28 +22,28 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.name
+	name: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-09-01-preview'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('Specifies whether the global registry endpoint routes traffic to this replication.')
-		regionEndpointEnabled: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.properties.regionEndpointEnabled?
+		regionEndpointEnabled: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-09-01-preview'>.properties.regionEndpointEnabled?
 	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview'>.tags
+	tags: resourceInput<'Microsoft.ContainerRegistry/registries/replications@2026-09-01-preview'>.tags
 }
 
 /* EXISTING RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2026-03-01-preview' existing = {
+resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2026-09-01-preview' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource ContainerRegistry_registries_replications_ 'Microsoft.ContainerRegistry/registries/replications@2026-03-01-preview' = {
+resource ContainerRegistry_registries_replications_ 'Microsoft.ContainerRegistry/registries/replications@2026-09-01-preview' = {
 	location: settings.location
 	name: settings.name
 	parent: ContainerRegistry_registries_

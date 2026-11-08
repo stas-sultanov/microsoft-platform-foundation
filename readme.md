@@ -15,7 +15,7 @@ Authored and maintained by [Stas Sultanov][linked_in_profile].
 
 The foundation depends on Bicep CLI features and Azure resource type definitions and is updated to newer Bicep versions as soon as practical.
 
-Bicep CLI version: [0.48.1](https://github.com/Azure/bicep/releases/tag/v0.48.1).
+Bicep CLI version: [0.49.2](https://github.com/Azure/bicep/releases/tag/v0.49.2).
 
 ## Documentation
 

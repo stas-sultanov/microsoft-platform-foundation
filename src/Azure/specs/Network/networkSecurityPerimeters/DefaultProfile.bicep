@@ -58,7 +58,7 @@ param resources {
 			@description('The configurable properties.')
 			@sealed()
 			properties: {
-				accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01'>.properties.accessMode
+				accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-03-01'>.properties.accessMode
 				@description('The reference to the PaaS resource to be associated.')
 				@validate(
 					value =>
@@ -68,7 +68,7 @@ param resources {
 						),
 					'The value must be an Azure resource ID.'
 				)
-				privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01'>.properties.privateLinkResource
+				privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-03-01'>.properties.privateLinkResource
 			}
 		}
 	}
@@ -80,27 +80,27 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/networkSecurityPerimeters@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/networkSecurityPerimeters@2026-03-01'>.name
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/networkSecurityPerimeters@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/networkSecurityPerimeters@2026-03-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPerimeters@2026-01-01' = {
+resource Network_networkSecurityPerimeters_ 'Microsoft.Network/networkSecurityPerimeters@2026-03-01' = {
 	location: settings.location
 	name: settings.name
 	properties: {}
 	tags: settings.tags
 }
 
-resource Network_networkSecurityPerimeters_profiles__Default 'Microsoft.Network/networkSecurityPerimeters/profiles@2026-01-01' = {
+resource Network_networkSecurityPerimeters_profiles__Default 'Microsoft.Network/networkSecurityPerimeters/profiles@2026-03-01' = {
 	name: resources.profiles.Default.name
 	parent: Network_networkSecurityPerimeters_
 	properties: {}
 }
 
-resource Network_networkSecurityPerimeters_profiles_accessRules__Default 'Microsoft.Network/networkSecurityPerimeters/profiles/accessRules@2026-01-01' = [
+resource Network_networkSecurityPerimeters_profiles_accessRules__Default 'Microsoft.Network/networkSecurityPerimeters/profiles/accessRules@2026-03-01' = [
 	for item in resources.profiles.Default.resources.accessRules: {
 		name: item.name
 		parent: Network_networkSecurityPerimeters_profiles__Default
@@ -108,7 +108,7 @@ resource Network_networkSecurityPerimeters_profiles_accessRules__Default 'Micros
 	}
 ]
 
-resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-01-01' = [
+resource Network_networkSecurityPerimeters_resourceAssociations_ 'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-03-01' = [
 	for item in sys.items(resources.resourceAssociations ?? {}): {
 		name: item.value.name
 		parent: Network_networkSecurityPerimeters_

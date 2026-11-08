@@ -26,7 +26,7 @@ jobs:
 
     steps:
     - name: Install Bicep
-      run: az bicep install --version v0.48.1
+      run: az bicep install --version v0.49.2
 
     - name: Checkout
       uses: actions/checkout@v7

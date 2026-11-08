@@ -38,9 +38,9 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/loadBalancers@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/loadBalancers@2026-03-01'>.name
 	@description('The configurable properties.')
-	properties: resourceInput<'Microsoft.Network/loadBalancers@2026-01-01'>.properties
+	properties: resourceInput<'Microsoft.Network/loadBalancers@2026-03-01'>.properties
 	@description('The SKU.')
 	@sealed()
 	@validate(
@@ -59,12 +59,12 @@ param settings {
 			| 'Global'
 	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/loadBalancers@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/loadBalancers@2026-03-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_loadBalancers_ 'Microsoft.Network/loadBalancers@2026-01-01' = {
+resource Network_loadBalancers_ 'Microsoft.Network/loadBalancers@2026-03-01' = {
 	location: settings.location
 	name: settings.name
 	properties: settings.properties
