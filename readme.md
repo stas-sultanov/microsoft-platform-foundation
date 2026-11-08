@@ -5,7 +5,7 @@
 [![Copilot Review](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/agents/copilot-pull-request-reviewer/badge.svg)][github_workflow_copilot_review]
 [![Release](https://github.com/stas-sultanov/microsoft-platform-foundation/actions/workflows/release.yml/badge.svg)][github_workflow_release]
 
-An opinionated Bicep module library for Azure and Entra, built around security, explicit contracts, and deliberate constraints.
+A decision-based Bicep module library for Azure and Entra. Its modules implement deliberately chosen architectural, engineering, and security decisions through explicit contracts and constraints.
 
 Authored and maintained by [Stas Sultanov][linked_in_profile].
 

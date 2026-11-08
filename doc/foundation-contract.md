@@ -1,10 +1,12 @@
 # Foundation Contract
 
-All foundation modules MUST follow these architectural, security, and compatibility rules.
+The foundation is a decision-based library. Its modules implement deliberately chosen architectural, engineering, security, and compatibility decisions through their interfaces, constraints, and implementations. Each module MUST follow the rules below and the decisions applicable to its purpose.
+
+Architectural and security decisions are made first. Modules expose only settings intentionally left open to consumers by those decisions.
 
 ## Design Principles
 
-- Modules MUST encode architectural and security decisions beyond simply mirroring ARM/Bicep or AVM resource schemas.
+- Modules MUST encode architectural and security decisions rather than simply mirroring native ARM/Bicep resource schemas.
 - Modules MUST NOT expose SKUs or configurations that Microsoft documents as deprecated, retired, or unsupported.
 - Modules MUST NOT expose security modes prohibited by this contract or Microsoft's service-specific security recommendations.
 - Module interfaces MUST NOT expose additional Azure capabilities unless explicitly requested or required by this contract.
