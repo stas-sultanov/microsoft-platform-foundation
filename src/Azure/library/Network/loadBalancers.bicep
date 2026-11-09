@@ -9,25 +9,9 @@ metadata description = 'Provides reusable types for Microsoft.Network/loadBalanc
 
 /* IMPORTS */
 
-import * as NetworkPublicIPAddresses from './publicIPAddresses.bicep'
+import * as Common from '../common.bicep'
 
 /* TYPES */
-
-@description('A reference to a load balancer backend address pool.')
-@export()
-@sealed()
-type BackendAddressPoolReference = {
-	@description('The ID of the Microsoft.Network/loadBalancers/backendAddressPools resource.')
-	@validate(
-		value =>
-			sys.like(
-				value,
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/loadBalancers/*/backendAddressPools/*'
-			),
-		'The value must be a Microsoft.Network/loadBalancers/backendAddressPools resource ID.'
-	)
-	id: string
-}
 
 @description('The load balancing rule child resource.')
 @export()
@@ -61,13 +45,13 @@ type PrivateFrontendIPConfiguration = {
 		@description('The reference to the Microsoft.Network/virtualNetworks/subnets resource.')
 		@validate(
 			value =>
-				sys.like(
-					value.?id ?? '',
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworks/*/subnets/*'
+				Common.IsReferenceTo(
+					'Microsoft.Network/virtualNetworks/subnets',
+					value.id
 				),
 			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
 		)
-		subnet: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2026-03-01'>.properties.subnet
+		subnet: Common.ReferenceById
 	}
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
 	zones: resourceInput<'Microsoft.Network/loadBalancers/frontendIPConfigurations@2026-03-01'>.zones
@@ -89,6 +73,14 @@ type PublicFrontendIPConfiguration = {
 	@sealed()
 	properties: {
 		@description('The reference to the Microsoft.Network/publicIPAddresses resource.')
-		publicIPAddress: NetworkPublicIPAddresses.Reference
+		@validate(
+			value =>
+				Common.IsReferenceTo(
+					'Microsoft.Network/publicIPAddresses',
+					value.id
+				),
+			'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
+		)
+		publicIPAddress: Common.ReferenceById
 	}
 }

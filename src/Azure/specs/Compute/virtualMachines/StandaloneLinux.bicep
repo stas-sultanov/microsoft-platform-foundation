@@ -60,11 +60,11 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../library/common.bicep'
+
 import * as InsightsDataCollectionRuleAssociations from '../../../library/Insights/dataCollectionRuleAssociations.bicep'
 
 import * as MaintenanceConfigurationAssignments from '../../../library/Maintenance/configurationAssignments.bicep'
-
-import * as NetworkNetworkInterfaces from '../../../library/Network/networkInterfaces.bicep'
 
 /* TYPES */
 
@@ -77,20 +77,16 @@ type DataDisk = {
 	@minValue(0)
 	@maxValue(63)
 	lun: int
-	@description('The managed disk to attach.')
-	@sealed()
-	managedDisk: {
-		@description('The ID of the Microsoft.Compute/disks resource.')
-		@validate(
-			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/disks/*'
-				),
-			'The value must be a Microsoft.Compute/disks resource ID.'
-		)
-		id: string
-	}
+	@description('The managed data disk to attach.')
+	@validate(
+		value =>
+			Common.IsReferenceTo(
+				'Microsoft.Compute/disks',
+				value.id
+			),
+		'The value must be a Microsoft.Compute/disks resource ID.'
+	)
+	managedDisk: Common.ReferenceById
 }
 
 @description('An existing bootable managed Linux OS disk with the Azure VM agent, created separately from an image. The VM deployment does not provision a local user or SSH key.')
@@ -99,19 +95,15 @@ type OsDisk = {
 	@description('The disk caching mode.')
 	caching: resourceInput<'Microsoft.Compute/virtualMachines@2026-04-01'>.properties.storageProfile.osDisk.caching
 	@description('The managed OS disk to attach.')
-	@sealed()
-	managedDisk: {
-		@description('The ID of the Microsoft.Compute/disks resource.')
-		@validate(
-			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/disks/*'
-				),
-			'The value must be a Microsoft.Compute/disks resource ID.'
-		)
-		id: string
-	}
+	@validate(
+		value =>
+			Common.IsReferenceTo(
+				'Microsoft.Compute/disks',
+				value.id
+			),
+		'The value must be a Microsoft.Compute/disks resource ID.'
+	)
+	managedDisk: Common.ReferenceById
 }
 
 /* PARAMETERS */
@@ -262,19 +254,15 @@ param settings {
 		@sealed()
 		capacityReservation: {
 			@description('The reference to the Microsoft.Compute/capacityReservationGroups resource.')
-			@sealed()
-			capacityReservationGroup: {
-				@description('The ID of the Microsoft.Compute/capacityReservationGroups resource.')
-				@validate(
-					value =>
-						sys.like(
-							value,
-							'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/capacityReservationGroups/*'
-						),
-					'The value must be a Microsoft.Compute/capacityReservationGroups resource ID.'
-				)
-				id: string
-			}
+			@validate(
+				value =>
+					Common.IsReferenceTo(
+						'Microsoft.Compute/capacityReservationGroups',
+						value.id
+					),
+				'The value must be a Microsoft.Compute/capacityReservationGroups resource ID.'
+			)
+			capacityReservationGroup: Common.ReferenceById
 		}?
 		@description('The hardware settings.')
 		@sealed()
@@ -287,7 +275,19 @@ param settings {
 		networkProfile: {
 			@description('One or more existing NICs, retained when the VM is deleted. The first NIC is primary; network configuration is owned by the consumer.')
 			@minLength(1)
-			networkInterfaces: NetworkNetworkInterfaces.Reference[]
+			@validate(
+				value =>
+					sys.empty(sys.filter(
+						value,
+						item =>
+							!Common.IsReferenceTo(
+								'Microsoft.Network/networkInterfaces',
+								item.id
+							)
+					)),
+				'Each value must be a Microsoft.Network/networkInterfaces resource ID.'
+			)
+			networkInterfaces: Common.ReferenceById[]
 		}
 		@description('The existing Linux OS disk and any existing managed data disks to attach.')
 		@sealed()

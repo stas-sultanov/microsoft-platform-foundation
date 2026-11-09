@@ -15,6 +15,8 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../library/common.bicep'
+
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
@@ -52,9 +54,9 @@ param settings {
 		@description('The ID of the Microsoft.Insights/dataCollectionRules resource.')
 		@validate(
 			value =>
-				value == null || sys.like(
-					value!,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Insights/dataCollectionRules/*'
+				value == null || Common.IsReferenceTo(
+					'Microsoft.Insights/dataCollectionRules',
+					value!
 				),
 			'The value must be a Microsoft.Insights/dataCollectionRules resource ID.'
 		)

@@ -9,7 +9,7 @@ metadata description = 'Provides reusable types and functions for Microsoft.Netw
 
 /* IMPORTS */
 
-import * as NetworkPublicIPAddresses from './publicIPAddresses.bicep'
+import * as Common from '../common.bicep'
 
 /* TYPES */
 
@@ -116,21 +116,28 @@ type IpConfigurationResource = {
 		@description('The private IP allocation method.')
 		privateIPAllocationMethod: 'Dynamic'
 		@description('The reference to a Standard, Static public IP address resource.')
-		publicIPAddress: NetworkPublicIPAddresses.Reference
+		@validate(
+			value =>
+				Common.IsReferenceTo(
+					'Microsoft.Network/publicIPAddresses',
+					value.id
+				),
+			'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
+		)
+		publicIPAddress: Common.ReferenceById
 		@description('The reference to the subnet resource named GatewaySubnet.')
-		@sealed()
-		subnet: {
-			@description('The ID of the Microsoft.Network/virtualNetworks/subnets resource.')
-			@validate(
-				value =>
-					sys.like(
-						value,
-						'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworks/*/subnets/GatewaySubnet'
-					),
-				'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
-			)
-			id: string
-		}
+		@validate(
+			value =>
+				Common.IsReferenceTo(
+					'Microsoft.Network/virtualNetworks/subnets',
+					value.id
+				) && sys.endsWith(
+					sys.toLower(value.id),
+					'/GatewaySubnet'
+				),
+			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID ending in GatewaySubnet.'
+		)
+		subnet: Common.ReferenceById
 	}
 }
 
@@ -142,22 +149,6 @@ type NatRuleResource = {
 	name: string
 	@description('Properties of the virtual network gateway NAT rule.')
 	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways/natRules@2026-03-01'>.properties
-}
-
-@description('A reference to a virtual network gateway.')
-@export()
-@sealed()
-type Reference = {
-	@description('The ID of the Microsoft.Network/virtualNetworkGateways resource.')
-	@validate(
-		value =>
-			sys.like(
-				value,
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworkGateways/*'
-			),
-		'The value must be a Microsoft.Network/virtualNetworkGateways resource ID.'
-	)
-	id: string
 }
 
 /* FUNCTIONS */

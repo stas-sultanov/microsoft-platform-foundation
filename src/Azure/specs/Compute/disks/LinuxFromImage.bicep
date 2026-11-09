@@ -35,6 +35,8 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../library/common.bicep'
+
 /* TYPES */
 
 @description('The creation data for one of the supported image sources.')
@@ -50,22 +52,18 @@ type CreationDataFromImageGallery = {
 	@description('The selected image source, deployed as the FromImage create option.')
 	createOption: 'FromImageGallery'
 	@description('The pinned Azure Compute Gallery image version.')
-	@sealed()
-	galleryImageReference: {
-		@description('The ID of the Microsoft.Compute/galleries/images/versions resource.')
-		@validate(
-			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/galleries/*/images/*/versions/*'
-				) && !sys.like(
-					value,
-					'*/versions/latest'
-				),
-			'The value must be a pinned Microsoft.Compute/galleries/images/versions resource ID.'
-		)
-		id: string
-	}
+	@validate(
+		value =>
+			Common.IsReferenceTo(
+				'Microsoft.Compute/galleries/images/versions',
+				value.id
+			) && !sys.like(
+				value.id,
+				'*/versions/latest'
+			),
+		'The value must be a pinned Microsoft.Compute/galleries/images/versions resource ID.'
+	)
+	galleryImageReference: Common.ReferenceById
 }
 
 @description('The creation data for a pinned Azure Marketplace platform image without a purchase plan.')
@@ -74,22 +72,18 @@ type CreationDataFromImageMarketplace = {
 	@description('The selected image source, deployed as the FromImage create option.')
 	createOption: 'FromImageMarketplace'
 	@description('The pinned Azure Marketplace platform image without a purchase plan.')
-	@sealed()
-	imageReference: {
-		@description('The ID of the Microsoft.Compute/locations/publishers/artifacttypes/offers/skus/versions resource.')
-		@validate(
-			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/providers/Microsoft.Compute/locations/*/publishers/*/artifacttypes/VMImage/offers/*/skus/*/versions/*'
-				) && !sys.like(
-					value,
-					'*/versions/latest'
-				),
-			'The value must be a pinned Microsoft.Compute/locations/publishers/artifacttypes/offers/skus/versions resource ID.'
-		)
-		id: string
-	}
+	@validate(
+		value =>
+			sys.like(
+				value.id,
+				'/subscriptions/*/providers/Microsoft.Compute/locations/*/publishers/*/artifacttypes/VMImage/offers/*/skus/*/versions/*'
+			) && !sys.like(
+				value.id,
+				'*/versions/latest'
+			),
+		'The value must be a pinned Microsoft.Compute/locations/publishers/artifacttypes/offers/skus/versions resource ID.'
+	)
+	imageReference: Common.ReferenceById
 }
 
 /* PARAMETERS */

@@ -9,32 +9,40 @@ metadata description = 'Provides common reusable types across Bicep modules.'
 
 /* TYPES */
 
+@description('A resource reference by ID.')
+@export()
+@sealed()
+type ReferenceById = {
+	@description('The resource ID.')
+	id: string
+}
+
 @description('A resource reference within the current deployment scope.')
 @export()
 @sealed()
-type ResourceReference = {
+type ReferenceByName = {
 	@description('The resource name.')
 	name: string
-}
-
-@description('A resource group scope reference.')
-@export()
-@sealed()
-type ResourceScope = {
-	@description('The resource group name.')
-	resourceGroupName: string
-	@description('The subscription id.')
-	subscriptionId: string?
 }
 
 @description('A resource reference with explicit scope information.')
 @export()
 @sealed()
-type ScopedResourceReference = {
+type ReferenceByNameAndScope = {
 	@description('The resource name.')
 	name: string
 	@description('The resource scope.')
-	scope: ResourceScope
+	scope: ResourceGroupScope
+}
+
+@description('A resource group scope reference.')
+@export()
+@sealed()
+type ResourceGroupScope = {
+	@description('The resource group name.')
+	resourceGroupName: string
+	@description('The subscription id.')
+	subscriptionId: string?
 }
 
 @description('Tags to be applied to the resource.')
@@ -43,3 +51,16 @@ type Tags = {
 	@description('A tag to be applied to the resource.')
 	*: string
 }
+
+/* FUNCTIONS */
+
+@description('Checks whether a reference matches the case-insensitive ID shape of a resource-group-scoped resource type, including child resource types.')
+@export()
+func IsReferenceTo(
+	type string,
+	id string
+) bool =>
+	sys.like(
+		id,
+		'/subscriptions/*/resourceGroups/*/providers/${sys.first(sys.split(type, '/'))}/${sys.join(sys.skip(sys.split(type, '/'), 1), '/*/')}/*'
+	)

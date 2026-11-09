@@ -13,6 +13,8 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
+import * as Common from '../../../library/common.bicep'
+
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
@@ -48,9 +50,9 @@ param settings {
 				Default: {
 					@validate(
 						value =>
-							sys.like(
-								value,
-								'/subscriptions/*/resourceGroups/*/providers/Microsoft.Monitor/accounts/*'
+							Common.IsReferenceTo(
+								'Microsoft.Monitor/accounts',
+								value
 							),
 						'The value must be a Microsoft.Monitor/accounts resource ID.'
 					)
