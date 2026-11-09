@@ -18,16 +18,16 @@ import * as DocumentDBDatabaseAccounts from '../../../../../library/DocumentDB/d
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentDatabaseAccountName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
+param parentDatabaseAccountName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.name
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts/sqlDatabases resource.')
-param parentSqlDatabaseName resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.name
+param parentSqlDatabaseName resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview'>.name
 
 @description('The resource settings.')
 @sealed()
 param settings {
 	@description('The name.')
-	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview'>.name
+	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -41,17 +41,17 @@ param settings {
 		@sealed()
 		resource: {
 			@description('Analytical TTL.')
-			analyticalStorageTtl: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview'>.properties.resource.analyticalStorageTtl?
+			analyticalStorageTtl: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.properties.resource.analyticalStorageTtl?
 			@description('List of computed properties')
-			computedProperties: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview'>.properties.resource.computedProperties?
+			computedProperties: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.properties.resource.computedProperties?
 			@description('The conflict resolution policy for the container.')
-			conflictResolutionPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview'>.properties.resource.conflictResolutionPolicy?
+			conflictResolutionPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.properties.resource.conflictResolutionPolicy?
 			@description('Default time to live')
-			defaultTtl: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview'>.properties.resource.defaultTtl?
+			defaultTtl: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.properties.resource.defaultTtl?
 			@description('The FullText policy for the container.')
-			fullTextPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview'>.properties.resource.fullTextPolicy?
+			fullTextPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.properties.resource.fullTextPolicy?
 			@description('The configuration of the indexing policy. By default, the indexing is automatic for all document paths within the container')
-			indexingPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview'>.properties.resource.indexingPolicy?
+			indexingPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.properties.resource.indexingPolicy?
 			@description('The configuration of the partition key to be used for partitioning data into multiple partitions')
 			@sealed()
 			@validate(
@@ -76,9 +76,9 @@ param settings {
 				version: int?
 			}
 			@description('The unique key policy configuration for specifying uniqueness constraints on documents in the collection in the Azure Cosmos DB service.')
-			uniqueKeyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview'>.properties.resource.uniqueKeyPolicy?
+			uniqueKeyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.properties.resource.uniqueKeyPolicy?
 			@description('The vector embedding policy for the container.')
-			vectorEmbeddingPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview'>.properties.resource.vectorEmbeddingPolicy?
+			vectorEmbeddingPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.properties.resource.vectorEmbeddingPolicy?
 		}
 	}
 }
@@ -86,7 +86,7 @@ param settings {
 /* EXISTING RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' existing = {
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' existing = {
 	name: parentDatabaseAccountName
 	#disable-next-line use-recent-api-versions // to use new features, preview version is required
 	resource sqlDatabases_ 'sqlDatabases' existing = {
@@ -97,7 +97,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 /* RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_sqlDatabases_containers_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2026-04-01-preview' = {
+resource DocumentDB_databaseAccounts_sqlDatabases_containers_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview' = {
 	name: settings.name
 	parent: DocumentDB_databaseAccounts_::sqlDatabases_
 	properties: {

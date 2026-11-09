@@ -59,11 +59,11 @@ param extensions {
 )
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.identity?
+	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
+	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.name
 	@description('The configurable properties.')
 	@sealed()
 	@validate(
@@ -73,17 +73,17 @@ param settings {
 	)
 	properties: {
 		@description('The policy for taking backups on an account.')
-		backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.backupPolicy
+		backupPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.backupPolicy
 		@description('Properties related to capacity enforcement on an account. Requires capacityMode to be Provisioned.')
-		capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.capacity?
+		capacity: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.capacity?
 		@description('The capacity mode.')
 		capacityMode:
 			| 'Provisioned'
 			| 'Serverless'
 		@description('The consistency policy.')
-		consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.consistencyPolicy
+		consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.consistencyPolicy
 		@description('List of IpRules.')
-		ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.ipRules
+		ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.ipRules
 		@description('The geo replication locations.')
 		@minLength(1)
 		@validate(
@@ -100,16 +100,16 @@ param settings {
 		)
 		locations: Location[]
 		@description('The network access mode.')
-		publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.properties.publicNetworkAccess
+		publicNetworkAccess: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.publicNetworkAccess
 	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.tags
+	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.tags
 }
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // capacityMode is available only in the preview API.
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' = {
+#disable-next-line use-recent-api-versions // capacityMode is available only in the preview API; 2026-04-01-preview Bicep types wrongly mark locations and databaseAccountOfferType read-only.
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}

@@ -20,7 +20,7 @@ type RoleAssignmentResourceInput = {
 	@sealed()
 	properties: {
 		@description('The principal id.')
-		principalId: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-04-01-preview'>.properties.principalId
+		principalId: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2025-11-01-preview'>.properties.principalId
 		@description('The name of the Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions resource.')
 		roleDefinitionName: string
 		@description('The Cosmos DB data-plane scope: "/" for the account, "/dbs/{databaseName}" for a database, or "/dbs/{databaseName}/colls/{containerName}" for a container.')
@@ -55,7 +55,7 @@ type RoleAssignmentResourceInput = {
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.name
 
 @description('Collection of role assignments.')
 @sealed()
@@ -66,12 +66,12 @@ param resources {
 /* EXISTING RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' existing = {
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' existing = {
 	name: parentName
 }
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview' existing = [
+resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2025-11-01-preview' existing = [
 	for item in resources.sqlRoleAssignments: {
 		name: item.properties.roleDefinitionName
 		parent: DocumentDB_databaseAccounts_
@@ -82,7 +82,7 @@ resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/d
 
 @batchSize(1)
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2026-04-01-preview' = [
+resource DocumentDB_databaseAccounts_sqlRoleAssignments_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2025-11-01-preview' = [
 	for (item, index) in resources.sqlRoleAssignments: {
 		name: sys.guid(
 			DocumentDB_databaseAccounts_.id,

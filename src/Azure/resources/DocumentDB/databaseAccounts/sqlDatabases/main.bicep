@@ -18,17 +18,17 @@ import * as DocumentDBDatabaseAccounts from '../../../../library/DocumentDB/data
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.name
 
 @description('The resource settings.')
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.identity?
+	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.name
+	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -41,20 +41,20 @@ param settings {
 		options: DocumentDBDatabaseAccounts.ThroughputOptions?
 	}
 	@description('Tags to put on the resource.')
-	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview'>.tags
+	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview'>.tags
 }
 
 /* EXISTING RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' existing = {
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2026-04-01-preview' = {
+resource DocumentDB_databaseAccounts_sqlDatabases_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}
