@@ -11,6 +11,10 @@ metadata description = 'Provisions Microsoft.Network/networkSecurityPerimeters/r
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as Common from '../../../../library/common.bicep'
+
 /* TYPES */
 
 @description('The configuration of a Microsoft.Network/networkSecurityPerimeters/resourceAssociations resource.')
@@ -28,12 +32,12 @@ type ResourceAssociationResourceInput = {
 		@validate(
 			value =>
 				sys.like(
-					value.?id ?? '',
+					value.id,
 					'/subscriptions/*/resourceGroups/*/providers/*'
 				),
 			'The value must be an Azure resource ID.'
 		)
-		privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-03-01'>.properties.privateLinkResource
+		privateLinkResource: Common.ReferenceById
 	}
 }
 

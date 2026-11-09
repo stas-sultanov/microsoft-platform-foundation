@@ -15,6 +15,27 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../../library/common.bicep'
+
+/* TYPES */
+
+@description('An IPAM pool allocation for subnet address prefixes.')
+@sealed()
+type IpamPoolPrefixAllocation = {
+	@description('The number of IP addresses to allocate.')
+	numberOfIpAddresses: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.ipamPoolPrefixAllocations[*].numberOfIpAddresses?
+	@description('The IPAM pool providing the address allocation.')
+	@validate(
+		value =>
+			value == null || Common.IsReferenceTo(
+				'Microsoft.Network/networkManagers/ipamPools',
+				value!.id
+			),
+		'The value must be a Microsoft.Network/networkManagers/ipamPools resource ID.'
+	)
+	pool: Common.ReferenceById?
+}
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -47,25 +68,81 @@ param settings {
 		@description('The service delegations for the subnet.')
 		delegations: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.delegations?
 		@description('The array of IpAllocation which reference this subnet.')
-		ipAllocations: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.ipAllocations?
+		@validate(
+			value =>
+				sys.empty(sys.filter(
+					value ?? [],
+					item =>
+						!Common.IsReferenceTo(
+							'Microsoft.Network/ipAllocations',
+							item.id
+						)
+				)),
+			'Each value must be a Microsoft.Network/ipAllocations resource ID.'
+		)
+		ipAllocations: Common.ReferenceById[]?
 		@description('The IPAM pools allocating the subnet address prefixes. Mutually exclusive with addressPrefixes.')
-		ipamPoolPrefixAllocations: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.ipamPoolPrefixAllocations?
+		ipamPoolPrefixAllocations: IpamPoolPrefixAllocation[]?
 		@description('The NAT gateway associated with the subnet.')
-		natGateway: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.natGateway?
+		@validate(
+			value =>
+				value == null || Common.IsReferenceTo(
+					'Microsoft.Network/natGateways',
+					value!.id
+				),
+			'The value must be a Microsoft.Network/natGateways resource ID.'
+		)
+		natGateway: Common.ReferenceById?
 		@description('The network security group associated with the subnet.')
-		networkSecurityGroup: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.networkSecurityGroup?
+		@validate(
+			value =>
+				value == null || Common.IsReferenceTo(
+					'Microsoft.Network/networkSecurityGroups',
+					value!.id
+				),
+			'The value must be a Microsoft.Network/networkSecurityGroups resource ID.'
+		)
+		networkSecurityGroup: Common.ReferenceById?
 		@description('The network policies applied to private endpoints in the subnet.')
 		privateEndpointNetworkPolicies: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.privateEndpointNetworkPolicies?
 		@description('The network policies applied to private link services in the subnet.')
 		privateLinkServiceNetworkPolicies: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.privateLinkServiceNetworkPolicies?
 		@description('The route table associated with the subnet.')
-		routeTable: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.routeTable?
+		@validate(
+			value =>
+				value == null || Common.IsReferenceTo(
+					'Microsoft.Network/routeTables',
+					value!.id
+				),
+			'The value must be a Microsoft.Network/routeTables resource ID.'
+		)
+		routeTable: Common.ReferenceById?
 		@description('An array of service endpoint policies.')
-		serviceEndpointPolicies: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.serviceEndpointPolicies?
+		@validate(
+			value =>
+				sys.empty(sys.filter(
+					value ?? [],
+					item =>
+						!Common.IsReferenceTo(
+							'Microsoft.Network/serviceEndpointPolicies',
+							item.id
+						)
+				)),
+			'Each value must be a Microsoft.Network/serviceEndpointPolicies resource ID.'
+		)
+		serviceEndpointPolicies: Common.ReferenceById[]?
 		@description('An array of service endpoints.')
 		serviceEndpoints: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.serviceEndpoints?
 		@description('Reference to an existing service gateway.')
-		serviceGateway: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.serviceGateway?
+		@validate(
+			value =>
+				value == null || Common.IsReferenceTo(
+					'Microsoft.Network/serviceGateways',
+					value!.id
+				),
+			'The value must be a Microsoft.Network/serviceGateways resource ID.'
+		)
+		serviceGateway: Common.ReferenceById?
 		@description('The sharing scope of the subnet.')
 		sharingScope: resourceInput<'Microsoft.Network/virtualNetworks/subnets@2026-03-01'>.properties.sharingScope?
 	}

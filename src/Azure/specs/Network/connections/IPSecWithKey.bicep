@@ -15,13 +15,11 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../library/common.bicep'
+
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 import * as NetworkConnections from '../../../library/Network/connections.bicep'
-
-import * as NetworkLocalNetworkGateways from '../../../library/Network/localNetworkGateways.bicep'
-
-import * as NetworkVirtualNetworkGateways from '../../../library/Network/virtualNetworkGateways.bicep'
 
 /* TYPES */
 
@@ -35,9 +33,33 @@ type ConnectionPropertiesInput = {
 	@description('Specifies whether BGP is enabled for this connection.')
 	enableBgp: bool?
 	@description('The ingress NAT rules.')
-	ingressNatRules: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.ingressNatRules?
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				item =>
+					!Common.IsReferenceTo(
+						'Microsoft.Network/virtualNetworkGateways/natRules',
+						item.id
+					)
+			)),
+		'Each value must be a Microsoft.Network/virtualNetworkGateways/natRules resource ID.'
+	)
+	ingressNatRules: Common.ReferenceById[]?
 	@description('The egress NAT rules.')
-	egressNatRules: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.egressNatRules?
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				item =>
+					!Common.IsReferenceTo(
+						'Microsoft.Network/virtualNetworkGateways/natRules',
+						item.id
+					)
+			)),
+		'Each value must be a Microsoft.Network/virtualNetworkGateways/natRules resource ID.'
+	)
+	egressNatRules: Common.ReferenceById[]?
 	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
 	@minLength(1)
 	@maxLength(1)
@@ -52,13 +74,21 @@ type ConnectionPropertiesInput = {
 	)
 	ipsecPolicies: NetworkConnections.IPSecPolicy[]
 	@description('The reference to the Microsoft.Network/localNetworkGateways resource.')
-	localNetworkGateway2: NetworkLocalNetworkGateways.Reference
+	@validate(
+		value =>
+			Common.IsReferenceTo(
+				'Microsoft.Network/localNetworkGateways',
+				value.id
+			),
+		'The value must be a Microsoft.Network/localNetworkGateways resource ID.'
+	)
+	localNetworkGateway2: Common.ReferenceById
 	@description('The ID of the Microsoft.KeyVault/vaults/secrets resource.')
 	@validate(
 		value =>
-			sys.like(
-				value,
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.KeyVault/vaults/*/secrets/*'
+			Common.IsReferenceTo(
+				'Microsoft.KeyVault/vaults/secrets',
+				value
 			),
 		'The value must be a Microsoft.KeyVault/vaults/secrets resource ID.'
 	)
@@ -68,7 +98,15 @@ type ConnectionPropertiesInput = {
 	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
 	usePolicyBasedTrafficSelectors: bool?
 	@description('The reference to the primary Microsoft.Network/virtualNetworkGateways resource.')
-	virtualNetworkGateway1: NetworkVirtualNetworkGateways.Reference
+	@validate(
+		value =>
+			Common.IsReferenceTo(
+				'Microsoft.Network/virtualNetworkGateways',
+				value.id
+			),
+		'The value must be a Microsoft.Network/virtualNetworkGateways resource ID.'
+	)
+	virtualNetworkGateway1: Common.ReferenceById
 }
 
 /* PARAMETERS */

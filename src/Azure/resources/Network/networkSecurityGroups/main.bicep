@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Network/networkSecurityGroups resource with extensions.'
+metadata description = 'Provisions a Microsoft.Network/networkSecurityGroups resource with child security rules and extensions.'
 
 /* SCOPE */
 
@@ -34,6 +34,13 @@ param extensions {
 	}
 }
 
+@description('The child resources.')
+@sealed()
+param resources {
+	@description('The security rules of the network security group.')
+	securityRules: NetworkNetworkSecurityGroups.SecurityRuleResource[]
+}
+
 @description('The resource settings.')
 @sealed()
 param settings {
@@ -46,8 +53,6 @@ param settings {
 	properties: {
 		@description('Specifies whether flows created from network security group connections are re-evaluated when rules are updated.')
 		flushConnection: bool
-		@description('The security rules of the network security group.')
-		securityRules: NetworkNetworkSecurityGroups.SecurityRuleResource[]?
 	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/networkSecurityGroups@2026-03-01'>.tags
@@ -58,9 +63,24 @@ param settings {
 resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups@2026-03-01' = {
 	location: settings.location
 	name: settings.name
-	properties: settings.properties
+	properties: {
+		flushConnection: settings.properties.flushConnection
+		// The current NSG API design resets security rules omitted from parent updates, including separately deployed child rules.
+		// Read the existing resource's rules and pass them back inline to preserve them before deploying child updates.
+		securityRules: this.existingResource().?properties.securityRules
+	}
 	tags: settings.tags
 }
+
+// Competing writes to the same network security group can fail with AnotherOperationInProgress, so the rules are deployed one at a time.
+@batchSize(1)
+resource Network_networkSecurityGroups_securityRules_ 'Microsoft.Network/networkSecurityGroups/securityRules@2026-03-01' = [
+	for item in resources.securityRules: {
+		name: item.name
+		parent: Network_networkSecurityGroups_
+		properties: item.properties
+	}
+]
 
 /* EXTENSIONS */
 

@@ -15,9 +15,30 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../library/common.bicep'
+
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* TYPES */
+
+@description('The DDoS protection settings for a regional public IP address.')
+@sealed()
+type DdosSettings = {
+	@description('The DDoS protection custom policy associated with the public IP address.')
+	ddosCustomPolicy: Common.ReferenceById?
+	@description('The DDoS protection plan associated with the public IP address.')
+	@validate(
+		value =>
+			value == null || Common.IsReferenceTo(
+				'Microsoft.Network/ddosProtectionPlans',
+				value!.id
+			),
+		'The value must be a Microsoft.Network/ddosProtectionPlans resource ID.'
+	)
+	ddosProtectionPlan: Common.ReferenceById?
+	@description('The DDoS protection mode.')
+	protectionMode: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.ddosSettings.protectionMode?
+}
 
 @description('The configurable properties for a regional public IP address.')
 @discriminator('publicIPAddressVersion')
@@ -29,7 +50,7 @@ type PublicIPAddressPropertiesInput =
 @sealed()
 type PublicIPAddressPropertiesIPv4 = {
 	@description('The DDoS protection custom policy associated with the public IP address.')
-	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.ddosSettings?
+	ddosSettings: DdosSettings?
 	@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')
 	@sealed()
 	dnsSettings: {
@@ -50,14 +71,22 @@ type PublicIPAddressPropertiesIPv4 = {
 	@description('The public IP address version.')
 	publicIPAddressVersion: 'IPv4'
 	@description('The public IP prefix this public IP address should be allocated from.')
-	publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.publicIPPrefix?
+	@validate(
+		value =>
+			value == null || Common.IsReferenceTo(
+				'Microsoft.Network/publicIPPrefixes',
+				value!.id
+			),
+		'The value must be a Microsoft.Network/publicIPPrefixes resource ID.'
+	)
+	publicIPPrefix: Common.ReferenceById?
 }
 
 @description('The configurable properties for an IPv6 regional public IP address.')
 @sealed()
 type PublicIPAddressPropertiesIPv6 = {
 	@description('The DDoS protection custom policy associated with the public IP address.')
-	ddosSettings: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.ddosSettings?
+	ddosSettings: DdosSettings?
 	@description('The optional DNS settings. When supplied, both the domain name label and its reuse scope are required.')
 	@sealed()
 	dnsSettings: {
@@ -81,7 +110,15 @@ type PublicIPAddressPropertiesIPv6 = {
 	@description('The public IP address version.')
 	publicIPAddressVersion: 'IPv6'
 	@description('The public IP prefix this public IP address should be allocated from.')
-	publicIPPrefix: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.publicIPPrefix?
+	@validate(
+		value =>
+			value == null || Common.IsReferenceTo(
+				'Microsoft.Network/publicIPPrefixes',
+				value!.id
+			),
+		'The value must be a Microsoft.Network/publicIPPrefixes resource ID.'
+	)
+	publicIPPrefix: Common.ReferenceById?
 }
 
 /* PARAMETERS */

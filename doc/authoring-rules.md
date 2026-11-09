@@ -18,39 +18,45 @@ The Foundation Contract owns architectural and security policy; this file owns B
 - Declarations within each section MUST be sorted alphabetically by declared name.
 - Built-in function calls MUST be namespace-qualified, such as `sys.map` or `az.resourceId`.
 - Imports MUST use `import * as <Namespace> from '<path>'`.
-- Imported symbols MUST be accessed through their import namespace, such as `Common.ResourceReference` or `AuthorizationRoleAssignments.CreateArray`.
+- Imported symbols MUST be accessed through their import namespace, such as `Common.ReferenceByName` or `AuthorizationRoleAssignments.CreateArray`.
 
 ## Types
 
+### Naming
+
 - User-defined data type names MUST describe the values they represent.
 - `Resource` MUST represent Azure-shaped resource settings requiring no translation or completion.
-- Consumers of `Resource` types MAY supply deployment context such as `parent` or `scope`.
 - Types representing complete Azure-shaped child resource settings MUST use `<ChildResourceType>Resource`, such as `KeyValueResource`.
 - When used, `Input` MUST be the final suffix after `Resource` or `Properties`, optionally preceded by a resource or scenario name; such a type MUST represent a value requiring translation or completion in a helper or resource declaration.
 - Types representing only Azure-shaped properties MAY use `Properties` or `<Kind>Properties`, such as `KeyValueProperties`.
 - Nested configuration, domain values, references, and union variants MUST NOT use the `Input` suffix.
+
+### Definitions
+
+- Consumers of `Resource` types MAY supply deployment context such as `parent` or `scope`.
 - Native resource-derived types, such as `resourceInput` and `resourceOutput`, SHOULD be preferred and MUST NOT be decorated with `@sealed()`.
 - Explicit object types declaring only named properties MUST use `@sealed()` at every nesting level, including empty object types and object types used for properties, array items, union variants, additional-property values, and permitted outputs.
 - Array items MUST use named sealed types where inline decoration is unsupported.
 - Object types using `*:` to declare additional properties MUST remain open; any explicitly declared object type used as an additional-property value MUST follow the same sealing rule.
 
-## Descriptions and Constraints
+## Descriptions
 
 - Boolean descriptions MUST use `Specifies whether <subject> <condition>.`.
 - Boolean descriptions MUST NOT use `whether or not`, `flag`, or imperative wording.
 - Resource ID property descriptions MUST use `The ID of the <provider/type> resource.` with canonical resource types; non-resource identifiers such as Entra object, subscription, tenant, and application IDs are excluded.
+
+## Constraints
+
 - `@validate()` MUST target the narrowest supported parameter/property owning each semantic invariant group.
 - Conditions within the same semantic invariant group MUST be combined in one predicate.
 - `@validate()` constraints intrinsic to properties of user-defined data types MUST be declared on those properties; type declarations MUST NOT be decorated with `@validate()`.
-- Resource ID parameters/properties MUST use `@validate()` with case-insensitive `sys.like()` and a canonical pattern, such as `/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*` (shape check only: `*` also matches `/` and empty text).
-- Optional resource ID values MUST accept null: `value == null || sys.like(value!, pattern)`.
-- Resource reference objects MUST validate `id`: `sys.like(value.?id ?? '', pattern)`.
-- Resource ID arrays MUST validate every element using `sys.filter()`.
+- Resource IDs MUST be validated with `@validate()` using `Common.IsReferenceTo`.
+- Arrays of resource IDs or references MUST validate every item using `sys.filter()` and `Common.IsReferenceTo`.
 
 ### Validation Messages
 
 - All `@validate()` messages MUST state the required valid configuration in declarative English, start with a capital letter (unless starting with a case-sensitive identifier), and end with a period.
-- Messages MUST use `<subject> must <constraint>.` or `<subject> must not <constraint>.`, except for the `At most one ... may ...` templates below. They MUST NOT use imperative wording (`Supply`, `Provide`), `requires`, `is required`, `cannot`, or `does not support`.
+- Messages MUST follow the applicable template below. When no template applies, use `<subject> must <constraint>.` or `<subject> must not <constraint>`. Messages MUST NOT use imperative wording (`Supply`, `Provide`), `requires`, `is required`, `cannot`, or `does not support`.
 - Messages MUST use exact property names or unambiguous domain terms. String literals MUST be enclosed in double quotes when needed to distinguish values, especially values containing commas.
 - Equivalent constraints MUST use the same template, adapted only for subjects, values, conditions, and collection scope:
 

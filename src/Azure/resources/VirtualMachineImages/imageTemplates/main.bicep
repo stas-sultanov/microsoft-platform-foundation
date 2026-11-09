@@ -15,6 +15,8 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../library/common.bicep'
+
 /* TYPES */
 @description('Versioning settings for a shared image distributor.')
 @discriminator('scheme')
@@ -52,9 +54,9 @@ type ImageTemplateSharedImageDistributor = {
 	@description('The ID of the Microsoft.Compute/galleries/images resource.')
 	@validate(
 		value =>
-			sys.like(
-				value,
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Compute/galleries/*/images/*'
+			Common.IsReferenceTo(
+				'Microsoft.Compute/galleries/images',
+				value
 			),
 		'The value must be a Microsoft.Compute/galleries/images resource ID.'
 	)

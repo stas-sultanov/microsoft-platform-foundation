@@ -14,7 +14,7 @@ targetScope = 'resourceGroup'
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.DocumentDB/databaseAccounts resource.')
-param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
+param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.name
 
 @description('The resource settings.')
 @sealed()
@@ -52,9 +52,9 @@ param settings {
 				)),
 			'Each scope must be "/", "/dbs/{databaseName}", or "/dbs/{databaseName}/colls/{containerName}".'
 		)
-		assignableScopes: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview'>.properties.assignableScopes
+		assignableScopes: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2025-11-01-preview'>.properties.assignableScopes
 		@description('The set of operations allowed through this Role Definition.')
-		permissions: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview'>.properties.permissions
+		permissions: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2025-11-01-preview'>.properties.permissions
 		@description('A user-friendly name for the Role Definition. Must be unique for the database account.')
 		roleName: string
 	}
@@ -63,14 +63,14 @@ param settings {
 /* EXISTING RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' existing = {
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' existing = {
 	name: parentName
 }
 
 /* RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2026-04-01-preview' = {
+resource DocumentDB_databaseAccounts_sqlRoleDefinitions_ 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2025-11-01-preview' = {
 	name: sys.guid(
 		DocumentDB_databaseAccounts_.id,
 		settings.properties.roleName

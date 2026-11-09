@@ -9,22 +9,6 @@ metadata description = 'Provides reusable types for Microsoft.Network/networkSec
 
 /* TYPES */
 
-@description('A reference to a network security group.')
-@export()
-@sealed()
-type Reference = {
-	@description('The ID of the Microsoft.Network/networkSecurityGroups resource.')
-	@validate(
-		value =>
-			sys.like(
-				value,
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/networkSecurityGroups/*'
-			),
-		'The value must be a Microsoft.Network/networkSecurityGroups resource ID.'
-	)
-	id: string
-}
-
 @description('The configuration of a Microsoft.Network/networkSecurityGroups/securityRules resource.')
 @export()
 @sealed()

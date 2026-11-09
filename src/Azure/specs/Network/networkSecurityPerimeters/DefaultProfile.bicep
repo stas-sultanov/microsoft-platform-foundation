@@ -15,6 +15,8 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../library/common.bicep'
+
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 import * as NetworkNetworkSecurityPerimeters from '../../../library/Network/networkSecurityPerimeters.bicep'
@@ -63,12 +65,12 @@ param resources {
 				@validate(
 					value =>
 						sys.like(
-							value.?id ?? '',
+							value.id,
 							'/subscriptions/*/resourceGroups/*/providers/*'
 						),
 					'The value must be an Azure resource ID.'
 				)
-				privateLinkResource: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-03-01'>.properties.privateLinkResource
+				privateLinkResource: Common.ReferenceById
 			}
 		}
 	}

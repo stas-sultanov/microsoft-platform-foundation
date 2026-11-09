@@ -9,7 +9,7 @@ metadata description = 'Provides reusable types and functions for Microsoft.Netw
 
 /* IMPORTS */
 
-import * as NetworkPublicIPAddresses from './publicIPAddresses.bicep'
+import * as Common from '../common.bicep'
 
 /* TYPES */
 
@@ -103,25 +103,41 @@ type BgpSettings = {
 	}?
 }
 
-@description('The configurable public IP and subnet references for a gateway IP configuration.')
+@description('The configuration of a virtual network gateway IP configuration.')
 @export()
 @sealed()
-type IpConfiguration = {
-	@description('The reference to a Standard, Static public IP address resource.')
-	publicIPAddress: NetworkPublicIPAddresses.Reference
-	@description('The reference to the subnet resource named GatewaySubnet.')
+type IpConfigurationResource = {
+	@description('The name.')
+	@minLength(1)
+	name: string
+	@description('The properties.')
 	@sealed()
-	subnet: {
-		@description('The ID of the Microsoft.Network/virtualNetworks/subnets resource.')
+	properties: {
+		@description('The private IP allocation method.')
+		privateIPAllocationMethod: 'Dynamic'
+		@description('The reference to a Standard, Static public IP address resource.')
 		@validate(
 			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworks/*/subnets/GatewaySubnet'
+				Common.IsReferenceTo(
+					'Microsoft.Network/publicIPAddresses',
+					value.id
 				),
-			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
+			'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
 		)
-		id: string
+		publicIPAddress: Common.ReferenceById
+		@description('The reference to the subnet resource named GatewaySubnet.')
+		@validate(
+			value =>
+				Common.IsReferenceTo(
+					'Microsoft.Network/virtualNetworks/subnets',
+					value.id
+				) && sys.endsWith(
+					sys.toLower(value.id),
+					'/GatewaySubnet'
+				),
+			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID ending in GatewaySubnet.'
+		)
+		subnet: Common.ReferenceById
 	}
 }
 
@@ -133,22 +149,6 @@ type NatRuleResource = {
 	name: string
 	@description('Properties of the virtual network gateway NAT rule.')
 	properties: resourceInput<'Microsoft.Network/virtualNetworkGateways/natRules@2026-03-01'>.properties
-}
-
-@description('A reference to a virtual network gateway.')
-@export()
-@sealed()
-type Reference = {
-	@description('The ID of the Microsoft.Network/virtualNetworkGateways resource.')
-	@validate(
-		value =>
-			sys.like(
-				value,
-				'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworkGateways/*'
-			),
-		'The value must be a Microsoft.Network/virtualNetworkGateways resource ID.'
-	)
-	id: string
 }
 
 /* FUNCTIONS */
@@ -166,18 +166,4 @@ func CreateBgpPeeringAddress(
 		gatewayName,
 		ipConfigurationName
 	)
-}
-
-@description('Creates a gateway IP configuration with a public IP address and dynamically allocated private IP address.')
-@export()
-func CreateIpConfiguration(
-	name string,
-	input IpConfiguration
-) resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-03-01'>.properties.ipConfigurations[*] => {
-	name: name
-	properties: {
-		privateIPAllocationMethod: 'Dynamic'
-		publicIPAddress: input.publicIPAddress
-		subnet: input.subnet
-	}
 }

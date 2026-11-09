@@ -11,6 +11,10 @@ metadata description = 'Provisions standard set of Microsoft.AlertsManagement/sm
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as Common from '../../library/common.bicep'
+
 /* TYPES */
 
 @description('The configuration of a smart detector alert rule.')
@@ -47,9 +51,9 @@ param alertRules {
 		sys.length(sys.filter(
 			value.groupIds,
 			id =>
-				!sys.like(
-					id,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Insights/actionGroups/*'
+				!Common.IsReferenceTo(
+					'Microsoft.Insights/actionGroups',
+					id
 				)
 		)) == 0,
 	'Each value must be a Microsoft.Insights/actionGroups resource ID.'

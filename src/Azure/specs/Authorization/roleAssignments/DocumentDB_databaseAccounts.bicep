@@ -18,7 +18,7 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 /* PARAMETERS */
 
 @description('Name of the Microsoft.DocumentDB/databaseAccounts resource.')
-param name resourceInput<'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview'>.name
+param name resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.name
 
 @description('Collection of role assignments.')
 param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
@@ -26,7 +26,7 @@ param roleAssignments AuthorizationRoleAssignments.ResourceInput[]
 /* EXISTING RESOURCES */
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
-resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2026-04-01-preview' existing = {
+resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview' existing = {
 	name: name
 }
 

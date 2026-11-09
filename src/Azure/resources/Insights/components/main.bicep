@@ -15,6 +15,8 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../library/common.bicep'
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -43,9 +45,9 @@ param settings {
 		@description('The ID of the Microsoft.OperationalInsights/workspaces resource.')
 		@validate(
 			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.OperationalInsights/workspaces/*'
+				Common.IsReferenceTo(
+					'Microsoft.OperationalInsights/workspaces',
+					value
 				),
 			'The value must be a Microsoft.OperationalInsights/workspaces resource ID.'
 		)

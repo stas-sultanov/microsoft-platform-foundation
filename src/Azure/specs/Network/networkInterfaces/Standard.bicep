@@ -35,19 +35,9 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as Common from '../../../library/common.bicep'
+
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
-
-import * as NetworkApplicationGateways from '../../../library/Network/applicationGateways.bicep'
-
-import * as NetworkApplicationSecurityGroups from '../../../library/Network/applicationSecurityGroups.bicep'
-
-import * as NetworkLoadBalancers from '../../../library/Network/loadBalancers.bicep'
-
-import * as NetworkNetworkSecurityGroups from '../../../library/Network/networkSecurityGroups.bicep'
-
-import * as NetworkPublicIPAddresses from '../../../library/Network/publicIPAddresses.bicep'
-
-import * as NetworkVirtualNetworks from '../../../library/Network/virtualNetworks.bicep'
 
 /* TYPES */
 
@@ -62,37 +52,141 @@ type IPConfigurationProperties =
 @sealed()
 type IPConfigurationPropertiesDynamic = {
 	@description('The application gateway backend address pools.')
-	applicationGatewayBackendAddressPools: NetworkApplicationGateways.BackendAddressPoolReference[]?
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				item =>
+					!Common.IsReferenceTo(
+						'Microsoft.Network/applicationGateways/backendAddressPools',
+						item.id
+					)
+			)),
+		'Each value must be a Microsoft.Network/applicationGateways/backendAddressPools resource ID.'
+	)
+	applicationGatewayBackendAddressPools: Common.ReferenceById[]?
 	@description('The application security groups.')
-	applicationSecurityGroups: NetworkApplicationSecurityGroups.Reference[]?
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				item =>
+					!Common.IsReferenceTo(
+						'Microsoft.Network/applicationSecurityGroups',
+						item.id
+					)
+			)),
+		'Each value must be a Microsoft.Network/applicationSecurityGroups resource ID.'
+	)
+	applicationSecurityGroups: Common.ReferenceById[]?
 	@description('The load balancer backend address pools.')
-	loadBalancerBackendAddressPools: NetworkLoadBalancers.BackendAddressPoolReference[]?
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				item =>
+					!Common.IsReferenceTo(
+						'Microsoft.Network/loadBalancers/backendAddressPools',
+						item.id
+					)
+			)),
+		'Each value must be a Microsoft.Network/loadBalancers/backendAddressPools resource ID.'
+	)
+	loadBalancerBackendAddressPools: Common.ReferenceById[]?
 	@description('The private IP address allocation method.')
 	privateIPAllocationMethod: 'Dynamic'
 	@description('The public IP address. It must be an IPv4 address with the Standard SKU.')
-	publicIPAddress: NetworkPublicIPAddresses.Reference?
+	@validate(
+		value =>
+			value == null || Common.IsReferenceTo(
+				'Microsoft.Network/publicIPAddresses',
+				value!.id
+			),
+		'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
+	)
+	publicIPAddress: Common.ReferenceById?
 	@description('The subnet. It must be the same for all IP configurations of the network interface.')
-	subnet: NetworkVirtualNetworks.SubnetReference
+	@validate(
+		value =>
+			Common.IsReferenceTo(
+				'Microsoft.Network/virtualNetworks/subnets',
+				value.id
+			),
+		'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
+	)
+	subnet: Common.ReferenceById
 }
 
 @description('The properties of an IPv4 IP configuration with a statically allocated private IP address.')
 @sealed()
 type IPConfigurationPropertiesStatic = {
 	@description('The application gateway backend address pools.')
-	applicationGatewayBackendAddressPools: NetworkApplicationGateways.BackendAddressPoolReference[]?
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				item =>
+					!Common.IsReferenceTo(
+						'Microsoft.Network/applicationGateways/backendAddressPools',
+						item.id
+					)
+			)),
+		'Each value must be a Microsoft.Network/applicationGateways/backendAddressPools resource ID.'
+	)
+	applicationGatewayBackendAddressPools: Common.ReferenceById[]?
 	@description('The application security groups.')
-	applicationSecurityGroups: NetworkApplicationSecurityGroups.Reference[]?
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				item =>
+					!Common.IsReferenceTo(
+						'Microsoft.Network/applicationSecurityGroups',
+						item.id
+					)
+			)),
+		'Each value must be a Microsoft.Network/applicationSecurityGroups resource ID.'
+	)
+	applicationSecurityGroups: Common.ReferenceById[]?
 	@description('The load balancer backend address pools.')
-	loadBalancerBackendAddressPools: NetworkLoadBalancers.BackendAddressPoolReference[]?
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				item =>
+					!Common.IsReferenceTo(
+						'Microsoft.Network/loadBalancers/backendAddressPools',
+						item.id
+					)
+			)),
+		'Each value must be a Microsoft.Network/loadBalancers/backendAddressPools resource ID.'
+	)
+	loadBalancerBackendAddressPools: Common.ReferenceById[]?
 	@description('The private IPv4 address within the subnet address range.')
 	@minLength(1)
 	privateIPAddress: string
 	@description('The private IP address allocation method.')
 	privateIPAllocationMethod: 'Static'
 	@description('The public IP address. It must be an IPv4 address with the Standard SKU.')
-	publicIPAddress: NetworkPublicIPAddresses.Reference?
+	@validate(
+		value =>
+			value == null || Common.IsReferenceTo(
+				'Microsoft.Network/publicIPAddresses',
+				value!.id
+			),
+		'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
+	)
+	publicIPAddress: Common.ReferenceById?
 	@description('The subnet. It must be the same for all IP configurations of the network interface.')
-	subnet: NetworkVirtualNetworks.SubnetReference
+	@validate(
+		value =>
+			Common.IsReferenceTo(
+				'Microsoft.Network/virtualNetworks/subnets',
+				value.id
+			),
+		'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
+	)
+	subnet: Common.ReferenceById
 }
 
 @description('An IPv4 IP configuration of the network interface.')
@@ -171,7 +265,15 @@ param settings {
 			*: IPConfigurationResourceInput
 		}
 		@description('The network security group associated with the network interface.')
-		networkSecurityGroup: NetworkNetworkSecurityGroups.Reference?
+		@validate(
+			value =>
+				value == null || Common.IsReferenceTo(
+					'Microsoft.Network/networkSecurityGroups',
+					value!.id
+				),
+			'The value must be a Microsoft.Network/networkSecurityGroups resource ID.'
+		)
+		networkSecurityGroup: Common.ReferenceById?
 	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/networkInterfaces@2026-03-01'>.tags
