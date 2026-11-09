@@ -35,9 +35,9 @@ type ConnectionPropertiesInput = {
 	@description('Specifies whether BGP is enabled for this connection.')
 	enableBgp: bool?
 	@description('The ingress NAT rules.')
-	ingressNatRules: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.ingressNatRules?
+	ingressNatRules: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.ingressNatRules?
 	@description('The egress NAT rules.')
-	egressNatRules: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.egressNatRules?
+	egressNatRules: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.egressNatRules?
 	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
 	@minLength(1)
 	@maxLength(1)
@@ -64,7 +64,7 @@ type ConnectionPropertiesInput = {
 	)
 	sharedKeyKeyVaultId: string
 	@description('The custom traffic selector policies, configured independently of usePolicyBasedTrafficSelectors.')
-	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-01-01'>.properties.trafficSelectorPolicies?
+	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.trafficSelectorPolicies?
 	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
 	usePolicyBasedTrafficSelectors: bool?
 	@description('The reference to the primary Microsoft.Network/virtualNetworkGateways resource.')
@@ -92,11 +92,11 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/connections@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/connections@2026-03-01'>.name
 	@description('The configurable properties.')
 	properties: ConnectionPropertiesInput
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/connections@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/connections@2026-03-01'>.tags
 }
 
 /* VARIABLES */
@@ -117,7 +117,7 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-05-15' existing = {
 	)
 }
 
-resource Network_connections_ 'Microsoft.Network/connections@2026-01-01' existing = {
+resource Network_connections_ 'Microsoft.Network/connections@2026-03-01' existing = {
 	dependsOn: [
 		Network_connections_Module_
 	]

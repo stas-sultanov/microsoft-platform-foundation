@@ -36,33 +36,32 @@ param extensions {
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.identity?
+	identity: resourceInput<'Microsoft.Cache/redisEnterprise@2026-09-01'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.name
+	name: resourceInput<'Microsoft.Cache/redisEnterprise@2026-09-01'>.name
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
 		@description('Dataset replication configuration for the Redis Enterprise cluster.')
-		highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.properties.highAvailability
+		highAvailability: resourceInput<'Microsoft.Cache/redisEnterprise@2026-09-01'>.properties.highAvailability
 		@description('Cluster-level maintenance configuration.')
-		maintenanceConfiguration: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.properties.maintenanceConfiguration
+		maintenanceConfiguration: resourceInput<'Microsoft.Cache/redisEnterprise@2026-09-01'>.properties.maintenanceConfiguration
 		@description('The network access mode.')
-		publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.properties.publicNetworkAccess
+		publicNetworkAccess: resourceInput<'Microsoft.Cache/redisEnterprise@2026-09-01'>.properties.publicNetworkAccess
 	}
 	@description('The SKU.')
-	sku: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.sku
+	sku: resourceInput<'Microsoft.Cache/redisEnterprise@2026-09-01'>.sku
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.tags
+	tags: resourceInput<'Microsoft.Cache/redisEnterprise@2026-09-01'>.tags
 	@description('The zones.')
-	zones: resourceInput<'Microsoft.Cache/redisEnterprise@2026-06-01-preview'>.zones?
+	zones: resourceInput<'Microsoft.Cache/redisEnterprise@2026-09-01'>.zones?
 }
 
 /* RESOURCES */
 
-#disable-next-line use-recent-api-versions // maintenance window configuration is available in preview only
-resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-06-01-preview' = {
+resource Cache_redisEnterprise_ 'Microsoft.Cache/redisEnterprise@2026-09-01' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}

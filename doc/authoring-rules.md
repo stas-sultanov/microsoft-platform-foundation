@@ -50,7 +50,7 @@ The Foundation Contract owns architectural and security policy; this file owns B
 ### Validation Messages
 
 - All `@validate()` messages MUST state the required valid configuration in declarative English, start with a capital letter (unless starting with a case-sensitive identifier), and end with a period.
-- Messages MUST use `<subject> must <constraint>.` or `<subject> must not <constraint>.`, except for the `At most one ... may ...` templates below; MUST NOT use imperative wording (`Supply`, `Provide`), `requires`, `is required`, `cannot`, or `does not support`.
+- Messages MUST use `<subject> must <constraint>.` or `<subject> must not <constraint>.`, except for the `At most one ... may ...` templates below. They MUST NOT use imperative wording (`Supply`, `Provide`), `requires`, `is required`, `cannot`, or `does not support`.
 - Messages MUST use exact property names or unambiguous domain terms. String literals MUST be enclosed in double quotes when needed to distinguish values, especially values containing commas.
 - Equivalent constraints MUST use the same template, adapted only for subjects, values, conditions, and collection scope:
 
@@ -84,7 +84,7 @@ The Foundation Contract owns architectural and security policy; this file owns B
 - `extensions` MUST group scoped non-child resources by provider/concern, such as `Authorization`, `Insights`, or `Maintenance`.
 - `resources` MUST be an object grouping child resource collections by child resource type, including when the module creates only one child resource type.
 - Each property in `resources` MUST use the child resource type segment as its name and contain an array of the corresponding `<ChildResourceType>Resource` type.
-- The `resources` parameter MUST use an inline object type expression so sensitive collections can be marked `@secure()` when needed; `@secure()` MUST be applied to the entire `resources` parameter when any child resource value is sensitive.
+- The `resources` parameter MUST use an inline object type expression. When any child resource value is sensitive, the entire `resources` parameter MUST be marked `@secure()`.
 - `settings` MUST contain primary-resource configuration, including applicable `identity`, `location`, `name`, `properties`, `sku`, `tags`, and `zones`.
 - `settings.properties` MUST represent Azure resource `properties`, using either its native resource-derived type or an intentionally curated subset.
 

@@ -51,7 +51,7 @@ type BgpWithFqdn = {
 	@description('The FQDN of the local network gateway.')
 	fqdn: string
 	@description('The address space of the local network site.')
-	localNetworkAddressSpace: resourceInput<'Microsoft.Network/localNetworkGateways@2026-01-01'>.properties.localNetworkAddressSpace?
+	localNetworkAddressSpace: resourceInput<'Microsoft.Network/localNetworkGateways@2026-03-01'>.properties.localNetworkAddressSpace?
 }
 
 @description('A local network gateway using BGP and an IP address endpoint.')
@@ -64,7 +64,7 @@ type BgpWithIp = {
 	@description('The IP address of the local network gateway.')
 	gatewayIpAddress: string
 	@description('The address space of the local network site.')
-	localNetworkAddressSpace: resourceInput<'Microsoft.Network/localNetworkGateways@2026-01-01'>.properties.localNetworkAddressSpace?
+	localNetworkAddressSpace: resourceInput<'Microsoft.Network/localNetworkGateways@2026-03-01'>.properties.localNetworkAddressSpace?
 }
 
 @description('The local network gateway properties for one of the supported BGP and endpoint configurations.')
@@ -101,7 +101,7 @@ type StaticWithFqdn = {
 	@description('The FQDN of the local network gateway.')
 	fqdn: string
 	@description('The address space of the local network site.')
-	localNetworkAddressSpace: resourceInput<'Microsoft.Network/localNetworkGateways@2026-01-01'>.properties.localNetworkAddressSpace
+	localNetworkAddressSpace: resourceInput<'Microsoft.Network/localNetworkGateways@2026-03-01'>.properties.localNetworkAddressSpace
 }
 
 @description('A local network gateway using static routing and an IP address endpoint.')
@@ -112,5 +112,5 @@ type StaticWithIp = {
 	@description('The IP address of the local network gateway.')
 	gatewayIpAddress: string
 	@description('The address space of the local network site.')
-	localNetworkAddressSpace: resourceInput<'Microsoft.Network/localNetworkGateways@2026-01-01'>.properties.localNetworkAddressSpace
+	localNetworkAddressSpace: resourceInput<'Microsoft.Network/localNetworkGateways@2026-03-01'>.properties.localNetworkAddressSpace
 }

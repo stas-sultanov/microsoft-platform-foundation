@@ -44,11 +44,11 @@ param extensions {
 @sealed()
 param settings {
 	@description('The identity.')
-	identity: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.identity?
+	identity: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-03-01'>.identity?
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-03-01'>.name
 	@description('The configurable properties.')
 	@sealed()
 	@validate(
@@ -77,7 +77,7 @@ param settings {
 			Instance1: NetworkVirtualNetworkGateways.IpConfiguration
 		}
 		@description('The optional VPN gateway NAT rules. Nonempty rules require VpnGw2AZ or higher.')
-		natRules: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.properties.natRules?
+		natRules: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-03-01'>.properties.natRules?
 		@description('The SKU.')
 		@sealed()
 		sku: {
@@ -91,12 +91,12 @@ param settings {
 		}
 	}
 	@description('The resource tags.')
-	tags: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-03-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2026-01-01' = {
+resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGateways@2026-03-01' = {
 	identity: settings.?identity ?? {
 		type: 'None'
 	}

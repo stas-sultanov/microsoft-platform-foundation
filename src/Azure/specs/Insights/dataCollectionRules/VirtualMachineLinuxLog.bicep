@@ -66,9 +66,10 @@ param settings {
 
 /* RESOURCES */
 
-// The output tables may not be ready when this rule is deployed.
+// The output table may not be ready when this rule is deployed.
 @retryOn([
 	'InvalidOutputTable'
+	'InvalidPayload'
 ])
 resource Insights_dataCollectionRules_ 'Microsoft.Insights/dataCollectionRules@2024-03-11' = {
 	identity: settings.?identity ?? {

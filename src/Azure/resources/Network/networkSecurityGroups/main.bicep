@@ -17,6 +17,8 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
+import * as NetworkNetworkSecurityGroups from '../../../library/Network/networkSecurityGroups.bicep'
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -38,16 +40,22 @@ param settings {
 	@description('The geo-location.')
 	location: string
 	@description('The name.')
-	name: resourceInput<'Microsoft.Network/networkSecurityGroups@2026-01-01'>.name
+	name: resourceInput<'Microsoft.Network/networkSecurityGroups@2026-03-01'>.name
 	@description('The configurable properties.')
-	properties: resourceInput<'Microsoft.Network/networkSecurityGroups@2026-01-01'>.properties
+	@sealed()
+	properties: {
+		@description('Specifies whether flows created from network security group connections are re-evaluated when rules are updated.')
+		flushConnection: bool
+		@description('The security rules of the network security group.')
+		securityRules: NetworkNetworkSecurityGroups.SecurityRuleResource[]?
+	}
 	@description('The tags.')
-	tags: resourceInput<'Microsoft.Network/networkSecurityGroups@2026-01-01'>.tags
+	tags: resourceInput<'Microsoft.Network/networkSecurityGroups@2026-03-01'>.tags
 }
 
 /* RESOURCES */
 
-resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups@2026-01-01' = {
+resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups@2026-03-01' = {
 	location: settings.location
 	name: settings.name
 	properties: settings.properties
