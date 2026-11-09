@@ -67,7 +67,7 @@ resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups
 		flushConnection: settings.properties.flushConnection
 		// The current NSG API design resets security rules omitted from parent updates, including separately deployed child rules.
 		// Read the existing resource's rules and pass them back inline to preserve them before deploying child updates.
-		securityRules: this.existingResource().?properties.securityRules ?? []
+		securityRules: this.existingResource().?properties.securityRules
 	}
 	tags: settings.tags
 }
