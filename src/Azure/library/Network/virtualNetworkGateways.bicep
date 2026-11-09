@@ -103,25 +103,34 @@ type BgpSettings = {
 	}?
 }
 
-@description('The configurable public IP and subnet references for a gateway IP configuration.')
+@description('The configuration of a virtual network gateway IP configuration.')
 @export()
 @sealed()
-type IpConfiguration = {
-	@description('The reference to a Standard, Static public IP address resource.')
-	publicIPAddress: NetworkPublicIPAddresses.Reference
-	@description('The reference to the subnet resource named GatewaySubnet.')
+type IpConfigurationResource = {
+	@description('The name.')
+	@minLength(1)
+	name: string
+	@description('The properties.')
 	@sealed()
-	subnet: {
-		@description('The ID of the Microsoft.Network/virtualNetworks/subnets resource.')
-		@validate(
-			value =>
-				sys.like(
-					value,
-					'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworks/*/subnets/GatewaySubnet'
-				),
-			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
-		)
-		id: string
+	properties: {
+		@description('The private IP allocation method.')
+		privateIPAllocationMethod: 'Dynamic'
+		@description('The reference to a Standard, Static public IP address resource.')
+		publicIPAddress: NetworkPublicIPAddresses.Reference
+		@description('The reference to the subnet resource named GatewaySubnet.')
+		@sealed()
+		subnet: {
+			@description('The ID of the Microsoft.Network/virtualNetworks/subnets resource.')
+			@validate(
+				value =>
+					sys.like(
+						value,
+						'/subscriptions/*/resourceGroups/*/providers/Microsoft.Network/virtualNetworks/*/subnets/GatewaySubnet'
+					),
+				'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
+			)
+			id: string
+		}
 	}
 }
 
@@ -166,18 +175,4 @@ func CreateBgpPeeringAddress(
 		gatewayName,
 		ipConfigurationName
 	)
-}
-
-@description('Creates a gateway IP configuration with a public IP address and dynamically allocated private IP address.')
-@export()
-func CreateIpConfiguration(
-	name string,
-	input IpConfiguration
-) resourceInput<'Microsoft.Network/virtualNetworkGateways@2026-03-01'>.properties.ipConfigurations[*] => {
-	name: name
-	properties: {
-		privateIPAllocationMethod: 'Dynamic'
-		publicIPAddress: input.publicIPAddress
-		subnet: input.subnet
-	}
 }
