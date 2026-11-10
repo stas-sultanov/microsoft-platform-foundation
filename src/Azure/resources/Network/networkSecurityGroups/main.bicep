@@ -39,7 +39,7 @@ param extensions {
 param resources {
 	@description('The security rules of the network security group.')
 	securityRules: NetworkNetworkSecurityGroups.SecurityRuleResource[]
-}
+}?
 
 @description('The resource settings.')
 @sealed()
@@ -75,7 +75,7 @@ resource Network_networkSecurityGroups_ 'Microsoft.Network/networkSecurityGroups
 // Competing writes to the same network security group can fail with AnotherOperationInProgress, so the rules are deployed one at a time.
 @batchSize(1)
 resource Network_networkSecurityGroups_securityRules_ 'Microsoft.Network/networkSecurityGroups/securityRules@2026-03-01' = [
-	for item in resources.securityRules: {
+	for item in resources.?securityRules ?? []: {
 		name: item.name
 		parent: Network_networkSecurityGroups_
 		properties: item.properties

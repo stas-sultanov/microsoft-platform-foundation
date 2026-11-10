@@ -17,6 +17,19 @@ import * as AuthorizationRoleAssignments from '../../../library/Authorization/ro
 
 import * as NetworkDnsZones from '../../../library/Network/dnsZones.bicep'
 
+/* TYPES */
+
+@description('Represents a virtual network link resource.')
+@sealed()
+type VirtualNetworkLinkResource = {
+	@description('The resource name.')
+	name: string
+	@description('Properties of the virtual network link to the Private DNS zone.')
+	properties: resourceInput<'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01'>.tags
+}
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -32,21 +45,9 @@ param extensions {
 @sealed()
 param resources {
 	@description('The A records.')
-	A: {
-		*: NetworkDnsZones.ARecord
-	}
+	A: NetworkDnsZones.ARecord[]
 	@description('The virtual network links.')
-	virtualNetworkLinks: {
-		@sealed()
-		*: {
-			@description('The resource name.')
-			name: string
-			@description('Properties of the virtual network link to the Private DNS zone.')
-			properties: resourceInput<'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01'>.properties
-			@description('The tags.')
-			tags: resourceInput<'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01'>.tags
-		}
-	}
+	virtualNetworkLinks: VirtualNetworkLinkResource[]
 }
 
 @description('The resource settings.')
@@ -69,28 +70,28 @@ resource Network_privateDnsZones_ 'Microsoft.Network/privateDnsZones@2024-06-01'
 }
 
 resource Network_privateDnsZones_A_ 'Microsoft.Network/privateDnsZones/A@2024-06-01' = [
-	for item in sys.items(resources.A): {
+	for item in resources.A: {
 		parent: Network_privateDnsZones_
-		name: item.value.name
+		name: item.name
 		properties: {
 			aRecords: sys.map(
-				item.value.values,
+				item.values,
 				value => {
 					ipv4Address: value
 				}
 			)
-			ttl: item.value.ttl
+			ttl: item.ttl
 		}
 	}
 ]
 
 resource Network_privateDnsZones_virtualNetworkLinks_ 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = [
-	for item in sys.items(resources.virtualNetworkLinks): {
+	for item in resources.virtualNetworkLinks: {
 		location: settings.location
-		name: item.value.name
+		name: item.name
 		parent: Network_privateDnsZones_
-		properties: item.value.properties
-		tags: item.value.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 

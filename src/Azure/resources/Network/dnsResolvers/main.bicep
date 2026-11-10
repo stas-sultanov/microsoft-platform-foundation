@@ -54,13 +54,9 @@ param extensions {
 @sealed()
 param resources {
 	@description('The inbound endpoints.')
-	inboundEndpoints: {
-		*: InboundEndpointResource
-	}
+	inboundEndpoints: InboundEndpointResource[]
 	@description('The outbound endpoints.')
-	outboundEndpoints: {
-		*: OutboundEndpointResource
-	}
+	outboundEndpoints: OutboundEndpointResource[]
 }
 
 @description('The resource settings.')
@@ -86,22 +82,22 @@ resource Network_dnsResolvers_ 'Microsoft.Network/dnsResolvers@2025-05-01' = {
 }
 
 resource Network_dnsResolvers_inboundEndpoints_ 'Microsoft.Network/dnsResolvers/inboundEndpoints@2025-05-01' = [
-	for item in sys.items(resources.inboundEndpoints): {
+	for item in resources.inboundEndpoints: {
 		location: settings.location
-		name: item.value.name
+		name: item.name
 		parent: Network_dnsResolvers_
-		properties: item.value.properties
-		tags: item.value.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 
 resource Network_dnsResolvers_outboundEndpoints_ 'Microsoft.Network/dnsResolvers/outboundEndpoints@2025-05-01' = [
-	for item in sys.items(resources.outboundEndpoints): {
+	for item in resources.outboundEndpoints: {
 		location: settings.location
-		name: item.value.name
+		name: item.name
 		parent: Network_dnsResolvers_
-		properties: item.value.properties
-		tags: item.value.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 

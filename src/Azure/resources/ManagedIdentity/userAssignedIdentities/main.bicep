@@ -15,6 +15,17 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+/* TYPES */
+
+@description('Federated identity credential resource configuration.')
+@sealed()
+type FederatedIdentityCredentialResource = {
+	@description('The resource name.')
+	name: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.name
+	@description('The properties.')
+	properties: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.properties
+}
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -30,15 +41,7 @@ param extensions {
 @sealed()
 param resources {
 	@description('The federated identity credentials.')
-	federatedIdentityCredentials: {
-		@sealed()
-		*: {
-			@description('The resource name.')
-			name: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.name
-			@description('The properties.')
-			properties: resourceInput<'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30'>.properties
-		}
-	}
+	federatedIdentityCredentials: FederatedIdentityCredentialResource[]
 }?
 
 @description('The resource settings.')
@@ -64,10 +67,10 @@ resource ManagedIdentity_userAssignedIdentities_ 'Microsoft.ManagedIdentity/user
 }
 
 resource ManagedIdentity_userAssignedIdentities_federatedIdentityCredentials_ 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2024-11-30' = [
-	for item in sys.items(resources.?federatedIdentityCredentials ?? {}): {
-		name: item.value.name
+	for item in resources.?federatedIdentityCredentials ?? []: {
+		name: item.name
 		parent: ManagedIdentity_userAssignedIdentities_
-		properties: item.value.properties
+		properties: item.properties
 	}
 ]
 

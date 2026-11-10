@@ -60,13 +60,9 @@ param extensions {
 @sealed()
 param resources {
 	@description('The DNS security rules.')
-	dnsSecurityRules: {
-		*: DnsSecurityRuleResource
-	}
+	dnsSecurityRules: DnsSecurityRuleResource[]
 	@description('The virtual network links.')
-	virtualNetworkLinks: {
-		*: VirtualNetworkLinkResource
-	}
+	virtualNetworkLinks: VirtualNetworkLinkResource[]
 }
 
 @description('The resource settings.')
@@ -89,22 +85,22 @@ resource Network_dnsResolverPolicies_ 'Microsoft.Network/dnsResolverPolicies@202
 }
 
 resource Network_dnsResolverPolicies_dnsSecurityRules_ 'Microsoft.Network/dnsResolverPolicies/dnsSecurityRules@2025-05-01' = [
-	for item in sys.items(resources.dnsSecurityRules): {
+	for item in resources.dnsSecurityRules: {
 		location: settings.location
-		name: item.value.name
+		name: item.name
 		parent: Network_dnsResolverPolicies_
-		properties: item.value.properties
-		tags: item.value.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 
 resource Network_dnsResolverPolicies_virtualNetworkLinks_ 'Microsoft.Network/dnsResolverPolicies/virtualNetworkLinks@2025-05-01' = [
-	for item in sys.items(resources.virtualNetworkLinks): {
+	for item in resources.virtualNetworkLinks: {
 		location: settings.location
-		name: item.value.name
+		name: item.name
 		parent: Network_dnsResolverPolicies_
-		properties: item.value.properties
-		tags: item.value.tags
+		properties: item.properties
+		tags: item.tags
 	}
 ]
 
