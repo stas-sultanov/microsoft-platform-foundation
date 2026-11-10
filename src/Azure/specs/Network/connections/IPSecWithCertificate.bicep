@@ -25,13 +25,27 @@ import * as NetworkConnections from '../../../library/Network/connections.bicep'
 
 @description('The settings for an IPsec connection using certificate authentication.')
 @sealed()
-type ConnectionPropertiesInput = {
+type ConnectionProperties = {
 	@description('Certificate authentication settings for the connection.')
 	certificateAuthentication: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.certificateAuthentication
 	@description('The dead peer detection timeout in seconds.')
 	@minValue(9)
 	@maxValue(3600)
 	dpdTimeoutSeconds: int?
+	@description('The egress NAT rules.')
+	@validate(
+		value =>
+			sys.empty(sys.filter(
+				value ?? [],
+				item =>
+					!Common.IsReferenceTo(
+						'Microsoft.Network/virtualNetworkGateways/natRules',
+						item.id
+					)
+			)),
+		'Each value must be a Microsoft.Network/virtualNetworkGateways/natRules resource ID.'
+	)
+	egressNatRules: Common.ReferenceById[]?
 	@description('Specifies whether BGP is enabled for this connection.')
 	enableBgp: bool?
 	@description('The ingress NAT rules.')
@@ -48,20 +62,6 @@ type ConnectionPropertiesInput = {
 		'Each value must be a Microsoft.Network/virtualNetworkGateways/natRules resource ID.'
 	)
 	ingressNatRules: Common.ReferenceById[]?
-	@description('The egress NAT rules.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/virtualNetworkGateways/natRules',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/virtualNetworkGateways/natRules resource ID.'
-	)
-	egressNatRules: Common.ReferenceById[]?
 	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
 	@minLength(1)
 	@maxLength(1)
@@ -72,7 +72,7 @@ type ConnectionPropertiesInput = {
 				policy =>
 					(policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256')
 			)) == 0,
-		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
+		'IPsec encryption and integrity must both use "GCMAES256" when either uses "GCMAES256".'
 	)
 	ipsecPolicies: NetworkConnections.IPSecPolicy[]
 	@description('The reference to the Microsoft.Network/localNetworkGateways resource.')
@@ -124,7 +124,7 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.Network/connections@2026-03-01'>.name
 	@description('The configurable properties.')
-	properties: ConnectionPropertiesInput
+	properties: ConnectionProperties
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/connections@2026-03-01'>.tags
 }

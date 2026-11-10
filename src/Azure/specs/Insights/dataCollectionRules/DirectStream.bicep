@@ -80,7 +80,7 @@ param settings {
 						value,
 						7
 					) == 'Custom-',
-				'Custom stream names must start with Custom-.'
+				'Custom stream names must start with "Custom-".'
 			)
 			name: string
 		}

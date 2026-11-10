@@ -56,7 +56,7 @@ param settings {
 							),
 						'The value must be a Microsoft.Monitor/accounts resource ID.'
 					)
-					@description('The resource ID of the Microsoft.Monitor/accounts resource.')
+					@description('The ID of the Microsoft.Monitor/accounts resource.')
 					accountResourceId: string
 				}
 			}

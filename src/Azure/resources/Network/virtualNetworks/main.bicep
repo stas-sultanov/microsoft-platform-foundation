@@ -87,7 +87,7 @@ param settings {
 			'Each value must be a Microsoft.Network/ipAllocations resource ID.'
 		)
 		ipAllocations: Common.ReferenceById[]?
-		@description('Indicates whether the private endpoint network policies are enabled for the virtual network.')
+		@description('Specifies whether private endpoint network policies are enabled for the virtual network.')
 		privateEndpointVNetPolicies: resourceInput<'Microsoft.Network/virtualNetworks@2026-03-01'>.properties.privateEndpointVNetPolicies?
 		@description('A configurable list of summarized gateway prefixes advertised for the virtual network.')
 		summarizedGatewayPrefixes: resourceInput<'Microsoft.Network/virtualNetworks@2026-03-01'>.properties.summarizedGatewayPrefixes?

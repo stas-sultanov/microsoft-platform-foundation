@@ -16,7 +16,7 @@ import * as Common from '../common.bicep'
 @description('Custom Azure APIPA BGP peering IPv4 addresses for one gateway IP configuration.')
 @export()
 @sealed()
-type IPConfigurationBgpPeeringAddressInput = {
+type IPConfigurationBgpPeeringAddress = {
 	@description('The list of custom BGP peering addresses which belong to IP configuration.')
 	@minLength(1)
 	@validate(

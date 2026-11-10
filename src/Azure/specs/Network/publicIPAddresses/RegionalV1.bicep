@@ -25,6 +25,14 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @sealed()
 type DdosSettings = {
 	@description('The DDoS protection custom policy associated with the public IP address.')
+	@validate(
+		value =>
+			value == null || Common.IsReferenceTo(
+				'Microsoft.Network/ddosCustomPolicies',
+				value!.id
+			),
+		'The value must be a Microsoft.Network/ddosCustomPolicies resource ID.'
+	)
 	ddosCustomPolicy: Common.ReferenceById?
 	@description('The DDoS protection plan associated with the public IP address.')
 	@validate(

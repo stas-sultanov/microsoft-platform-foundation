@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions an active-active, route-based Microsoft.Network/virtualNetworkGateways VPN gateway for S2S/VNet-to-VNet connectivity, with child NAT rules and extensions.'
+metadata description = 'Provisions a Microsoft.Network/virtualNetworkGateways resource for active-active, route-based S2S/VNet-to-VNet connectivity with child NAT rules and extensions.'
 
 /* SCOPE */
 
@@ -42,13 +42,13 @@ param extensions {
 
 @description('The child resources.')
 @sealed()
-@validate(
-	value =>
-		settings.properties.sku.name != 'VpnGw1AZ' || sys.empty(value.?natRules),
-	'resources.natRules must be empty when settings.properties.sku.name is "VpnGw1AZ".'
-)
 param resources {
 	@description('The VPN gateway NAT rules. Nonempty rules require VpnGw2AZ or higher.')
+	@validate(
+		value =>
+			settings.properties.sku.name != 'VpnGw1AZ' || sys.empty(value),
+		'natRules must be empty when settings.properties.sku.name is "VpnGw1AZ".'
+	)
 	natRules: NetworkVirtualNetworkGateways.NatRuleResource[]?
 }?
 
@@ -81,8 +81,8 @@ param settings {
 				'Custom BGP peering IP addresses must be unique across both gateway IP configurations.'
 			)
 			bgpPeeringAddresses: [
-				NetworkVirtualNetworkGateways.IPConfigurationBgpPeeringAddressInput
-				NetworkVirtualNetworkGateways.IPConfigurationBgpPeeringAddressInput
+				NetworkVirtualNetworkGateways.IPConfigurationBgpPeeringAddress
+				NetworkVirtualNetworkGateways.IPConfigurationBgpPeeringAddress
 			]?
 		}?
 		@description('Specifies whether BGP is enabled.')
@@ -93,7 +93,7 @@ param settings {
 		@validate(
 			value =>
 				sys.toLower(value[0].properties.subnet.id) == sys.toLower(value[1].properties.subnet.id) && sys.toLower(value[0].properties.publicIPAddress.id) != sys.toLower(value[1].properties.publicIPAddress.id) && sys.toLower(value[0].name) != sys.toLower(value[1].name),
-			'Both gateway instances must have different IP configuration names and reference the same subnet and different public IP address resources.'
+			'IP configuration names and public IP address resource IDs must be unique across both gateway instances, ignoring case. Both gateway instances must reference the same subnet.'
 		)
 		ipConfigurations: [
 			@description('The IP configuration for the gateway instance 0.')

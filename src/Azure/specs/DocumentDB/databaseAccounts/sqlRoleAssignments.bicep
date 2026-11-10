@@ -13,9 +13,9 @@ targetScope = 'resourceGroup'
 
 /* TYPES */
 
-@description('RoleAssignment resource input configuration.')
+@description('A Cosmos DB SQL role assignment.')
 @sealed()
-type RoleAssignmentResourceInput = {
+type SqlRoleAssignmentResourceInput = {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
@@ -60,7 +60,7 @@ param parentName resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01
 @description('Collection of role assignments.')
 @sealed()
 param resources {
-	sqlRoleAssignments: RoleAssignmentResourceInput[]
+	sqlRoleAssignments: SqlRoleAssignmentResourceInput[]
 }
 
 /* EXISTING RESOURCES */

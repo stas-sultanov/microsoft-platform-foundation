@@ -287,7 +287,7 @@ resource Network_networkInterfaces_ 'Microsoft.Network/networkInterfaces@2026-03
 	properties: {
 		enableAcceleratedNetworking: settings.properties.enableAcceleratedNetworking
 		enableIPForwarding: false
-		ipConfigurations: concat(
+		ipConfigurations: sys.concat(
 			[
 				{
 					name: settings.properties.ipConfigurations.Primary.name
