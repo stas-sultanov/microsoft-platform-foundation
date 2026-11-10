@@ -10,7 +10,7 @@ metadata description = 'Provisions a Microsoft.Network/networkInterfaces resourc
 /*
 This spec provides a network interface for a virtual machine, such as the StandaloneLinux spec:
 - Subnet: one existing subnet shared by all IP configurations
-- IP configurations: IPv4 only; a required primary configuration and up to 255 optional secondaries
+- IP configurations: IPv4 only; the first is primary, with up to 255 secondaries
 - IPv6 and dual-stack: not supported
 - Private IP allocation: Dynamic or Static per IP configuration
 - Public IP addresses: optional existing references; inbound access is controlled by network security groups
@@ -114,7 +114,7 @@ param extensions {
 					item =>
 						!sys.empty(item.properties.?logs)
 				)),
-			'logs must be empty or omitted for network interface diagnostic settings.'
+			'logs must be empty or omitted.'
 		)
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -134,32 +134,29 @@ param settings {
 	properties: {
 		@description('Specifies whether accelerated networking is enabled.')
 		enableAcceleratedNetworking: bool
-		@description('The IPv4 IP configurations.')
+		@description('The IPv4 IP configurations. The first is primary; all others are secondary.')
+		@minLength(1)
+		@maxLength(256)
 		@validate(
 			value =>
-				sys.length(sys.items(value)) <= 256 && sys.length(sys.union(
+				sys.length(sys.union(
 					sys.map(
-						sys.items(value),
+						value,
 						item =>
-							sys.toLower(item.value.name)
+							sys.toLower(item.name)
 					),
 					[]
-				)) == sys.length(sys.items(value)) && sys.length(sys.union(
+				)) == sys.length(value) && sys.length(sys.union(
 					sys.map(
-						sys.items(value),
+						value,
 						item =>
-							sys.toLower(item.value.properties.subnet.id)
+							sys.toLower(item.properties.subnet.id)
 					),
 					[]
 				)) == 1,
-			'The number of IP configurations must not exceed 256. IP configuration names must be unique within the network interface, ignoring case. All IP configurations must use the same subnet.'
+			'IP configuration names must be unique within the network interface, ignoring case. All IP configurations must use the same subnet.'
 		)
-		ipConfigurations: {
-			@description('The required primary IP configuration.')
-			Primary: IPConfigurationResourceInput
-			@description('The optional secondary IP configurations.')
-			*: IPConfigurationResourceInput
-		}
+		ipConfigurations: IPConfigurationResourceInput[]
 		@description('The network security group associated with the network interface.')
 		networkSecurityGroup: Common.ReferenceById?
 	}
@@ -175,33 +172,16 @@ resource Network_networkInterfaces_ 'Microsoft.Network/networkInterfaces@2026-03
 	properties: {
 		enableAcceleratedNetworking: settings.properties.enableAcceleratedNetworking
 		enableIPForwarding: false
-		ipConfigurations: sys.concat(
-			[
-				{
-					name: settings.properties.ipConfigurations.Primary.name
-					properties: {
-						...settings.properties.ipConfigurations.Primary.properties
-						primary: true
-						privateIPAddressVersion: 'IPv4'
-					}
+		ipConfigurations: [
+			for (item, index) in settings.properties.ipConfigurations: {
+				name: item.name
+				properties: {
+					...item.properties
+					primary: index == 0
+					privateIPAddressVersion: 'IPv4'
 				}
-			],
-			sys.map(
-				sys.filter(
-					sys.items(settings.properties.ipConfigurations),
-					item =>
-						item.key != 'Primary'
-				),
-				item => {
-					name: item.value.name
-					properties: {
-						...item.value.properties
-						primary: false
-						privateIPAddressVersion: 'IPv4'
-					}
-				}
-			)
-		)
+			}
+		]
 		networkSecurityGroup: settings.properties.?networkSecurityGroup
 		nicType: 'Standard'
 	}
