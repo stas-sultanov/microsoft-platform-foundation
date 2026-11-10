@@ -13,8 +13,6 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import * as Common from '../../../library/common.bicep'
-
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
@@ -48,14 +46,6 @@ param settings {
 			monitoringAccounts: {
 				@sealed()
 				Default: {
-					@validate(
-						value =>
-							Common.IsReferenceTo(
-								'Microsoft.Monitor/accounts',
-								value
-							),
-						'The value must be a Microsoft.Monitor/accounts resource ID.'
-					)
 					@description('The ID of the Microsoft.Monitor/accounts resource.')
 					accountResourceId: string
 				}

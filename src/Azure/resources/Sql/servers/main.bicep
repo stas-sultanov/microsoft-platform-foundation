@@ -15,8 +15,6 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
-import * as Common from '../../../library/common.bicep'
-
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
@@ -111,14 +109,6 @@ param settings {
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.publicNetworkAccess
 		@description('The ID of the Microsoft.ManagedIdentity/userAssignedIdentities resource.')
-		@validate(
-			value =>
-				value == null || Common.IsReferenceTo(
-					'Microsoft.ManagedIdentity/userAssignedIdentities',
-					value!
-				),
-			'The value must be a Microsoft.ManagedIdentity/userAssignedIdentities resource ID.'
-		)
 		primaryUserAssignedIdentityId: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.primaryUserAssignedIdentityId
 		@description('Specifies whether outbound network access is restricted for this server.')
 		restrictOutboundNetworkAccess: resourceInput<'Microsoft.Sql/servers@2025-01-01'>.properties.restrictOutboundNetworkAccess

@@ -50,8 +50,6 @@ The Foundation Contract owns architectural and security policy; this file owns B
 - `@validate()` MUST target the narrowest supported parameter/property owning each semantic invariant group.
 - Conditions within the same semantic invariant group MUST be combined in one predicate.
 - `@validate()` constraints intrinsic to properties of user-defined data types MUST be declared on those properties; type declarations MUST NOT be decorated with `@validate()`.
-- Resource IDs MUST be validated with `@validate()` using `Common.IsReferenceTo`.
-- Arrays of resource IDs or references MUST validate every item using `sys.filter()` and `Common.IsReferenceTo`.
 
 ### Validation Messages
 
@@ -72,8 +70,6 @@ The Foundation Contract owns architectural and security policy; this file owns B
   | Allowed values          | `<subject> must be <value1> or <value2>.`                         |
   | Uniqueness              | `<subject> must be unique <scope>.`                               |
   | Format or range         | `<subject> must <format or range constraint>.`                    |
-  | Resource ID             | `The value must be a <provider/type> resource ID.`                |
-  | Resource ID collection  | `Each value must be a <provider/type> resource ID.`               |
 
 - Lists of three or more alternatives MUST use `x, y, or z`. Collection subjects MAY use `Each <item>` instead of `Each value` for clarity.
 - Messages for combined predicates MUST describe every constraint using the same templates, joined by `and` or separate sentences.

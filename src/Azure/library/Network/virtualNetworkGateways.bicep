@@ -66,26 +66,15 @@ type IpConfigurationResource = {
 		@description('The private IP allocation method.')
 		privateIPAllocationMethod: 'Dynamic'
 		@description('The reference to a Standard, Static public IP address resource.')
-		@validate(
-			value =>
-				Common.IsReferenceTo(
-					'Microsoft.Network/publicIPAddresses',
-					value.id
-				),
-			'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
-		)
 		publicIPAddress: Common.ReferenceById
 		@description('The reference to the subnet resource named GatewaySubnet.')
 		@validate(
 			value =>
-				Common.IsReferenceTo(
-					'Microsoft.Network/virtualNetworks/subnets',
-					value.id
-				) && sys.endsWith(
+				sys.endsWith(
 					sys.toLower(value.id),
 					'/GatewaySubnet'
 				),
-			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID ending in GatewaySubnet.'
+			'The subnet name must be "GatewaySubnet".'
 		)
 		subnet: Common.ReferenceById
 	}

@@ -51,16 +51,3 @@ type Tags = {
 	@description('A tag to be applied to the resource.')
 	*: string
 }
-
-/* FUNCTIONS */
-
-@description('Checks whether a reference matches the case-insensitive ID shape of a resource-group-scoped resource type, including child resource types.')
-@export()
-func IsReferenceTo(
-	type string,
-	id string
-) bool =>
-	sys.like(
-		id,
-		'/subscriptions/*/resourceGroups/*/providers/${sys.first(sys.split(type, '/'))}/${sys.join(sys.skip(sys.split(type, '/'), 1), '/*/')}/*'
-	)

@@ -15,8 +15,6 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
-import * as Common from '../../../library/common.bicep'
-
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
@@ -45,14 +43,6 @@ param settings {
 	@sealed()
 	properties: {
 		@description('The ID of the Microsoft.Insights/dataCollectionEndpoints resource.')
-		@validate(
-			value =>
-				value == null || Common.IsReferenceTo(
-					'Microsoft.Insights/dataCollectionEndpoints',
-					value!
-				),
-			'The value must be a Microsoft.Insights/dataCollectionEndpoints resource ID.'
-		)
 		dataCollectionEndpointId: string?
 		@description('Data flow configuration.')
 		@sealed()

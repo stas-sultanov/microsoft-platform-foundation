@@ -25,24 +25,8 @@ import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosti
 @sealed()
 type DdosSettings = {
 	@description('The DDoS protection custom policy associated with the public IP address.')
-	@validate(
-		value =>
-			value == null || Common.IsReferenceTo(
-				'Microsoft.Network/ddosCustomPolicies',
-				value!.id
-			),
-		'The value must be a Microsoft.Network/ddosCustomPolicies resource ID.'
-	)
 	ddosCustomPolicy: Common.ReferenceById?
 	@description('The DDoS protection plan associated with the public IP address.')
-	@validate(
-		value =>
-			value == null || Common.IsReferenceTo(
-				'Microsoft.Network/ddosProtectionPlans',
-				value!.id
-			),
-		'The value must be a Microsoft.Network/ddosProtectionPlans resource ID.'
-	)
 	ddosProtectionPlan: Common.ReferenceById?
 	@description('The DDoS protection mode.')
 	protectionMode: resourceInput<'Microsoft.Network/publicIPAddresses@2026-03-01'>.properties.ddosSettings.protectionMode?
@@ -79,14 +63,6 @@ type PublicIPAddressPropertiesIPv4 = {
 	@description('The public IP address version.')
 	publicIPAddressVersion: 'IPv4'
 	@description('The public IP prefix this public IP address should be allocated from.')
-	@validate(
-		value =>
-			value == null || Common.IsReferenceTo(
-				'Microsoft.Network/publicIPPrefixes',
-				value!.id
-			),
-		'The value must be a Microsoft.Network/publicIPPrefixes resource ID.'
-	)
 	publicIPPrefix: Common.ReferenceById?
 }
 
@@ -118,14 +94,6 @@ type PublicIPAddressPropertiesIPv6 = {
 	@description('The public IP address version.')
 	publicIPAddressVersion: 'IPv6'
 	@description('The public IP prefix this public IP address should be allocated from.')
-	@validate(
-		value =>
-			value == null || Common.IsReferenceTo(
-				'Microsoft.Network/publicIPPrefixes',
-				value!.id
-			),
-		'The value must be a Microsoft.Network/publicIPPrefixes resource ID.'
-	)
 	publicIPPrefix: Common.ReferenceById?
 }
 

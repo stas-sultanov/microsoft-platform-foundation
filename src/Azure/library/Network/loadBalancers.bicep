@@ -43,14 +43,6 @@ type PrivateFrontendIPConfiguration = {
 		@description('The private IP address of the IP configuration.')
 		privateIPAddress: string
 		@description('The reference to the Microsoft.Network/virtualNetworks/subnets resource.')
-		@validate(
-			value =>
-				Common.IsReferenceTo(
-					'Microsoft.Network/virtualNetworks/subnets',
-					value.id
-				),
-			'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
-		)
 		subnet: Common.ReferenceById
 	}
 	@description('A list of availability zones denoting the IP allocated for the resource needs to come from.')
@@ -73,14 +65,6 @@ type PublicFrontendIPConfiguration = {
 	@sealed()
 	properties: {
 		@description('The reference to the Microsoft.Network/publicIPAddresses resource.')
-		@validate(
-			value =>
-				Common.IsReferenceTo(
-					'Microsoft.Network/publicIPAddresses',
-					value.id
-				),
-			'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
-		)
 		publicIPAddress: Common.ReferenceById
 	}
 }

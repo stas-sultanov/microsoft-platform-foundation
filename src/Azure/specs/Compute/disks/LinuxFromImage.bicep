@@ -54,14 +54,11 @@ type CreationDataFromImageGallery = {
 	@description('The pinned Azure Compute Gallery image version.')
 	@validate(
 		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Compute/galleries/images/versions',
-				value.id
-			) && !sys.like(
+			!sys.like(
 				value.id,
 				'*/versions/latest'
 			),
-		'The value must be a pinned Microsoft.Compute/galleries/images/versions resource ID.'
+		'The image version must not be "latest".'
 	)
 	galleryImageReference: Common.ReferenceById
 }
@@ -74,14 +71,11 @@ type CreationDataFromImageMarketplace = {
 	@description('The pinned Azure Marketplace platform image without a purchase plan.')
 	@validate(
 		value =>
-			sys.like(
-				value.id,
-				'/subscriptions/*/providers/Microsoft.Compute/locations/*/publishers/*/artifacttypes/VMImage/offers/*/skus/*/versions/*'
-			) && !sys.like(
+			!sys.like(
 				value.id,
 				'*/versions/latest'
 			),
-		'The value must be a pinned Microsoft.Compute/locations/publishers/artifacttypes/offers/skus/versions resource ID.'
+		'The image version must not be "latest".'
 	)
 	imageReference: Common.ReferenceById
 }

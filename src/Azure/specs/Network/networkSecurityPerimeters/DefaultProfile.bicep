@@ -62,14 +62,6 @@ param resources {
 			properties: {
 				accessMode: resourceInput<'Microsoft.Network/networkSecurityPerimeters/resourceAssociations@2026-03-01'>.properties.accessMode
 				@description('The reference to the PaaS resource to be associated.')
-				@validate(
-					value =>
-						sys.like(
-							value.id,
-							'/subscriptions/*/resourceGroups/*/providers/*'
-						),
-					'The value must be an Azure resource ID.'
-				)
 				privateLinkResource: Common.ReferenceById
 			}
 		}

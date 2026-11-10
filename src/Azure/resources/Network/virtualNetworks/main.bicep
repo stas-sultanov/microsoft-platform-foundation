@@ -54,14 +54,6 @@ param settings {
 		@description('The BGP community associated with the virtual network.')
 		bgpCommunities: resourceInput<'Microsoft.Network/virtualNetworks@2026-03-01'>.properties.bgpCommunities?
 		@description('The DDoS protection plan associated with the virtual network.')
-		@validate(
-			value =>
-				value == null || Common.IsReferenceTo(
-					'Microsoft.Network/ddosProtectionPlans',
-					value!.id
-				),
-			'The value must be a Microsoft.Network/ddosProtectionPlans resource ID.'
-		)
 		ddosProtectionPlan: Common.ReferenceById?
 		@description('The DHCP options associated with the virtual network.')
 		dhcpOptions: resourceInput<'Microsoft.Network/virtualNetworks@2026-03-01'>.properties.dhcpOptions?
@@ -74,18 +66,6 @@ param settings {
 		@description('The flow timeout for the virtual network in minutes.')
 		flowTimeoutInMinutes: int?
 		@description('The IP allocations associated with the virtual network.')
-		@validate(
-			value =>
-				sys.empty(sys.filter(
-					value ?? [],
-					item =>
-						!Common.IsReferenceTo(
-							'Microsoft.Network/ipAllocations',
-							item.id
-						)
-				)),
-			'Each value must be a Microsoft.Network/ipAllocations resource ID.'
-		)
 		ipAllocations: Common.ReferenceById[]?
 		@description('Specifies whether private endpoint network policies are enabled for the virtual network.')
 		privateEndpointVNetPolicies: resourceInput<'Microsoft.Network/virtualNetworks@2026-03-01'>.properties.privateEndpointVNetPolicies?

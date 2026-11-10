@@ -52,68 +52,16 @@ type IPConfigurationProperties =
 @sealed()
 type IPConfigurationPropertiesDynamic = {
 	@description('The application gateway backend address pools.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/applicationGateways/backendAddressPools',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/applicationGateways/backendAddressPools resource ID.'
-	)
 	applicationGatewayBackendAddressPools: Common.ReferenceById[]?
 	@description('The application security groups.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/applicationSecurityGroups',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/applicationSecurityGroups resource ID.'
-	)
 	applicationSecurityGroups: Common.ReferenceById[]?
 	@description('The load balancer backend address pools.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/loadBalancers/backendAddressPools',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/loadBalancers/backendAddressPools resource ID.'
-	)
 	loadBalancerBackendAddressPools: Common.ReferenceById[]?
 	@description('The private IP address allocation method.')
 	privateIPAllocationMethod: 'Dynamic'
 	@description('The public IP address. It must be an IPv4 address with the Standard SKU.')
-	@validate(
-		value =>
-			value == null || Common.IsReferenceTo(
-				'Microsoft.Network/publicIPAddresses',
-				value!.id
-			),
-		'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
-	)
 	publicIPAddress: Common.ReferenceById?
 	@description('The subnet. It must be the same for all IP configurations of the network interface.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Network/virtualNetworks/subnets',
-				value.id
-			),
-		'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
-	)
 	subnet: Common.ReferenceById
 }
 
@@ -121,46 +69,10 @@ type IPConfigurationPropertiesDynamic = {
 @sealed()
 type IPConfigurationPropertiesStatic = {
 	@description('The application gateway backend address pools.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/applicationGateways/backendAddressPools',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/applicationGateways/backendAddressPools resource ID.'
-	)
 	applicationGatewayBackendAddressPools: Common.ReferenceById[]?
 	@description('The application security groups.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/applicationSecurityGroups',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/applicationSecurityGroups resource ID.'
-	)
 	applicationSecurityGroups: Common.ReferenceById[]?
 	@description('The load balancer backend address pools.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/loadBalancers/backendAddressPools',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/loadBalancers/backendAddressPools resource ID.'
-	)
 	loadBalancerBackendAddressPools: Common.ReferenceById[]?
 	@description('The private IPv4 address within the subnet address range.')
 	@minLength(1)
@@ -168,24 +80,8 @@ type IPConfigurationPropertiesStatic = {
 	@description('The private IP address allocation method.')
 	privateIPAllocationMethod: 'Static'
 	@description('The public IP address. It must be an IPv4 address with the Standard SKU.')
-	@validate(
-		value =>
-			value == null || Common.IsReferenceTo(
-				'Microsoft.Network/publicIPAddresses',
-				value!.id
-			),
-		'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
-	)
 	publicIPAddress: Common.ReferenceById?
 	@description('The subnet. It must be the same for all IP configurations of the network interface.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Network/virtualNetworks/subnets',
-				value.id
-			),
-		'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
-	)
 	subnet: Common.ReferenceById
 }
 
@@ -265,14 +161,6 @@ param settings {
 			*: IPConfigurationResourceInput
 		}
 		@description('The network security group associated with the network interface.')
-		@validate(
-			value =>
-				value == null || Common.IsReferenceTo(
-					'Microsoft.Network/networkSecurityGroups',
-					value!.id
-				),
-			'The value must be a Microsoft.Network/networkSecurityGroups resource ID.'
-		)
 		networkSecurityGroup: Common.ReferenceById?
 	}
 	@description('The tags.')

@@ -33,34 +33,10 @@ type ConnectionProperties = {
 	@maxValue(3600)
 	dpdTimeoutSeconds: int?
 	@description('The egress NAT rules.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/virtualNetworkGateways/natRules',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/virtualNetworkGateways/natRules resource ID.'
-	)
 	egressNatRules: Common.ReferenceById[]?
 	@description('Specifies whether BGP is enabled for this connection.')
 	enableBgp: bool?
 	@description('The ingress NAT rules.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/virtualNetworkGateways/natRules',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/virtualNetworkGateways/natRules resource ID.'
-	)
 	ingressNatRules: Common.ReferenceById[]?
 	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
 	@minLength(1)
@@ -76,28 +52,12 @@ type ConnectionProperties = {
 	)
 	ipsecPolicies: NetworkConnections.IPSecPolicy[]
 	@description('The reference to the Microsoft.Network/localNetworkGateways resource.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Network/localNetworkGateways',
-				value.id
-			),
-		'The value must be a Microsoft.Network/localNetworkGateways resource ID.'
-	)
 	localNetworkGateway2: Common.ReferenceById
 	@description('The custom traffic selector policies, configured independently of usePolicyBasedTrafficSelectors.')
 	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.trafficSelectorPolicies?
 	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
 	usePolicyBasedTrafficSelectors: bool?
 	@description('The reference to the primary Microsoft.Network/virtualNetworkGateways resource.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Network/virtualNetworkGateways',
-				value.id
-			),
-		'The value must be a Microsoft.Network/virtualNetworkGateways resource ID.'
-	)
 	virtualNetworkGateway1: Common.ReferenceById
 }
 
