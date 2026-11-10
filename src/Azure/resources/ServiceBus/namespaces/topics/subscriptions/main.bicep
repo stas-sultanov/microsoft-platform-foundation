@@ -11,6 +11,17 @@ metadata description = 'Provisions a Microsoft.ServiceBus/namespaces/topics/subs
 
 targetScope = 'resourceGroup'
 
+/* TYPES */
+
+@description('Represents a rule resource.')
+@sealed()
+type RuleResource = {
+	@description('The resource name.')
+	name: string
+	@description('The properties.')
+	properties: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2026-01-01'>.properties
+}
+
 /* PARAMETERS */
 
 @description('The name of the parent Microsoft.ServiceBus/namespaces resource.')
@@ -22,15 +33,7 @@ param parentTopicName resourceInput<'Microsoft.ServiceBus/namespaces/topics@2026
 @description('The child resources.')
 @sealed()
 param resources {
-	rules: {
-		@sealed()
-		*: {
-			@description('The name.')
-			name: string
-			@description('The properties.')
-			properties: resourceInput<'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2026-01-01'>.properties
-		}
-	}
+	rules: RuleResource[]
 }?
 
 @description('The resource settings.')
@@ -61,9 +64,9 @@ resource ServiceBus_namespaces_topics_subscriptions_ 'Microsoft.ServiceBus/names
 }
 
 resource ServiceBus_namespaces_topics_subscriptions_rules_ 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules@2026-01-01' = [
-	for item in sys.items(resources.?rules ?? {}): {
-		name: item.value.name
+	for item in resources.?rules ?? []: {
+		name: item.name
 		parent: ServiceBus_namespaces_topics_subscriptions_
-		properties: item.value.properties
+		properties: item.properties
 	}
 ]

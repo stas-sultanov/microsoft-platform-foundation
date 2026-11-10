@@ -10,7 +10,7 @@ metadata description = 'Provisions a Microsoft.Network/networkInterfaces resourc
 /*
 This spec provides a network interface for a virtual machine, such as the StandaloneLinux spec:
 - Subnet: one existing subnet shared by all IP configurations
-- IP configurations: IPv4 only; a required primary configuration and up to 255 optional secondaries
+- IP configurations: IPv4 only; the first is primary, with up to 255 secondaries
 - IPv6 and dual-stack: not supported
 - Private IP allocation: Dynamic or Static per IP configuration
 - Public IP addresses: optional existing references; inbound access is controlled by network security groups
@@ -52,68 +52,16 @@ type IPConfigurationProperties =
 @sealed()
 type IPConfigurationPropertiesDynamic = {
 	@description('The application gateway backend address pools.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/applicationGateways/backendAddressPools',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/applicationGateways/backendAddressPools resource ID.'
-	)
 	applicationGatewayBackendAddressPools: Common.ReferenceById[]?
 	@description('The application security groups.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/applicationSecurityGroups',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/applicationSecurityGroups resource ID.'
-	)
 	applicationSecurityGroups: Common.ReferenceById[]?
 	@description('The load balancer backend address pools.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/loadBalancers/backendAddressPools',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/loadBalancers/backendAddressPools resource ID.'
-	)
 	loadBalancerBackendAddressPools: Common.ReferenceById[]?
 	@description('The private IP address allocation method.')
 	privateIPAllocationMethod: 'Dynamic'
 	@description('The public IP address. It must be an IPv4 address with the Standard SKU.')
-	@validate(
-		value =>
-			value == null || Common.IsReferenceTo(
-				'Microsoft.Network/publicIPAddresses',
-				value!.id
-			),
-		'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
-	)
 	publicIPAddress: Common.ReferenceById?
 	@description('The subnet. It must be the same for all IP configurations of the network interface.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Network/virtualNetworks/subnets',
-				value.id
-			),
-		'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
-	)
 	subnet: Common.ReferenceById
 }
 
@@ -121,46 +69,10 @@ type IPConfigurationPropertiesDynamic = {
 @sealed()
 type IPConfigurationPropertiesStatic = {
 	@description('The application gateway backend address pools.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/applicationGateways/backendAddressPools',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/applicationGateways/backendAddressPools resource ID.'
-	)
 	applicationGatewayBackendAddressPools: Common.ReferenceById[]?
 	@description('The application security groups.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/applicationSecurityGroups',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/applicationSecurityGroups resource ID.'
-	)
 	applicationSecurityGroups: Common.ReferenceById[]?
 	@description('The load balancer backend address pools.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/loadBalancers/backendAddressPools',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/loadBalancers/backendAddressPools resource ID.'
-	)
 	loadBalancerBackendAddressPools: Common.ReferenceById[]?
 	@description('The private IPv4 address within the subnet address range.')
 	@minLength(1)
@@ -168,24 +80,8 @@ type IPConfigurationPropertiesStatic = {
 	@description('The private IP address allocation method.')
 	privateIPAllocationMethod: 'Static'
 	@description('The public IP address. It must be an IPv4 address with the Standard SKU.')
-	@validate(
-		value =>
-			value == null || Common.IsReferenceTo(
-				'Microsoft.Network/publicIPAddresses',
-				value!.id
-			),
-		'The value must be a Microsoft.Network/publicIPAddresses resource ID.'
-	)
 	publicIPAddress: Common.ReferenceById?
 	@description('The subnet. It must be the same for all IP configurations of the network interface.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Network/virtualNetworks/subnets',
-				value.id
-			),
-		'The value must be a Microsoft.Network/virtualNetworks/subnets resource ID.'
-	)
 	subnet: Common.ReferenceById
 }
 
@@ -218,7 +114,7 @@ param extensions {
 					item =>
 						!sys.empty(item.properties.?logs)
 				)),
-			'logs must be empty or omitted for network interface diagnostic settings.'
+			'logs must be empty or omitted.'
 		)
 		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
 	}
@@ -238,41 +134,30 @@ param settings {
 	properties: {
 		@description('Specifies whether accelerated networking is enabled.')
 		enableAcceleratedNetworking: bool
-		@description('The IPv4 IP configurations.')
+		@description('The IPv4 IP configurations. The first is primary; all others are secondary.')
+		@minLength(1)
+		@maxLength(256)
 		@validate(
 			value =>
-				sys.length(sys.items(value)) <= 256 && sys.length(sys.union(
+				sys.length(sys.union(
 					sys.map(
-						sys.items(value),
+						value,
 						item =>
-							sys.toLower(item.value.name)
+							sys.toLower(item.name)
 					),
 					[]
-				)) == sys.length(sys.items(value)) && sys.length(sys.union(
+				)) == sys.length(value) && sys.length(sys.union(
 					sys.map(
-						sys.items(value),
+						value,
 						item =>
-							sys.toLower(item.value.properties.subnet.id)
+							sys.toLower(item.properties.subnet.id)
 					),
 					[]
 				)) == 1,
-			'The number of IP configurations must not exceed 256. IP configuration names must be unique within the network interface, ignoring case. All IP configurations must use the same subnet.'
+			'IP configuration names must be unique within the network interface, ignoring case. All IP configurations must use the same subnet.'
 		)
-		ipConfigurations: {
-			@description('The required primary IP configuration.')
-			Primary: IPConfigurationResourceInput
-			@description('The optional secondary IP configurations.')
-			*: IPConfigurationResourceInput
-		}
+		ipConfigurations: IPConfigurationResourceInput[]
 		@description('The network security group associated with the network interface.')
-		@validate(
-			value =>
-				value == null || Common.IsReferenceTo(
-					'Microsoft.Network/networkSecurityGroups',
-					value!.id
-				),
-			'The value must be a Microsoft.Network/networkSecurityGroups resource ID.'
-		)
 		networkSecurityGroup: Common.ReferenceById?
 	}
 	@description('The tags.')
@@ -287,33 +172,16 @@ resource Network_networkInterfaces_ 'Microsoft.Network/networkInterfaces@2026-03
 	properties: {
 		enableAcceleratedNetworking: settings.properties.enableAcceleratedNetworking
 		enableIPForwarding: false
-		ipConfigurations: concat(
-			[
-				{
-					name: settings.properties.ipConfigurations.Primary.name
-					properties: {
-						...settings.properties.ipConfigurations.Primary.properties
-						primary: true
-						privateIPAddressVersion: 'IPv4'
-					}
+		ipConfigurations: [
+			for (item, index) in settings.properties.ipConfigurations: {
+				name: item.name
+				properties: {
+					...item.properties
+					primary: index == 0
+					privateIPAddressVersion: 'IPv4'
 				}
-			],
-			sys.map(
-				sys.filter(
-					sys.items(settings.properties.ipConfigurations),
-					item =>
-						item.key != 'Primary'
-				),
-				item => {
-					name: item.value.name
-					properties: {
-						...item.value.properties
-						primary: false
-						privateIPAddressVersion: 'IPv4'
-					}
-				}
-			)
-		)
+			}
+		]
 		networkSecurityGroup: settings.properties.?networkSecurityGroup
 		nicType: 'Standard'
 	}

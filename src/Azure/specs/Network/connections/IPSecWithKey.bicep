@@ -30,36 +30,12 @@ type ConnectionPropertiesInput = {
 	@minValue(9)
 	@maxValue(3600)
 	dpdTimeoutSeconds: int?
+	@description('The egress NAT rules.')
+	egressNatRules: Common.ReferenceById[]?
 	@description('Specifies whether BGP is enabled for this connection.')
 	enableBgp: bool?
 	@description('The ingress NAT rules.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/virtualNetworkGateways/natRules',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/virtualNetworkGateways/natRules resource ID.'
-	)
 	ingressNatRules: Common.ReferenceById[]?
-	@description('The egress NAT rules.')
-	@validate(
-		value =>
-			sys.empty(sys.filter(
-				value ?? [],
-				item =>
-					!Common.IsReferenceTo(
-						'Microsoft.Network/virtualNetworkGateways/natRules',
-						item.id
-					)
-			)),
-		'Each value must be a Microsoft.Network/virtualNetworkGateways/natRules resource ID.'
-	)
-	egressNatRules: Common.ReferenceById[]?
 	@description('Custom IPsec policies. Azure supports at most one policy per connection.')
 	@minLength(1)
 	@maxLength(1)
@@ -70,42 +46,18 @@ type ConnectionPropertiesInput = {
 				policy =>
 					(policy.ipsecEncryption == 'GCMAES256') != (policy.ipsecIntegrity == 'GCMAES256')
 			)) == 0,
-		'IPsec encryption and integrity must both use GCMAES256 when either uses GCMAES256.'
+		'IPsec encryption and integrity must both use "GCMAES256" when either uses "GCMAES256".'
 	)
 	ipsecPolicies: NetworkConnections.IPSecPolicy[]
 	@description('The reference to the Microsoft.Network/localNetworkGateways resource.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Network/localNetworkGateways',
-				value.id
-			),
-		'The value must be a Microsoft.Network/localNetworkGateways resource ID.'
-	)
 	localNetworkGateway2: Common.ReferenceById
 	@description('The ID of the Microsoft.KeyVault/vaults/secrets resource.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.KeyVault/vaults/secrets',
-				value
-			),
-		'The value must be a Microsoft.KeyVault/vaults/secrets resource ID.'
-	)
 	sharedKeyKeyVaultId: string
 	@description('The custom traffic selector policies, configured independently of usePolicyBasedTrafficSelectors.')
 	trafficSelectorPolicies: resourceInput<'Microsoft.Network/connections@2026-03-01'>.properties.trafficSelectorPolicies?
 	@description('Specifies whether policy-based traffic selectors are enabled for this connection.')
 	usePolicyBasedTrafficSelectors: bool?
 	@description('The reference to the primary Microsoft.Network/virtualNetworkGateways resource.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Network/virtualNetworkGateways',
-				value.id
-			),
-		'The value must be a Microsoft.Network/virtualNetworkGateways resource ID.'
-	)
 	virtualNetworkGateway1: Common.ReferenceById
 }
 
@@ -140,7 +92,7 @@ param settings {
 /* VARIABLES */
 
 @description('The segments of the shared key secret resource ID: /subscriptions/{2}/resourceGroups/{4}/providers/Microsoft.KeyVault/vaults/{8}/secrets/{10}.')
-var sharedKeySecretIdSegments = split(
+var sharedKeySecretIdSegments = sys.split(
 	settings.properties.sharedKeyKeyVaultId,
 	'/'
 )
@@ -149,7 +101,7 @@ var sharedKeySecretIdSegments = split(
 
 resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-05-15' existing = {
 	name: sharedKeySecretIdSegments[8]
-	scope: resourceGroup(
+	scope: az.resourceGroup(
 		sharedKeySecretIdSegments[2],
 		sharedKeySecretIdSegments[4]
 	)
@@ -170,7 +122,7 @@ resource Network_connections_ 'Microsoft.Network/connections@2026-03-01' existin
 // - Its path does not follow the 'specs' path conventions, because it must be a separate file to receive the secret as a @secure() parameter.
 // - It exposes the 'sharedKey' parameter outside the standard module interface, because that is how the secret is passed in.
 module Network_connections_Module_ 'IPSecWithKey/connection.bicep' = {
-	name: '${deployment().name}-connection'
+	name: '${az.deployment().name}-connection'
 	params: {
 		settings: {
 			location: settings.location
@@ -214,7 +166,7 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 	}
 ]
 
-#disable-next-line use-recent-api-versions // to use new features, preview version is required
+#disable-next-line use-recent-api-versions // Preview API required for diagnostic settings features unavailable in the stable API.
 resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
 	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name

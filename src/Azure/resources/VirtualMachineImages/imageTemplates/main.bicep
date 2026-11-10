@@ -15,8 +15,6 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
-import * as Common from '../../../library/common.bicep'
-
 /* TYPES */
 @description('Versioning settings for a shared image distributor.')
 @discriminator('scheme')
@@ -52,14 +50,6 @@ type ImageTemplateSharedImageDistributor = {
 	@description('Specifies whether the created image version is excluded from the latest version.')
 	excludeFromLatest: bool?
 	@description('The ID of the Microsoft.Compute/galleries/images resource.')
-	@validate(
-		value =>
-			Common.IsReferenceTo(
-				'Microsoft.Compute/galleries/images',
-				value
-			),
-		'The value must be a Microsoft.Compute/galleries/images resource ID.'
-	)
 	galleryImageId: string
 	@description('Describes replication mode for distribution in Azure Compute Gallery.')
 	replicationMode:
@@ -197,14 +187,6 @@ param settings {
 		@description('Specifies the properties used to describe the source image.')
 		source: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.source
 		@description('The ID of the Microsoft.Resources/resourceGroups resource.')
-		@validate(
-			value =>
-				value == null || sys.like(
-					value!,
-					'/subscriptions/*/resourceGroups/*'
-				),
-			'The value must be a Microsoft.Resources/resourceGroups resource ID.'
-		)
 		stagingResourceGroup: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.stagingResourceGroup
 		@description('Configuration options and validations to be performed on the resulting image.')
 		validate: resourceInput<'Microsoft.VirtualMachineImages/imageTemplates@2025-10-01'>.properties.validate?

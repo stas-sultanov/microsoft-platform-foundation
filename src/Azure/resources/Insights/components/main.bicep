@@ -15,8 +15,6 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
-import * as Common from '../../../library/common.bicep'
-
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -43,14 +41,6 @@ param settings {
 		@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
 		publicNetworkAccessForQuery: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForQuery
 		@description('The ID of the Microsoft.OperationalInsights/workspaces resource.')
-		@validate(
-			value =>
-				Common.IsReferenceTo(
-					'Microsoft.OperationalInsights/workspaces',
-					value
-				),
-			'The value must be a Microsoft.OperationalInsights/workspaces resource ID.'
-		)
 		workspaceResourceId: string
 	}
 	@description('The tags.')

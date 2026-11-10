@@ -13,8 +13,6 @@ targetScope = 'resourceGroup'
 
 /* IMPORTS */
 
-import * as Common from '../../../library/common.bicep'
-
 import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
 
 /* PARAMETERS */
@@ -48,14 +46,6 @@ param settings {
 			logAnalytics: {
 				@sealed()
 				Default: {
-					@validate(
-						value =>
-							Common.IsReferenceTo(
-								'Microsoft.OperationalInsights/workspaces',
-								value
-							),
-						'The value must be a Microsoft.OperationalInsights/workspaces resource ID.'
-					)
 					@description('The ID of the Microsoft.OperationalInsights/workspaces resource.')
 					workspaceResourceId: string
 				}

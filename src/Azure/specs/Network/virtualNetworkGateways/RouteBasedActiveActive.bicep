@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions an active-active, route-based Microsoft.Network/virtualNetworkGateways VPN gateway for S2S/VNet-to-VNet connectivity, with child NAT rules and extensions. Point-to-site VPN is outside this specification.'
+metadata description = 'Provisions a Microsoft.Network/virtualNetworkGateways resource for active-active, route-based S2S/VNet-to-VNet connectivity with child NAT rules and extensions.'
 
 /* SCOPE */
 
@@ -42,15 +42,15 @@ param extensions {
 
 @description('The child resources.')
 @sealed()
-@validate(
-	value =>
-		settings.properties.sku.name != 'VpnGw1AZ' || sys.empty(value.natRules),
-	'resources.natRules must be empty when settings.properties.sku.name is "VpnGw1AZ".'
-)
 param resources {
 	@description('The VPN gateway NAT rules. Nonempty rules require VpnGw2AZ or higher.')
-	natRules: NetworkVirtualNetworkGateways.NatRuleResource[]
-}
+	@validate(
+		value =>
+			settings.properties.sku.name != 'VpnGw1AZ' || sys.empty(value),
+		'natRules must be empty when settings.properties.sku.name is "VpnGw1AZ".'
+	)
+	natRules: NetworkVirtualNetworkGateways.NatRuleResource[]?
+}?
 
 @description('The resource settings.')
 @sealed()
@@ -64,25 +64,43 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
-		@description('The custom BGP settings.')
-		bgpSettings: NetworkVirtualNetworkGateways.BgpSettings?
+		@description('The BGP speaker settings.')
+		@sealed()
+		bgpSettings: {
+			@description('The BGP autonomous system number.')
+			@minValue(1)
+			@maxValue(4294967294)
+			asn: int?
+			@description('BGP peering addresses for the gateway IP configurations.')
+			@validate(
+				value =>
+					value == null || sys.empty(sys.intersection(
+						value![0].customBgpIpAddresses,
+						value![1].customBgpIpAddresses
+					)),
+				'Custom BGP peering IP addresses must be unique across both gateway IP configurations.'
+			)
+			bgpPeeringAddresses: [
+				NetworkVirtualNetworkGateways.IPConfigurationBgpPeeringAddress
+				NetworkVirtualNetworkGateways.IPConfigurationBgpPeeringAddress
+			]?
+		}?
 		@description('Specifies whether BGP is enabled.')
 		enableBgp: bool
 		@description('Specifies whether BGP routes are translated using NAT.')
 		enableBgpRouteTranslationForNat: bool
-		@description('Two gateway IP configurations referencing the same subnet and distinct Standard, Static public IP resources. Deploy the public IP resources separately.')
-		@sealed()
+		@description('IP configurations.')
 		@validate(
 			value =>
-				sys.toLower(value.Instance0.properties.subnet.id) == sys.toLower(value.Instance1.properties.subnet.id) && sys.toLower(value.Instance0.properties.publicIPAddress.id) != sys.toLower(value.Instance1.properties.publicIPAddress.id) && sys.toLower(value.Instance0.name) != sys.toLower(value.Instance1.name),
-			'Both gateway instances must have different IP configuration names and reference the same subnet and different public IP address resources.'
+				sys.toLower(value[0].properties.subnet.id) == sys.toLower(value[1].properties.subnet.id) && sys.toLower(value[0].properties.publicIPAddress.id) != sys.toLower(value[1].properties.publicIPAddress.id) && sys.toLower(value[0].name) != sys.toLower(value[1].name),
+			'IP configuration names and public IP address resource IDs must be unique across both gateway instances, ignoring case. Both gateway instances must reference the same subnet.'
 		)
-		ipConfigurations: {
+		ipConfigurations: [
 			@description('The IP configuration for the gateway instance 0.')
-			Instance0: NetworkVirtualNetworkGateways.IpConfigurationResource
+			NetworkVirtualNetworkGateways.IpConfigurationResource
 			@description('The IP configuration for the gateway instance 1.')
-			Instance1: NetworkVirtualNetworkGateways.IpConfigurationResource
-		}
+			NetworkVirtualNetworkGateways.IpConfigurationResource
+		]
 		@description('The SKU.')
 		@sealed()
 		sku: {
@@ -113,18 +131,18 @@ resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGatewa
 			? null
 			: {
 					asn: settings.properties.?bgpSettings.asn
-					bgpPeeringAddresses: settings.properties.?bgpSettings.?customBgpIpAddresses == null
+					bgpPeeringAddresses: settings.properties.?bgpSettings.?bgpPeeringAddresses == null
 						? null
 						: [
 								NetworkVirtualNetworkGateways.CreateBgpPeeringAddress(
 									settings.name,
-									settings.properties.ipConfigurations.Instance0.name,
-									settings.properties.bgpSettings!.customBgpIpAddresses!.Instance0
+									settings.properties.ipConfigurations[0].name,
+									settings.properties.bgpSettings!.bgpPeeringAddresses![0].customBgpIpAddresses
 								)
 								NetworkVirtualNetworkGateways.CreateBgpPeeringAddress(
 									settings.name,
-									settings.properties.ipConfigurations.Instance1.name,
-									settings.properties.bgpSettings!.customBgpIpAddresses!.Instance1
+									settings.properties.ipConfigurations[1].name,
+									settings.properties.bgpSettings!.bgpPeeringAddresses![1].customBgpIpAddresses
 								)
 							]
 				}
@@ -132,8 +150,8 @@ resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGatewa
 		enableBgpRouteTranslationForNat: settings.properties.enableBgpRouteTranslationForNat
 		gatewayType: 'Vpn'
 		ipConfigurations: [
-			settings.properties.ipConfigurations.Instance0
-			settings.properties.ipConfigurations.Instance1
+			settings.properties.ipConfigurations[0]
+			settings.properties.ipConfigurations[1]
 		]
 		// Parent updates can reset separately deployed NAT rules; pass existing rules back inline before deploying child updates.
 		natRules: this.existingResource().?properties.natRules
@@ -149,7 +167,7 @@ resource Network_virtualNetworkGateways_ 'Microsoft.Network/virtualNetworkGatewa
 // NAT rule writes update the same gateway, so deploy them one at a time.
 @batchSize(1)
 resource Network_virtualNetworkGateways_natRules_ 'Microsoft.Network/virtualNetworkGateways/natRules@2026-03-01' = [
-	for item in resources.natRules: {
+	for item in resources.?natRules ?? []: {
 		name: item.name
 		parent: Network_virtualNetworkGateways_
 		properties: item.properties
