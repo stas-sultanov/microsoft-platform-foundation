@@ -13,94 +13,44 @@ import * as Common from '../common.bicep'
 
 /* TYPES */
 
-@description('The BGP settings.')
+@description('Custom Azure APIPA BGP peering IPv4 addresses for one gateway IP configuration.')
 @export()
 @sealed()
-type BgpSettings = {
-	@description('The BGP autonomous system number.')
-	@minValue(1)
-	@maxValue(4294967294)
-	asn: int?
-	@description('Optional custom Azure APIPA BGP peering IPv4 addresses for each gateway instance. Azure permits 169.254.21.0 through 169.254.22.255; verify addresses against the remote peers.')
-	@sealed()
+type IPConfigurationBgpPeeringAddressInput = {
+	@description('The list of custom BGP peering addresses which belong to IP configuration.')
+	@minLength(1)
 	@validate(
 		value =>
-			value == null || sys.empty(sys.intersection(
-				value!.Instance0,
-				value!.Instance1
+			sys.length(sys.union(
+				value,
+				[]
+			)) == sys.length(value) && sys.empty(sys.filter(
+				value,
+				address =>
+					!((sys.startsWith(
+						address,
+						'169.254.21.'
+					) || sys.startsWith(
+						address,
+						'169.254.22.'
+					)) && sys.contains(
+						sys.map(
+							sys.range(
+								0,
+								256
+							),
+							n =>
+								sys.string(n)
+						),
+						sys.substring(
+							address,
+							11
+						)
+					))
 			)),
-		'Custom BGP peering IP addresses must be unique across both instances.'
+		'Custom BGP peering IP addresses must be unique IPv4 addresses from 169.254.21.0 through 169.254.22.255.'
 	)
-	customBgpIpAddresses: {
-		@description('Custom Azure APIPA BGP peering IPv4 addresses for the Instance 0.')
-		@minLength(1)
-		@validate(
-			value =>
-				sys.length(sys.union(
-					value,
-					[]
-				)) == sys.length(value) && sys.empty(sys.filter(
-					value,
-					address =>
-						!((sys.startsWith(
-							address,
-							'169.254.21.'
-						) || sys.startsWith(
-							address,
-							'169.254.22.'
-						)) && sys.contains(
-							sys.map(
-								sys.range(
-									0,
-									256
-								),
-								n =>
-									sys.string(n)
-							),
-							sys.substring(
-								address,
-								11
-							)
-						))
-				)),
-			'Custom BGP peering IP addresses must be unique IPv4 addresses from 169.254.21.0 through 169.254.22.255.'
-		)
-		Instance0: string[]
-		@description('Custom Azure APIPA BGP peering IPv4 addresses for the Instance 1.')
-		@minLength(1)
-		@validate(
-			value =>
-				sys.length(sys.union(
-					value,
-					[]
-				)) == sys.length(value) && sys.empty(sys.filter(
-					value,
-					address =>
-						!((sys.startsWith(
-							address,
-							'169.254.21.'
-						) || sys.startsWith(
-							address,
-							'169.254.22.'
-						)) && sys.contains(
-							sys.map(
-								sys.range(
-									0,
-									256
-								),
-								n =>
-									sys.string(n)
-							),
-							sys.substring(
-								address,
-								11
-							)
-						))
-				)),
-			'Custom BGP peering IP addresses must be unique IPv4 addresses from 169.254.21.0 through 169.254.22.255.'
-		)
-		Instance1: string[]
-	}?
+	customBgpIpAddresses: string[]
 }
 
 @description('The configuration of a virtual network gateway IP configuration.')
