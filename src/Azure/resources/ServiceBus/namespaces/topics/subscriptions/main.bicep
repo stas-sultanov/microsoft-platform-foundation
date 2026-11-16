@@ -11,6 +11,10 @@ metadata description = 'Provisions a Microsoft.ServiceBus/namespaces/topics/subs
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as AuthorizationRoleAssignments from '../../../../../library/Authorization/roleAssignments.bicep'
+
 /* TYPES */
 
 @description('Represents a rule resource.')
@@ -35,6 +39,15 @@ param parentTopicName resourceInput<'Microsoft.ServiceBus/namespaces/topics@2026
 param resources {
 	rules: RuleResource[]
 }?
+
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	@sealed()
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+	}?
+}
 
 @description('The resource settings.')
 @sealed()
@@ -68,5 +81,18 @@ resource ServiceBus_namespaces_topics_subscriptions_rules_ 'Microsoft.ServiceBus
 		name: item.name
 		parent: ServiceBus_namespaces_topics_subscriptions_
 		properties: item.properties
+	}
+]
+
+/* EXTENSIONS */
+
+resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+	for item in AuthorizationRoleAssignments.CreateArray(
+		ServiceBus_namespaces_topics_subscriptions_.id,
+		extensions.?Authorization.roleAssignments ?? []
+	): {
+		name: item.name
+		properties: item.properties
+		scope: ServiceBus_namespaces_topics_subscriptions_
 	}
 ]
