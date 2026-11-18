@@ -9,21 +9,7 @@ metadata description = 'Provides reusable types and functions for Microsoft.Auth
 
 /* TYPES */
 
-@description('RoleAssignmentProperties input configuration.')
-@export()
-@sealed()
-type PropertiesInput = {
-	@description('Description of role assignment.')
-	description: string
-	@description('The principal id.')
-	principalId: string
-	@description('The principal type of the assigned principal id.')
-	principalType: resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties.principalType?
-	@description('The role definition name.')
-	roleName: string
-}
-
-@description('RoleAssignment resource configuration.')
+@description('The configuration of a Microsoft.Authorization/roleAssignments resource.')
 @export()
 @sealed()
 type Resource = {
@@ -33,12 +19,21 @@ type Resource = {
 	properties: resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties
 }
 
-@description('RoleAssignment resource input configuration.')
+@description('The input configuration of a Microsoft.Authorization/roleAssignments resource.')
 @export()
 @sealed()
 type ResourceInput = {
 	@description('The configurable properties.')
-	properties: PropertiesInput
+	properties: {
+		@description('Description of role assignment.')
+		description: string
+		@description('The principal id.')
+		principalId: string
+		@description('The principal type of the assigned principal id.')
+		principalType: resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties.principalType?
+		@description('The role definition name.')
+		roleName: string
+	}
 }
 
 /* FUNCTIONS */
@@ -54,7 +49,12 @@ func Create(
 		input.properties.roleName,
 		input.properties.principalId
 	)
-	properties: CreateProperties(input.properties)
+	properties: {
+		description: input.properties.description
+		principalId: input.properties.principalId
+		principalType: input.properties.?principalType
+		roleDefinitionId: az.roleDefinitions(input.properties.roleName).id
+	}
 }
 
 @description('Creates resources from an array of input configuration.')
@@ -71,14 +71,3 @@ func CreateArray(
 				input
 			)
 	)
-
-@description('Creates RoleAssignmentProperties from input configuration.')
-@export()
-func CreateProperties(
-	input PropertiesInput
-) resourceInput<'Microsoft.Authorization/roleAssignments@2022-04-01'>.properties => {
-	description: input.description
-	principalId: input.principalId
-	principalType: input.?principalType
-	roleDefinitionId: az.roleDefinitions(input.roleName).id
-}

@@ -9,16 +9,6 @@ metadata description = 'Provides reusable types for Microsoft.Insights/diagnosti
 
 /* TYPES */
 
-@description('DiagnosticSettingsProperties input configuration.')
-@export()
-@sealed()
-type PropertiesInput = {
-	@description('The list of logs settings.')
-	logs: resourceInput<'Microsoft.Insights/diagnosticSettings@2021-05-01-preview'>.properties.logs?
-	@description('The list of metric settings.')
-	metrics: resourceInput<'Microsoft.Insights/diagnosticSettings@2021-05-01-preview'>.properties.metrics?
-}
-
 @description('The configuration of a Microsoft.Insights/diagnosticSettings resource.')
 @export()
 @sealed()
@@ -29,20 +19,34 @@ type Resource = {
 	properties: resourceInput<'Microsoft.Insights/diagnosticSettings@2021-05-01-preview'>.properties
 }
 
+@description('The input configuration of a Microsoft.Insights/diagnosticSettings resource.')
+@export()
+@sealed()
+type ResourceInput = {
+	@description('The name.')
+	name: string
+	@description('The configurable properties.')
+	properties: {
+		@description('The list of logs settings.')
+		logs: resourceInput<'Microsoft.Insights/diagnosticSettings@2021-05-01-preview'>.properties.logs?
+		@description('The list of metric settings.')
+		metrics: resourceInput<'Microsoft.Insights/diagnosticSettings@2021-05-01-preview'>.properties.metrics?
+	}
+}
+
 /* FUNCTIONS */
 
-@description('Creates Resource from configurable properties.')
+@description('Creates Resource with Log Analytics Workspace destination.')
 @export()
-func CreateResourceWithLogAnalyticsWorkspace(
-	name string,
-	properties PropertiesInput,
+func CreateWithLogAnalyticsWorkspace(
+	resourceInput ResourceInput,
 	workspaceId string
 ) Resource => {
-	name: name
+	name: resourceInput.name
 	properties: {
 		logAnalyticsDestinationType: 'Dedicated'
-		logs: properties.?logs ?? []
-		metrics: properties.?metrics ?? []
+		logs: resourceInput.properties.?logs ?? []
+		metrics: resourceInput.properties.?metrics ?? []
 		workspaceId: workspaceId
 	}
 }
