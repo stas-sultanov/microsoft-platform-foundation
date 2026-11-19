@@ -62,7 +62,6 @@ param resources {
 			@description('The extension settings.')
 			@sealed()
 			extensions: {
-				@minLength(1)
 				@sealed()
 				Insights: {
 					diagnosticSettings: InsightsDiagnosticSettings.Resource[]

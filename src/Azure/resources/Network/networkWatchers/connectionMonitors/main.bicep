@@ -5,13 +5,26 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Network/networkWatchers/connectionMonitors resource.'
+metadata description = 'Provisions a Microsoft.Network/networkWatchers/connectionMonitors resource with extensions.'
 
 /* SCOPE */
 
 targetScope = 'resourceGroup'
 
+/* IMPORTS */
+
+import * as InsightsDiagnosticSettings from '../../../../library/Insights/diagnosticSettings.bicep'
+
 /* PARAMETERS */
+
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	@sealed()
+	Insights: {
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
+	}
+}
 
 @description('The name of the parent Microsoft.Network/networkWatchers resource.')
 param parentName resourceInput<'Microsoft.Network/networkWatchers@2026-03-01'>.name
@@ -44,3 +57,14 @@ resource Network_networkWatchers_connectionMonitors_ 'Microsoft.Network/networkW
 	properties: settings.properties
 	tags: settings.tags
 }
+
+/* EXTENSIONS */
+
+#disable-next-line use-recent-api-versions // The repository selects this preview API for all diagnostic settings.
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for item in extensions.Insights.diagnosticSettings: {
+		name: item.name
+		properties: item.properties
+		scope: Network_networkWatchers_connectionMonitors_
+	}
+]

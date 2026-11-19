@@ -15,6 +15,8 @@ targetScope = 'resourceGroup'
 
 import * as AuthorizationRoleAssignments from '../../../library/Authorization/roleAssignments.bicep'
 
+import * as InsightsDiagnosticSettings from '../../../library/Insights/diagnosticSettings.bicep'
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -24,6 +26,10 @@ param extensions {
 	Authorization: {
 		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
 	}?
+	@sealed()
+	Insights: {
+		diagnosticSettings: InsightsDiagnosticSettings.Resource[]
+	}
 }
 
 @description('The resource settings.')
@@ -71,6 +77,15 @@ resource Authorization_roleAssignments_ 'Microsoft.Authorization/roleAssignments
 		Monitor_accounts_.id,
 		extensions.?Authorization.roleAssignments ?? []
 	): {
+		name: item.name
+		properties: item.properties
+		scope: Monitor_accounts_
+	}
+]
+
+#disable-next-line use-recent-api-versions // The repository selects this preview API for all diagnostic settings.
+resource Insights_diagnosticSettings_ 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
+	for item in extensions.Insights.diagnosticSettings: {
 		name: item.name
 		properties: item.properties
 		scope: Monitor_accounts_

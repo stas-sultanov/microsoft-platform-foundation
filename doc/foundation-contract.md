@@ -24,7 +24,7 @@ The key words MUST, MUST NOT, REQUIRED, SHOULD, SHOULD NOT, MAY, and OPTIONAL ar
 
 - Modules MUST declare every resource they provision or configure.
 - Modules in `resources` and `specs` whose primary resource type is a top-level Azure resource type MUST expose a required `extensions` parameter.
-- For every resource a module provisions that supports diagnostic settings, the module MUST require a non-empty diagnostic settings collection under that resource's own `extensions.Insights.diagnosticSettings` and MUST provision that collection for that resource.
+- For every resource a module provisions that supports diagnostic settings, except workspace-based `Microsoft.Insights/components`, the module MUST expose a diagnostic settings collection under that resource's own `extensions.Insights.diagnosticSettings` and MUST provision any settings provided in that collection for that resource. The collection MAY be empty.
 - Modules that expose `extensions.Authorization.roleAssignments` MUST allow consumers to omit role assignments by omitting `extensions.Authorization` or the collection. The collection MAY be required when `Authorization` is supplied.
 - Omitting `extensions.Authorization` or an optional `extensions.Authorization.roleAssignments` collection, or providing an empty `extensions.Authorization.roleAssignments` collection, MUST create no role assignments.
 
