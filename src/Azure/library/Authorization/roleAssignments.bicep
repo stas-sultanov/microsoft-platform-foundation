@@ -24,6 +24,7 @@ type Resource = {
 @sealed()
 type ResourceInput = {
 	@description('The configurable properties.')
+	@sealed()
 	properties: {
 		@description('Description of role assignment.')
 		description: string

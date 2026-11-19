@@ -101,11 +101,11 @@ All Bicep modules MUST follow the Foundation Contract and these rules.
 
 ## Resources and API Versions
 
-- Resource declarations at the file's top level MUST use symbolic names in the form `<Provider>_<resourceType>_<childResourceType>...`, including every applicable child type segment.
+- Resource declarations at the file's top level MUST use symbolic names in the form `<Provider>_<resourceType>_<childResourceType>...<InstanceSuffix>`, including every applicable child type segment.
 - `<Provider>` MUST be the Azure provider namespace without `Microsoft.`, such as `Network` for `Microsoft.Network`.
 - Resource type segments in symbolic names MUST preserve the casing in the Azure resource type, such as `virtualNetworks` and `subnets`.
-- A symbolic name MAY append `__<Qualifier>` to distinguish declarations of the same type or identify a fixed singleton. The qualifier MUST be deterministic and identify the resource instance.
-- Nested child resource declarations, including `existing` declarations, MAY use the child type segment followed by `_`, such as `containers_`. Other declarations MUST use the full type-path naming form.
+- `<InstanceSuffix>` MUST be `_` or `__<Name>`. `<Name>` MUST be deterministic and identify the resource instance.
+- Nested child resource declarations, including `existing` declarations, MAY use `<childResourceType><InstanceSuffix>`, such as `containers_` or `containers__Default`. Other declarations MUST use the full type-path naming form.
 - A resource type and all its descendants under the same provider MUST use one API version across declarations and references.
 - API versions MUST match the versions selected by [Sync-ApiVersions.ps1](../tools/Sync-ApiVersions.ps1): the newest preview in `src` when one exists, otherwise the newest stable version.
 
