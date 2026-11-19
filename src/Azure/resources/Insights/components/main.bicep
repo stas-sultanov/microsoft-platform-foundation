@@ -36,6 +36,8 @@ param settings {
 	@description('The configurable properties.')
 	@sealed()
 	properties: {
+		@description('Specifies whether IP address masking is disabled.')
+		disableIpMasking: bool
 		@description('Specifies whether the network access type for accessing Application Insights ingestion is enabled.')
 		publicNetworkAccessForIngestion: resourceInput<'Microsoft.Insights/components@2020-02-02'>.properties.publicNetworkAccessForIngestion
 		@description('Specifies whether the network access type for accessing Application Insights query is enabled.')
@@ -55,7 +57,7 @@ resource Insights_components_ 'Microsoft.Insights/components@2020-02-02' = {
 	name: settings.name
 	properties: {
 		Application_Type: 'web'
-		DisableIpMasking: true
+		DisableIpMasking: settings.properties.disableIpMasking
 		DisableLocalAuth: true
 		publicNetworkAccessForIngestion: settings.properties.publicNetworkAccessForIngestion
 		publicNetworkAccessForQuery: settings.properties.?publicNetworkAccessForQuery
