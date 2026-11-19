@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Compute/virtualMachines resource for a security-hardened standalone Linux virtual machine with an existing managed OS disk, Microsoft Entra SSH access, Azure Monitor Agent, and optional extensions.'
+metadata description = 'Provisions a Microsoft.Compute/virtualMachines resource for a security-hardened standalone Linux virtual machine with an existing managed OS disk, Entra SSH access, Azure Monitor Agent, and optional extensions.'
 
 /*
 This spec provides a security-hardened Linux VM for always-on services.
@@ -20,8 +20,8 @@ This is a standalone VM, not a high-availability deployment:
 - NIC deletion: detached when the VM is deleted
 - Password authentication: inherited from the attached OS disk; must be disabled in the guest
 - Local password: not provisioned by this spec
-- Local SSH keys: not provisioned by this spec; Microsoft Entra SSH login is provided by the required extension
-- Microsoft Entra login extension: always installed
+- Local SSH keys: not provisioned by this spec; Entra SSH login is provided by the required extension
+- Entra login extension: always installed
 - Trusted Launch: required
 - Secure Boot: enabled
 - vTPM: enabled
@@ -155,7 +155,7 @@ param extensions {
 	'EntraLogin, GuestAttestation, and MonitorAgent are already installed by this spec and must not be supplied.'
 )
 param resources {
-	@description('The additional VM extensions by alias. Microsoft Entra login, Azure Monitor Agent, and Guest Attestation are installed internally and must not be supplied. Additional extensions deploy sequentially in ascending alias order.')
+	@description('The additional VM extensions by alias. Entra login, Azure Monitor Agent, and Guest Attestation are installed internally and must not be supplied. Additional extensions deploy sequentially in ascending alias order.')
 	@validate(
 		value =>
 			sys.length(sys.union(
@@ -173,10 +173,10 @@ param resources {
 		'Extension names must be unique, and the name of each additional extension must equal its type.'
 	)
 	extensions: {
-		@description('An additional Linux VM extension. Extensions run sequentially in ascending alias order after Microsoft Entra login, Azure Monitor Agent, and Guest Attestation are installed.')
+		@description('An additional Linux VM extension. Extensions run sequentially in ascending alias order after Entra login, Azure Monitor Agent, and Guest Attestation are installed.')
 		@sealed()
 		*: {
-			@description('The extension name. It must equal the extension type and be unique among all extensions; the Microsoft Entra login, Azure Monitor Agent, and Guest Attestation names are reserved.')
+			@description('The extension name. It must equal the extension type and be unique among all extensions; the Entra login, Azure Monitor Agent, and Guest Attestation names are reserved.')
 			@minLength(1)
 			@maxLength(64)
 			name: string

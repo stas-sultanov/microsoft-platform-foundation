@@ -5,7 +5,7 @@ metadata author = {
 		linkedIn: 'https://www.linkedin.com/in/stas-sultanov'
 	}
 }
-metadata description = 'Provisions a Microsoft.Storage/storageAccounts resource for blobs with Entra based access.'
+metadata description = 'Provisions a Microsoft.Storage/storageAccounts resource for blobs with Entra-based access.'
 
 /* SCOPE */
 

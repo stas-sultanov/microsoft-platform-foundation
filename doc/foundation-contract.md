@@ -1,33 +1,48 @@
 # Foundation Contract
 
-The foundation is a decision-based library. Its modules implement deliberately chosen architectural, engineering, security, and compatibility decisions through their interfaces, constraints, and implementations. Each module MUST follow the rules below and the decisions applicable to its purpose.
+This contract defines baseline requirements for every Foundation module that provisions one or more Azure or Entra resources.
 
-Architectural and security decisions are made first. Modules expose only settings intentionally left open to consumers by those decisions.
+The key words MUST, MUST NOT, REQUIRED, SHOULD, SHOULD NOT, MAY, and OPTIONAL are to be interpreted as described in RFC 2119 and RFC 8174. They are normative only when written in uppercase.
 
-## Design Principles
+## General Requirements
 
-- Modules MUST encode architectural and security decisions rather than simply mirroring native ARM/Bicep resource schemas.
-- Modules MUST NOT expose SKUs or configurations that Microsoft documents as deprecated, retired, or unsupported.
-- Modules MUST NOT expose security modes prohibited by this contract or Microsoft's service-specific security recommendations.
-- Module interfaces MUST NOT expose additional Azure capabilities unless explicitly requested or required by this contract.
-- Modules MUST add constraints and validation missing from native Bicep resource types, using strong types and template structure to prevent invalid configurations.
-- SKU names MUST use explicit allowlists unless valid names depend on deployment context and cannot be represented reliably by a fixed list.
-- Module interfaces MUST NOT expose arbitrary property bags, `additionalSettings`, or raw ARM passthrough that bypasses the contract.
-- Resource and spec module contracts MUST prioritize predictable, enforceable configuration that is difficult to misuse over configuration breadth.
+- Modules MAY define additional module-specific requirements.
+- Module-specific requirements MUST NOT weaken or contradict this contract.
+- Modules MUST implement every applicable requirement in this contract and their documented module-specific requirements.
+
+## Resource Settings and Validation
+
+- Modules MUST NOT expose resource settings through open object types or properties typed as `any`.
+- Modules MUST use the native `resourceInput` type for non-primitive resource properties and resource properties with constraints expressed by Bicep parameter decorators when that type and applicable decorators express the module's required type and allowed values.
+- Modules MUST use a custom type for non-primitive resource properties and resource properties with constraints expressed by Bicep parameter decorators when no native `resourceInput` type exists or that type and its applicable decorators cannot express the module's required type and allowed values.
+- Modules MUST use Bicep types and decorators to express input constraints.
+- Modules MUST use template validation for input constraints that Bicep types and decorators cannot express.
+- Modules MUST reject inputs that violate this contract or their documented module-specific requirements.
+- Modules MUST NOT expose properties or configurations that Microsoft documents as deprecated, retired, or unsupported.
+
+## Resources and Extensions
+
+- Modules MUST declare every resource they provision or configure.
+- Modules in `resources` and `specs` whose primary resource type is a top-level Azure resource type MUST expose a required `extensions` parameter.
+- For every resource a module provisions that supports diagnostic settings, the module MUST require a non-empty diagnostic settings collection under that resource's own `extensions.Insights.diagnosticSettings` and MUST provision that collection for that resource.
+- Modules MUST NOT require `extensions.Authorization.roleAssignments`.
+- Omitting or providing an empty `extensions.Authorization.roleAssignments` collection MUST create no role assignments.
 
 ## Security Baseline
 
-- When supported by the selected service, SKU, and API version, Microsoft Entra ID data-plane authorization MUST be enabled and all non-Entra data-plane authorization methods MUST be disabled.
-- Modules MUST enforce the highest configurable minimum TLS version for the selected service, SKU, and API version.
-- Modules whose resources support `publicNetworkAccess` MUST expose it as a required consumer setting without a module-supplied default.
-- Firewall rules and trusted-service exceptions SHOULD be optional consumer settings.
-- Encryption MUST default to platform-managed keys.
-- Where outputs are otherwise permitted by the [Authoring Rules](authoring-rules.md#outputs), they MUST NOT include secrets, passwords, or authentication keys, except generated Entra application password credentials returned by Microsoft Graph only at creation.
+- Modules MUST use Entra ID exclusively for data-plane authorization where supported.
+- For each resource that exposes a configurable minimum TLS version, modules MUST set it to the highest version supported by the selected service, SKU, and API version.
+- For each resource that supports `publicNetworkAccess`, modules MUST expose it as a required parameter.
+- Firewall rules and trusted-service exceptions MUST be optional parameters.
+- Modules MUST NOT enable firewall rules or trusted-service exceptions by default.
+- Modules MUST use platform-managed keys by default for each resource that supports a configurable encryption key source.
+
+## Outputs
+
+- Where outputs are permitted by the [Authoring Rules](authoring-rules.md#outputs), modules MUST NOT output secrets, passwords, or authentication keys, except Entra application password credentials returned by Microsoft Graph during creation.
 - Permitted secret outputs MUST be marked `@secure()`.
 
 ## Evolution and Compatibility
 
-- New revisions MAY introduce breaking changes when Azure capabilities, security guidance, or engineering practices improve.
-- Backward compatibility MUST NOT override this contract.
-- Projects requiring a stable dependency MAY pin a Git commit, tag, submodule revision, or immutable module artifact.
-- Consumers MUST adapt their infrastructure code when adopting a revision that changes the contracts they use.
+- The Foundation MUST NOT guarantee backward compatibility between versions.
+- Consumers MUST treat every new Foundation version as potentially breaking.

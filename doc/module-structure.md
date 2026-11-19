@@ -8,8 +8,8 @@ Modules are grouped by purpose using the categories and paths below.
 | ------------------------ | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/Azure/library`      | Shared types, functions, and constants                               | MUST NOT contain resources.                                                                                                                                                                                                                 |
 | `src/Azure/patterns`     | Reusable compositions that deploy and wire multiple resource types   | MUST own the relationship between the resources they compose.                                                                                                                                                                               |
-| `src/Azure/resources`    | Modules for one primary Azure resource type                          | MUST create the primary resource and MAY create its child resources and extension resources, such as diagnostics and authorization.                                                                                                         |
-| `src/Azure/specs`        | Scenario-specific specializations of one primary Azure resource type | MUST create the primary resource specialization and MAY create its child resources and extension resources, such as diagnostics and authorization. MUST remain resource-specific and implement scenario-specific decisions and constraints. |
+| `src/Azure/resources`    | Modules for one primary Azure resource type, top-level or child      | MUST create the primary resource and MAY create its child resources and extension resources, such as diagnostics and authorization.                                                                                                         |
+| `src/Azure/specs`        | Scenario-specific specializations of one primary Azure resource type, top-level or child | MUST create the primary resource specialization and MAY create its child resources and extension resources, such as diagnostics and authorization. MUST remain resource-specific and implement scenario-specific decisions and constraints. |
 | `src/Entra/applications` | Entra application artifacts managed through Microsoft Graph          | MUST be used for Microsoft Graph-driven Entra application artifacts.                                                                                                                                                                        |
 
 ## Path Conventions
@@ -26,6 +26,10 @@ Modules are grouped by purpose using the categories and paths below.
 - `src/Azure/specs/<Provider>/<resourceType>/<childResourceType>/<childResourceType>/<Name>.bicep`
 - `src/Entra/applications/<Name>.bicep`
 
-Child resource type path segments MAY continue as deeply as the Azure resource type requires.
+Here, a module's primary resource type is the resource type it targets; it can be top-level or child.
+
+An Azure resource type hierarchy starts with a top-level resource type, such as `Microsoft.Storage/storageAccounts`. A top-level resource type may have no child resource types. A child resource type may itself have child resource types at any depth supported by Azure; for example, `Microsoft.Storage/storageAccounts/fileServices/shares` has two child levels.
+
+A parent resource is the immediate resource that owns a child resource.
 
 The `Provider` path segment MUST match the Azure provider namespace without `Microsoft.`. The `resourceType` and `childResourceType` path segments MUST match the corresponding Azure resource type segments.

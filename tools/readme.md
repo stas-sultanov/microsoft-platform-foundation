@@ -5,7 +5,7 @@ PowerShell scripts for formatting, validating, and publishing the Bicep modules 
 ## Requirements
 
 - PowerShell 7.0 or later.
-- For formatting, building, or publishing: Azure CLI with the Bicep CLI version listed in [Bicep Version](../readme.md#bicep-version). These scripts call `az bicep`, not a standalone `bicep` executable.
+- For formatting, building, or publishing: Azure CLI with the Bicep CLI version listed in [Bicep Compatibility](../readme.md#bicep-compatibility). These scripts call `az bicep`, not a standalone `bicep` executable.
 - Examples assume the repository root as the working directory.
 
 ## Scripts
@@ -47,7 +47,7 @@ Enforces one API version per API-version family, as defined in [Resources and AP
 Rules:
 
 - A reference is any text matching `<Namespace>/<type>[/<childType>...]@YYYY-MM-DD[-preview]`, including text in comments. The match does not require the version to end there: `@2025-01-01-beta` is matched as `@2025-01-01`. Versions without a date, such as `Microsoft.Graph/applications@beta`, are ignored.
-- A family is the namespace and top-level type, such as `Microsoft.KeyVault/vaults` for `Microsoft.KeyVault/vaults/secrets@2026-05-15`.
+- A family is the namespace and top-level resource type, such as `Microsoft.KeyVault/vaults` for `Microsoft.KeyVault/vaults/secrets@2026-05-15`.
 - The expected version of a family is its newest preview version if it has any; otherwise, its newest stable version. Only versions already present under `-SourceRoot` are considered.
 - To change a family's version, set one reference to the target version and run `-RunMode Replace`. This works only if the target becomes the expected version. Otherwise, such as when moving from preview to stable, update every reference in the family manually.
 

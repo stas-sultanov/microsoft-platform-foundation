@@ -22,7 +22,7 @@ This spec provides a managed OS disk for a Trusted Launch Linux virtual machine:
 - Performance tier, bursting, and sharing: platform defaults
 - Encryption at rest: platform-managed keys
 - Azure Disk Encryption: not supported
-- Import and export authorization: Microsoft Entra ID; incompatible with Azure Backup and Azure Site Recovery
+- Import and export authorization: Entra ID; incompatible with Azure Backup and Azure Site Recovery
 - Import and export network access: all networks when public network access is enabled; denied otherwise
 - Private import and export through disk access: not supported
 */
