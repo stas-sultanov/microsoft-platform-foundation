@@ -15,6 +15,87 @@ targetScope = 'resourceGroup'
 
 import * as InsightsDiagnosticSettings from '../../../../library/Insights/diagnosticSettings.bicep'
 
+/* TYPES */
+
+@description('A connection monitor endpoint of one of the supported endpoint types.')
+@discriminator('type')
+@sealed()
+type Endpoint =
+	| EndpointAzureSubnet
+	| EndpointAzureVM
+	| EndpointAzureVMSS
+	| EndpointAzureVNet
+	| EndpointExternalAddress
+
+@description('An endpoint for an Azure subnet.')
+@sealed()
+type EndpointAzureSubnet = {
+	@description('The test coverage for the endpoint.')
+	coverageLevel: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties.endpoints[*].coverageLevel?
+	@description('The name of the endpoint.')
+	name: string
+	@description('The ID of the Microsoft.Network/virtualNetworks/subnets resource.')
+	resourceId: string
+	@description('The addresses included in or excluded from the endpoint.')
+	scope: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties.endpoints[*].scope?
+	@description('The endpoint type.')
+	type: 'AzureSubnet'
+}
+
+@description('An endpoint for an Azure virtual machine.')
+@sealed()
+type EndpointAzureVM = {
+	@description('The address of the virtual machine.')
+	address: string?
+	@description('The name of the endpoint.')
+	name: string
+	@description('The ID of the Microsoft.Compute/virtualMachines resource.')
+	resourceId: string
+	@description('The endpoint type.')
+	type: 'AzureVM'
+}
+
+@description('An endpoint for an Azure virtual machine scale set.')
+@sealed()
+type EndpointAzureVMSS = {
+	@description('The test coverage for the endpoint.')
+	coverageLevel: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties.endpoints[*].coverageLevel?
+	@description('The name of the endpoint.')
+	name: string
+	@description('The ID of the Microsoft.Compute/virtualMachineScaleSets resource.')
+	resourceId: string
+	@description('The addresses included in or excluded from the endpoint.')
+	scope: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties.endpoints[*].scope?
+	@description('The endpoint type.')
+	type: 'AzureVMSS'
+}
+
+@description('An endpoint for an Azure virtual network.')
+@sealed()
+type EndpointAzureVNet = {
+	@description('The test coverage for the endpoint.')
+	coverageLevel: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties.endpoints[*].coverageLevel?
+	@description('The name of the endpoint.')
+	name: string
+	@description('The ID of the Microsoft.Network/virtualNetworks resource.')
+	resourceId: string
+	@description('The addresses included in or excluded from the endpoint.')
+	scope: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties.endpoints[*].scope?
+	@description('The endpoint type.')
+	type: 'AzureVNet'
+}
+
+@description('An endpoint for an external IP address, FQDN, or URL.')
+@sealed()
+type EndpointExternalAddress = {
+	@description('The IP address, FQDN, or URL of the endpoint.')
+	address: string
+	@description('The name of the endpoint.')
+	name: string
+	@description('The endpoint type.')
+	type: 'ExternalAddress'
+}
+
 /* PARAMETERS */
 
 @description('The extensions settings.')
@@ -37,7 +118,21 @@ param settings {
 	@description('The name.')
 	name: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.name
 	@description('The configurable properties.')
-	properties: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties
+	@sealed()
+	properties: {
+		@description('Specifies whether the connection monitor starts automatically after creation.')
+		autoStart: bool?
+		@description('The connection monitor endpoints.')
+		endpoints: Endpoint[]
+		@description('The notes associated with the connection monitor.')
+		notes: string?
+		@description('The connection monitor outputs.')
+		outputs: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties.outputs?
+		@description('The connection monitor test configurations.')
+		testConfigurations: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties.testConfigurations
+		@description('The connection monitor test groups.')
+		testGroups: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.properties.testGroups
+	}
 	@description('The tags.')
 	tags: resourceInput<'Microsoft.Network/networkWatchers/connectionMonitors@2026-03-01'>.tags
 }
