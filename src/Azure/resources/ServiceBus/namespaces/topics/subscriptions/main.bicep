@@ -28,6 +28,15 @@ type RuleResource = {
 
 /* PARAMETERS */
 
+@description('The extensions settings.')
+@sealed()
+param extensions {
+	@sealed()
+	Authorization: {
+		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
+	}?
+}
+
 @description('The name of the parent Microsoft.ServiceBus/namespaces resource.')
 param parentNamespaceName resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.name
 
@@ -39,15 +48,6 @@ param parentTopicName resourceInput<'Microsoft.ServiceBus/namespaces/topics@2026
 param resources {
 	rules: RuleResource[]
 }?
-
-@description('The extensions settings.')
-@sealed()
-param extensions {
-	@sealed()
-	Authorization: {
-		roleAssignments: AuthorizationRoleAssignments.ResourceInput[]
-	}?
-}
 
 @description('The resource settings.')
 @sealed()

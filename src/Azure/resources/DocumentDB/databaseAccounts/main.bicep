@@ -83,7 +83,7 @@ param settings {
 		@description('The consistency policy.')
 		consistencyPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.consistencyPolicy
 		@description('List of IpRules.')
-		ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.ipRules
+		ipRules: resourceInput<'Microsoft.DocumentDB/databaseAccounts@2025-11-01-preview'>.properties.ipRules?
 		@description('The geo replication locations.')
 		@minLength(1)
 		@validate(
@@ -124,7 +124,7 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 		createMode: 'Default'
 		databaseAccountOfferType: 'Standard'
 		disableLocalAuth: true
-		ipRules: settings.properties.ipRules
+		ipRules: settings.properties.?ipRules
 		locations: sys.map(
 			settings.properties.locations,
 			(

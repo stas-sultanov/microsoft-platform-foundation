@@ -57,8 +57,6 @@ param settings {
 		ipAddressType: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.ipAddressType
 		@description('Number of premium messaging partitions for the namespace. Requires: sku.name == \'Premium\'.')
 		premiumMessagingPartitions: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.premiumMessagingPartitions?
-		@description('Private endpoint connections for the namespace. Requires: sku.name == \'Premium\'.')
-		privateEndpointConnections: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.privateEndpointConnections?
 		@description('The network access mode.')
 		publicNetworkAccess: resourceInput<'Microsoft.ServiceBus/namespaces@2026-01-01'>.properties.publicNetworkAccess
 	}

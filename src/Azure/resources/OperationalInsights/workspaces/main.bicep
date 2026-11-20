@@ -61,11 +61,33 @@ param settings {
 		publicNetworkAccessForIngestion: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.properties.publicNetworkAccessForIngestion
 		@description('The network access type for query.')
 		publicNetworkAccessForQuery: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.properties.publicNetworkAccessForQuery
-		@description('The workspace data retention in days.')
+		@description('The data retention in days.')
 		@minValue(30)
 		retentionInDays: int
-		@description('The SKU of the workspace.')
-		sku: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.properties.sku
+		@description('The SKU.')
+		@discriminator('name')
+		sku:
+			| {
+				@description('The SKU name of the Pay-as-you-go pricing tier.')
+				name: 'PerGB2018'
+			}
+			| {
+				@description('The capacity reservation level in GB per day.')
+				capacityReservationLevel:
+					| 100
+					| 200
+					| 300
+					| 400
+					| 500
+					| 1000
+					| 2000
+					| 5000
+					| 10000
+					| 25000
+					| 50000
+				@description('The SKU name of the Commitment Tier pricing tier.')
+				name: 'CapacityReservation'
+			}
 		@description('The daily volume cap for ingestion.')
 		workspaceCapping: resourceInput<'Microsoft.OperationalInsights/workspaces@2026-03-01'>.properties.workspaceCapping?
 	}

@@ -31,7 +31,7 @@ param settings {
 					sys.length(value) - 3
 				)
 			) == '_CL',
-		'Custom log table names must end with _CL.'
+		'Custom log table names must end with "_CL".'
 	)
 	name: resourceInput<'Microsoft.OperationalInsights/workspaces/tables@2026-03-01'>.name
 	@description('The properties.')

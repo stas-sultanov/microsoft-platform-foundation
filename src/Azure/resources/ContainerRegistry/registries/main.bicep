@@ -65,7 +65,7 @@ param settings {
 		@description('Specifies whether Tasks are allowed to bypass the network rules for this container registry.')
 		networkRuleBypassAllowedForTasks: bool?
 		@description('Specifies whether trusted Azure services may bypass registry network rules.')
-		networkRuleBypassOptions: resourceInput<'Microsoft.ContainerRegistry/registries@2026-09-01-preview'>.properties.networkRuleBypassOptions?
+		networkRuleBypassOptions: resourceInput<'Microsoft.ContainerRegistry/registries@2026-09-01-preview'>.properties.networkRuleBypassOptions
 		@description('The network rule set. Requires: sku.name == \'Premium\'.')
 		networkRuleSet: resourceInput<'Microsoft.ContainerRegistry/registries@2026-09-01-preview'>.properties.networkRuleSet?
 		@description('The policies.')
@@ -120,7 +120,7 @@ resource ContainerRegistry_registries_ 'Microsoft.ContainerRegistry/registries@2
 		endpointProtocol: settings.properties.endpointProtocol
 		metadataSearch: settings.properties.metadataSearch
 		networkRuleBypassAllowedForTasks: settings.properties.?networkRuleBypassAllowedForTasks
-		networkRuleBypassOptions: settings.properties.?networkRuleBypassOptions
+		networkRuleBypassOptions: settings.properties.networkRuleBypassOptions
 		networkRuleSet: settings.properties.?networkRuleSet
 		policies: {
 			azureADAuthenticationAsArmPolicy: {

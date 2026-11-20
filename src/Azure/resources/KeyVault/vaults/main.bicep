@@ -56,7 +56,17 @@ param settings {
 		@description('Specifies whether soft delete is enabled for this key vault.')
 		enableSoftDelete: bool
 		@description('Rules governing the accessibility of the key vault from specific network locations.')
-		networkAcls: resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.properties.networkAcls?
+		@sealed()
+		networkAcls: {
+			@description('Specifies which traffic can bypass network rules.')
+			bypass: resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.properties.networkAcls.bypass
+			@description('The default action when no rule from ipRules and from virtualNetworkRules match.')
+			defaultAction: resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.properties.networkAcls.defaultAction?
+			@description('The list of IP address rules.')
+			ipRules: resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.properties.networkAcls.ipRules?
+			@description('The list of virtual network rules.')
+			virtualNetworkRules: resourceInput<'Microsoft.KeyVault/vaults@2026-05-15'>.properties.networkAcls.virtualNetworkRules?
+		}
 		@description('The network access mode.')
 		publicNetworkAccess:
 			| 'Enabled'
@@ -84,7 +94,7 @@ resource KeyVault_vaults_ 'Microsoft.KeyVault/vaults@2026-05-15' = {
 			: null
 		enableRbacAuthorization: true
 		enableSoftDelete: settings.properties.enableSoftDelete
-		networkAcls: settings.properties.?networkAcls ?? {}
+		networkAcls: settings.properties.networkAcls
 		publicNetworkAccess: settings.properties.publicNetworkAccess
 		sku: {
 			family: 'A'

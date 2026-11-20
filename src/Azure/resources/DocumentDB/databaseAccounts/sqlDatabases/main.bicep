@@ -40,7 +40,7 @@ param settings {
 		)
 		options: DocumentDBDatabaseAccounts.ThroughputOptions?
 	}
-	@description('Tags to put on the resource.')
+	@description('The tags.')
 	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2025-11-01-preview'>.tags
 }
 

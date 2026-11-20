@@ -26,6 +26,10 @@ param parentSqlDatabaseName resourceInput<'Microsoft.DocumentDB/databaseAccounts
 @description('The resource settings.')
 @sealed()
 param settings {
+	@description('The identity.')
+	identity: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.identity?
+	@description('The geo-location.')
+	location: string
 	@description('The name.')
 	name: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.name
 	@description('The configurable properties.')
@@ -81,6 +85,8 @@ param settings {
 			vectorEmbeddingPolicy: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.properties.resource.vectorEmbeddingPolicy?
 		}
 	}
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview'>.tags
 }
 
 /* EXISTING RESOURCES */
@@ -98,6 +104,10 @@ resource DocumentDB_databaseAccounts_ 'Microsoft.DocumentDB/databaseAccounts@202
 
 #disable-next-line use-recent-api-versions // to use new features, preview version is required
 resource DocumentDB_databaseAccounts_sqlDatabases_containers_ 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2025-11-01-preview' = {
+	identity: settings.?identity ?? {
+		type: 'None'
+	}
+	location: settings.location
 	name: settings.name
 	parent: DocumentDB_databaseAccounts_::sqlDatabases_
 	properties: {
@@ -132,4 +142,5 @@ resource DocumentDB_databaseAccounts_sqlDatabases_containers_ 'Microsoft.Documen
 				: {})
 		}
 	}
+	tags: settings.tags
 }

@@ -25,6 +25,8 @@ param settings {
 	name: resourceInput<'Microsoft.Compute/galleries/applications@2026-03-03'>.name
 	@description('The configurable properties.')
 	properties: resourceInput<'Microsoft.Compute/galleries/applications@2026-03-03'>.properties
+	@description('The tags.')
+	tags: resourceInput<'Microsoft.Compute/galleries/applications@2026-03-03'>.tags
 }
 
 /* EXISTING RESOURCES */
@@ -40,4 +42,5 @@ resource Compute_galleries_applications_ 'Microsoft.Compute/galleries/applicatio
 	name: settings.name
 	parent: Compute_galleries_
 	properties: settings.properties
+	tags: settings.tags
 }
